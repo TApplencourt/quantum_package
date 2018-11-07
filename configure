@@ -543,16 +543,10 @@ def create_ninja_and_rc(l_installed):
 def recommendation():
     path = join(QP_ROOT, "quantum_package.rc")
     print "Now :"
+    print ""
     print "   source {0}".format(path)
-    print ""
-    print "Then, install the modules you want to install using :"
-    print "    qp_module.py"
-    print ""
-    print "Finally :"
     print "   ninja"
     print ""
-    print "You can install more plugin with the qp_module.py install command" 
-    print "PS : For more info on compiling the code, read the README.md"
 
 
 if __name__ == '__main__':
@@ -560,7 +554,7 @@ if __name__ == '__main__':
     l_installed, l_install_descendant = checking(d_dependency)
 
     if l_install_descendant:
-        print "You will need to install:"
+        print "The following will be installed:"
         for i in l_install_descendant:
             print "* {0}".format(i)
 

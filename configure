@@ -49,9 +49,8 @@ QP_ROOT_INSTALL = join(QP_ROOT, "install")
 os.environ["PATH"] = os.environ["PATH"] + ":" + QP_ROOT_BIN
 
 d_dependency = {
-    "ocaml": ["m4", "curl", "zlib", "patch", "gcc", "zeromq", "gmp"],
+    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
     "m4": ["make"],
-    "curl": ["make"],
     "zlib": ["gcc", "make"],
     "patch": ["make"],
     "ezfio": ["irpf90"],
@@ -90,11 +89,6 @@ m4 = Info(
     url="http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz",
     description=" m4",
     default_path=join(QP_ROOT_BIN, "m4"))
-
-curl = Info(
-    url="http://qmcchem.ups-tlse.fr/files/scemama/curl-7.30.0.ermine.tar.bz2",
-    description=" curl",
-    default_path=join(QP_ROOT_BIN, "curl"))
 
 zlib = Info(
     url='http://www.zlib.net/zlib-1.2.11.tar.gz',
@@ -158,7 +152,7 @@ bats = Info(
 
 d_info = dict()
 
-for m in ["ocaml", "m4", "curl", "zlib", "patch", "irpf90", "docopt",
+for m in ["ocaml", "m4", "zlib", "patch", "irpf90", "docopt",
           "resultsFile", "ninja", "emsl", "ezfio", 
           "zeromq", "f77zmq", "bats", "gmp"]: 
     exec ("d_info['{0}']={0}".format(m))

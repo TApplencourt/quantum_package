@@ -49,24 +49,26 @@ QP_ROOT_INSTALL = join(QP_ROOT, "install")
 os.environ["PATH"] = os.environ["PATH"] + ":" + QP_ROOT_BIN
 
 d_dependency = {
+    "python": [],
+    "make": [],
+    "bats": [],
+    "gcc": [],
+    "g++": [],
 #    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
     "ocaml": [ "gcc", "zeromq", "gmp"],
 #    "m4": ["make"],
 #    "zlib": ["gcc", "make"],
 #    "patch": ["make"],
-    "ezfio": ["irpf90"],
+    "autoconf": ["make"],
+    "automake": ["make"],
+    "ezfio": ["irpf90", "make", "ninja"],
     "irpf90": ["python"],
     "docopt": ["python"],
     "resultsFile": ["python"],
     "emsl": ["python"],
-    "gcc": [],
-    "g++": [],
-    "zeromq" : [ "g++", "make" ],
+    "zeromq" : [ "g++", "make", "autoconf", "automake" ],
     "f77zmq" : [ "zeromq", "python", "make" ],
-    "python": [],
     "ninja": ["g++", "python"],
-    "make": [],
-    "bats": [],
     "gmp" : ["make", "g++"]
 }
 
@@ -86,11 +88,11 @@ ocaml = Info(
     description=' OCaml, Opam and the Core library (it will take some time roughly 20min)',
     default_path=join(QP_ROOT_BIN, "opam"))
 
-#m4 = Info(
-#    url="http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz",
-#    description=" m4",
-#    default_path=join(QP_ROOT_BIN, "m4"))
-#
+m4 = Info(
+    url="http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz",
+    description=" m4",
+    default_path=join(QP_ROOT_BIN, "m4"))
+
 #zlib = Info(
 #    url='http://www.zlib.net/zlib-1.2.11.tar.gz',
 #    description=' zlib',

@@ -3,7 +3,6 @@ before_script:
   - sudo apt-get update -q
   - sudo apt-get remove curl
   - sudo apt-get remove zlib1g-dev
-  - sudo apt-get remove m4
   - sudo apt-get install autoconf
   - sudo rm /usr/local/bin/bats
 
@@ -22,7 +21,7 @@ addons:
     - gcc
     - liblapack-dev
     - libblas-dev
-#    - patch
+    - patch
 
 cache:
   directories:

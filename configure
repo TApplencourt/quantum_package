@@ -54,10 +54,9 @@ d_dependency = {
     "bats": [],
     "gcc": [],
     "g++": [],
-#    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
-    "ocaml": [ "gcc", "zeromq", "gmp", "patch"],
-#    "m4": ["make"],
-#    "zlib": ["gcc", "make"],
+    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
+    "m4": ["make"],
+    "zlib": ["gcc", "make"],
     "patch": ["make"],
     "autoconf": ["make"],
     "automake": ["make"],
@@ -88,15 +87,10 @@ ocaml = Info(
     description=' OCaml, Opam and the Core library (it will take some time roughly 20min)',
     default_path=join(QP_ROOT_BIN, "opam"))
 
-m4 = Info(
-    url="http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz",
-    description=" m4",
-    default_path=join(QP_ROOT_BIN, "m4"))
-
-#zlib = Info(
-#    url='http://www.zlib.net/zlib-1.2.11.tar.gz',
-#    description=' zlib',
-#    default_path=join(QP_ROOT_LIB, "libz.a"))
+zlib = Info(
+    url='http://www.zlib.net/zlib-1.2.11.tar.gz',
+    description=' zlib',
+    default_path=join(QP_ROOT_LIB, "libz.a"))
 
 patch = Info(
     url='ftp://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz',
@@ -155,8 +149,7 @@ bats = Info(
 
 d_info = dict()
 
-#for m in ["ocaml", "m4", "zlib", "patch", "irpf90", "docopt",
-for m in ["ocaml", "irpf90", "docopt",
+for m in ["ocaml", "zlib", "patch", "irpf90", "docopt",
           "resultsFile", "ninja", "emsl", "ezfio", 
           "zeromq", "f77zmq", "bats", "gmp"]: 
     exec ("d_info['{0}']={0}".format(m))

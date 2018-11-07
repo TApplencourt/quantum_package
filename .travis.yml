@@ -4,7 +4,6 @@ before_script:
   - sudo apt-get remove curl
   - sudo apt-get remove patch
   - sudo apt-get remove m4
-  - sudo apt-get remove bats
 
 os: linux
 

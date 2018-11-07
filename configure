@@ -55,10 +55,10 @@ d_dependency = {
     "gcc": [],
     "g++": [],
 #    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
-    "ocaml": [ "gcc", "zeromq", "gmp"],
+    "ocaml": [ "gcc", "zeromq", "gmp", "patch"],
 #    "m4": ["make"],
 #    "zlib": ["gcc", "make"],
-#    "patch": ["make"],
+    "patch": ["make"],
     "autoconf": ["make"],
     "automake": ["make"],
     "ezfio": ["irpf90", "make", "ninja"],
@@ -97,11 +97,11 @@ m4 = Info(
 #    url='http://www.zlib.net/zlib-1.2.11.tar.gz',
 #    description=' zlib',
 #    default_path=join(QP_ROOT_LIB, "libz.a"))
-#
-#patch = Info(
-#    url='ftp://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz',
-#    description=' patch',
-#    default_path=join(QP_ROOT_BIN, "patch"))
+
+patch = Info(
+    url='ftp://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz',
+    description=' patch',
+    default_path=join(QP_ROOT_BIN, "patch"))
 
 irpf90 = Info(
     url='{head}/LCPQ/irpf90/{tail}'.format(**path_github),

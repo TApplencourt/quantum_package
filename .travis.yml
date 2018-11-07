@@ -2,7 +2,9 @@ sudo: true
 before_script:
   - sudo apt-get update -q
   - sudo apt-get remove curl
-  - sudo apt-get remove patch
+  - sudo apt-get remove zlib1g-dev
+  - sudo apt-get remove m4
+  - sudo apt-get install autoconf
   - sudo rm /usr/local/bin/bats
 
 os: linux
@@ -20,7 +22,7 @@ addons:
     - gcc
     - liblapack-dev
     - libblas-dev
-    - autoconf
+#    - patch
 
 cache:
   directories:
@@ -35,4 +37,5 @@ script:
   - ./configure ./config/travis.cfg
 #  - source ./quantum_package.rc ; cd ~ ; install_lapack.sh ; cd $QP_ROOT
   - source ./quantum_package.rc ; ninja
+  - sudo apt-get install curl
   - source ./quantum_package.rc ; cd tests ; ./run_tests.sh -v

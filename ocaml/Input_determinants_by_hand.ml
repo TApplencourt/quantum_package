@@ -96,13 +96,25 @@ end = struct
     let n_states = 
       States_number.to_int n
     in
-    Ezfio.set_determinants_n_states n_states;
-    let data =
-      Array.create n_states 1.
-      |> Array.to_list
+    let old_nstates, read_wf =
+      Ezfio.get_determinants_n_states (), 
+      Ezfio.get_determinants_read_wf  ()
     in
-    Ezfio.ezfio_array_of_list ~rank:1 ~dim:[| n_states |] ~data
-    |> Ezfio.set_determinants_state_average_weight
+    Printf.eprintf "nstates : %d\n" n_states;
+    Printf.eprintf "old_nstates : %d\n" old_nstates;
+    Printf.eprintf "read_wf  : %s\n" (if read_wf then "true" else "false");
+    if read_wf && old_nstates <> n_states then
+      Printf.eprintf "Warning : n_states could not be changed because read_wf is true\n%!"
+    else
+      begin
+        Ezfio.set_determinants_n_states n_states;
+        let data =
+          Array.create n_states 1.
+          |> Array.to_list
+        in
+        Ezfio.ezfio_array_of_list ~rank:1 ~dim:[| n_states |] ~data
+        |> Ezfio.set_determinants_state_average_weight
+      end
   ;;
 
   let write_state_average_weight data =

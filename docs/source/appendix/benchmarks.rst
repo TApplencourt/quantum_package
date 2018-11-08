@@ -14,7 +14,7 @@ in 111 MOs.
 Convergence of the energy
 -------------------------
 
-.. figure:: _static/cn3_energy.png
+.. figure:: ../_static/cn3_energy.png
    :alt: Convergence of the energy.
 
    Convergence of the variational energy, with and without the PT2 correction.
@@ -67,7 +67,7 @@ We present the parallel speedup curve, and the wall-clock time in seconds
 required to compute one iteration for two wave functions measured on Olympe
 and Irene.
 
-.. figure:: _static/speedup_davidson.png
+.. figure:: ../_static/speedup_davidson.png
    :alt: Parallel speedup of Davidson's diagonalization.
 
    Parallel speedup of Davidson's diagonalization measured on Olympe and Irene.
@@ -113,7 +113,7 @@ required to compute the PT2 correction for two wave functions measured on
 Olympe and Irene.
 
 
-.. figure:: _static/speedup_pt2.png
+.. figure:: ../_static/speedup_pt2.png
    :alt: Parallel speedup of the PT2 computation of the ground state.
 
    Parallel speedup of the PT2 computation of the ground state measured
@@ -153,6 +153,6 @@ Number of 48-core Nodes   Ground state (9.3M)   Excited state (9.3M)    Ground s
 ======================= ====================== ======================= ====================== =======================
 
 
-.. _Irene: http://www-hpc.cea.fr/en/complexe/tgcc-Irene.htm
-.. _Olympe:  https://www.calmip.univ-toulouse.fr/spip.php?article582&lang=fr
+
+
 

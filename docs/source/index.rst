@@ -11,22 +11,47 @@ Quantum Package
    :align: center
    :alt: Quantum Package
 
+
+.. toctree::
+   :caption: Introduction
+
+   intro/intro
+   intro/selected_ci
+   intro/requirements
+   intro/installation
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: User's guide
 
-   intro
-   interfaces
-   installation
-   users_guide
-   benchmarks
-   programming
-   research
-   license
+   users_guide/users_guide
+   users_guide/interfaces
+   users_guide/qp_create_ezfio_from_xyz
+   users_guide/qp_convert_output_to_ezfio
+   users_guide/qp_edit
+   users_guide/qp_run
+   users_guide/qp_set_mo_class
+   users_guide/hartree_fock
+   users_guide/natural_orbitals
+   users_guide/plugins
+   users_guide/excited_states
+
+users_guide.rst
+   users_guide/interfaces
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Programmer's guide
+
+   programmers_guide/programming
 
 
-Indices and tables
-==================
+.. toctree::
+   :maxdepth: 2
+   :caption: Appendix:
 
-* :ref:`genindex`
-* :ref:`search`
+   appendix/benchmarks
+   appendix/research
+   appendix/license
+
+

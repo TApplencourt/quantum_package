@@ -35,6 +35,13 @@ release = '1.0'
 #
 # needs_sphinx = '1.0'
 
+with open("_static/links.rst",'r') as f:
+    rst_epilog = f.read()
+
+suppress_warnings = [
+  'ref.citation'
+]
+
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.

@@ -12,7 +12,7 @@ determinant-driven paradigm.  The determinant-driven framework allows the
 programmer to include any arbitrary set of determinants in the variational
 space, and thus gives a complete freedom in the methodological development. All
 the programs are developed with the `IRPF90`_ code generator, which simplifies
-the development of new programs.
+the collaborative development, and the development of new features.
 
 
 
@@ -25,7 +25,7 @@ their own programs.
 
 The |qp| has been designed specifically for sCI, so all the
 algorithms which are programmed are not adapted to run SCF or DFT calculations
-on thousands of atoms. Currently, the systems targeted have less than 500
+on thousands of atoms. Currently, the systems targeted have less than 600
 molecular orbitals.
 
 The |qp| is *not* a massive production code. For conventional
@@ -35,11 +35,11 @@ fast. Again, the role of the |qp| is to make life simple for the
 developer. Once a new method is developed and tested, the developer is encouraged
 to consider re-expressing it with an integral-driven formulation, and to 
 implement the new method in open-source production codes, such as `NWChem`_
-or `GAMESS`_.
+or |GAMESS|.
 
 
-Applications
-""""""""""""
+Some Applications
+"""""""""""""""""
 
 Multiple programs were developed with the |qp|, such as:
 
@@ -58,10 +58,4 @@ All these programs can generate ground and excited states, and spin pure wave fu
 (eigenstates of S²).
 
 
-.. Links ..
 
-.. _IRPF90: http://irpf90.ups-tlse.fr
-.. _NWChem: http://www.nwchem-sw.org/
-.. _GAMESS: https://www.msg.chem.iastate.edu/gamess/
-
-.. |qp| replace:: Quantum Package

@@ -10,6 +10,15 @@ BEGIN_PROVIDER [ double precision, psi_energy, (N_states) ]
   enddo
 END_PROVIDER
 
+BEGIN_PROVIDER [ double precision, psi_energy_with_nucl_rep, (N_states) ]
+ implicit none
+ BEGIN_DOC
+ ! Energy of the wave function with the nuclear repulsion energy.
+ END_DOC
+ psi_energy_with_nucl_rep(1:N_states) = psi_energy(1:N_states) + nuclear_repulsion
+END_PROVIDER
+
+
 
 
 subroutine H_S2_u_0_nstates_openmp(v_0,s_0,u_0,N_st,sze)

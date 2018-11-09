@@ -47,7 +47,7 @@ QP_ROOT_INC = join(QP_ROOT, "include")
 QP_ROOT_INSTALL = join(QP_ROOT, "install")
 
 if "LDFLAGS" not in os.environ:
-  os.environ["LDFLAGS"] = "-L$QP_ROOT/lib"
+  os.environ["LDFLAGS"] = "-L"+QP_ROOT_LIB
 
 os.environ["PATH"] = os.environ["PATH"] + ":" + QP_ROOT_BIN
 

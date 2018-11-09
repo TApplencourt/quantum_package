@@ -62,6 +62,7 @@ def save_new_module(path, l_child):
 ! TODO
   END_DOC
   print *, 'Hello world'
+  end
 """)
 
 def main(arguments):

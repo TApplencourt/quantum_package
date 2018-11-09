@@ -137,8 +137,10 @@ program fci_zmq
   print*,   'correlation_ratio = ', correlation_energy_ratio
 
 
-  call save_iterations(CI_energy(1:N_states),pt2,N_det) 
-  call write_double(6,correlation_energy_ratio, 'Correlation ratio')
-  call print_summary(CI_energy(1:N_states),pt2,error,variance,norm)
+  if (.True.) then ! Avoid pre-calculation of CI_energy
+    call save_iterations(CI_energy(1:N_states),pt2,N_det) 
+    call write_double(6,correlation_energy_ratio, 'Correlation ratio')
+    call print_summary(CI_energy(1:N_states),pt2,error,variance,norm)
+  endif
 
 end

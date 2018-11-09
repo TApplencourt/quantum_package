@@ -43,9 +43,18 @@ except KeyError:
 
 QP_ROOT_BIN = join(QP_ROOT, "bin")
 QP_ROOT_LIB = join(QP_ROOT, "lib")
+QP_ROOT_INC = join(QP_ROOT, "include")
 QP_ROOT_INSTALL = join(QP_ROOT, "install")
 
+if "LDFLAGS" not in os.environ:
+  os.environ["LDFLAGS"] = "-L$QP_ROOT/lib"
+
 os.environ["PATH"] = os.environ["PATH"] + ":" + QP_ROOT_BIN
+
+try:
+    os.environ["C_INCLUDE_PATH"] = os.environ["C_INCLUDE_PATH"] + ":" + QP_ROOT_INC
+except KeyError:
+    os.environ["C_INCLUDE_PATH"] = QP_ROOT_INC
 
 try:
     os.environ["LIBRARY_PATH"] = os.environ["LIBRARY_PATH"] + ":" + QP_ROOT_LIB 

@@ -8,10 +8,10 @@ cd -
 PACKAGES="core cryptokit ocamlfind sexplib zmq ppx_sexp_conv ppx_deriving"
 
 # Needed for ZeroMQ
-export C_INCLUDE_PATH="${QP_ROOT}"/include:"${C_INCLUDE_PATH}"
-export LIBRARY_PATH="${QP_ROOT}"/lib:"${LIBRARY_PATH}"
-export LDFLAGS="-L$QP_ROOT/lib"
-export LD_LIBRARY_PATH="${QP_ROOT}"/lib:"${LD_LIBRARY_PATH}"
+#export C_INCLUDE_PATH="${QP_ROOT}"/include:"${C_INCLUDE_PATH}"
+#export LIBRARY_PATH="${QP_ROOT}"/lib:"${LIBRARY_PATH}"
+#export LDFLAGS="-L$QP_ROOT/lib"
+#export LD_LIBRARY_PATH="${QP_ROOT}"/lib:"${LD_LIBRARY_PATH}"
 
 # return 0 if program version is equal or greater than check version
 check_version () {

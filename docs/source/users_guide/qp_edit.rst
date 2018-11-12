@@ -1,22 +1,9 @@
 .. _qp_edit:
 
-qp_edit
-=======
-
 .. TODO
 
-Usage ::
-
-    qp_edit EZFIO_DIRECTORY
-
-
-Flags ::
-
-    [-c]           Checks the input data
-    [-ndet int]    Truncate the wavefunction to the target number of determinants
-    [-state int]   Pick the state as a new wavefunction.
-    [-help]        print this help text and exit
-                   (alias: -?)
+qp_edit
+=======
 
 This command reads the content of the |EZFIO| directory and creates a temporary
 file containing the data. The data is presented as a *ReStructured Text* (rst)
@@ -28,9 +15,38 @@ the text editor is closed, the updated data is saved into the |EZFIO| directory.
    When the wave function is too large (more than 10 000 determinants), the
    determinants are not displayed.
 
+Usage
+-----
+
+.. code-block:: bash
+
+    qp_edit [FLAGS] <EZFIO_DIRECTORY>
+    Flags :
+      [-c]          [-ndet int]
+      [-state int]  [-help]
+
+
+.. option:: -c
+
+   Checks the input data
+
+.. option:: -ndet <int>
+
+   Truncates the wavefunction to the target number of determinants
+
+.. option:: -state <int>
+
+   Pick the target state as a new wavefunction.
+
+.. option:: -help
+
+   Print the help text and exits
+
+
 Here is a short list of important control parameters :
 
-read_wf
+.. option:: read_wf
+
    If ``false``, initialize the calculation with a single-determinant wave
    function. If ``true``, initialize the calculation with the wave function stored
    in the |EZFIO| directory.

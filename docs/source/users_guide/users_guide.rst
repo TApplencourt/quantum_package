@@ -50,7 +50,7 @@ basis set:
 Run a Hartree-Fock calculation
 ------------------------------
 
-The program ref:`qp_run` is the driver program of the |qp|. To run an SCF calculation,
+The program :ref:`qp_run` is the driver program of the |qp|. To run an SCF calculation,
 just run 
 
 .. code-block:: bash

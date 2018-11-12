@@ -1,11 +1,12 @@
-=====================
-Generators_CAS Module
-=====================
+==============
+Generators_CAS
+==============
 
-The generator determinants are those filtered by the ``cas_bitmask`` mask.
+Module defining the generator determinants as those belonging to a |CAS|.
+The |MOs| belonging to the |CAS| are those which were set as active with
+the :ref:`qp_set_mo_class` command.
 
-Assumptions
-===========
+This module is intended to be included in the :file:`NEED` file to define
+generators on a |CAS|.
 
-The active space is defined by the ``reference_bitmask``.
 

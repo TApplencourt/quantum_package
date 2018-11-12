@@ -1,8 +1,7 @@
-=======================
-Psiref_threshold Module
-=======================
+==========
+Psiref_CAS
+==========
 
-
-Reference wave function is defined as all determinants with coefficients
-such that | c_i/c_max | > threshold.
+Reference wave function is defined as a |CAS| wave function. 
+This module is required for |CAS-SD|, |MRPT| or |MRCC|.
 

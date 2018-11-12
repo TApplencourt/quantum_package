@@ -13,15 +13,17 @@ Quantum Package
 
 
 .. toctree::
+   :maxdepth: 1
    :caption: Introduction
 
    intro/intro
    intro/selected_ci
    intro/requirements
-   intro/installation
+   intro/configure
+   intro/install
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: User's guide
 
    users_guide/users_guide
@@ -31,24 +33,31 @@ Quantum Package
    users_guide/qp_edit
    users_guide/qp_run
    users_guide/qp_set_mo_class
-   users_guide/hartree_fock
    users_guide/natural_orbitals
    users_guide/plugins
    users_guide/excited_states
-
-users_guide.rst
    users_guide/interfaces
 
+
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :caption: Modules
+   :glob:
+
+   modules/*
+
+
+
+.. toctree::
+   :maxdepth: 1
    :caption: Programmer's guide
 
    programmers_guide/programming
 
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Appendix:
+   :maxdepth: 1
+   :caption: Appendix
 
    appendix/benchmarks
    appendix/research

@@ -3,35 +3,64 @@
 qp_create_ezfio_from_xyz
 ========================
 
-.. TODO
-
-Usage ::
-
-   qp_create_ezfio_from_xyz [FLAGS] (xyz_file|zmt_file) 
-
-Flags ::
-
-   -b string      Name of basis set.
-   [-au]          Input geometry is in atomic units.
-   [-c int]       Total charge of the molecule. Default is 0.
-   [-cart]        Compute AOs in the Cartesian basis set (6d, 10f, ...)
-   [-d float]     Add dummy atoms. x * (covalent radii of the atoms)
-   [-m int]       Spin multiplicity (2S+1) of the molecule. Default is 1.
-   [-o file]      Name of the created EZFIO file.
-   [-p string]    Name of the pseudo-potential
-   [-help]        print this help text and exit
-                  (alias: -?)
-
+.. program:: qp_create_ezfio_from_xyz
 
 This command creates an |EZFIO| directory from a standard `xyz` file or from a
-`z-matrix` file in Gaussian format. The basis set is defined as a single string
-if all the atoms are taken from the same basis set, otherwise specific elements
-can be defined as follows::
+`z-matrix` file in Gaussian format.
 
-   -b "cc-pcvdz | H:cc-pvdz | C:6-31g"
-   -b "cc-pvtz | 1,H:sto-3g | 3,H:6-31g"
+Usage 
+-----
 
-By default, the basis set is obtained from the local database of the |qp|.
+.. code-block:: bash
+
+   qp_create_ezfio_from_xyz [FLAGS] (<xyz_file> | <zmt_file>) 
+   Flags :
+      -b [-au] [-c int] [-cart] [-d float] 
+      [-m int] [-o file] [-p string] [-help]
+
+.. option:: -b <basis_name>
+
+   Name of basis set.  The basis set is defined as a single string if all the
+   atoms are taken from the same basis set, otherwise specific elements can be
+   defined as follows::
+
+      -b "cc-pcvdz | H:cc-pvdz | C:6-31g"
+      -b "cc-pvtz | 1,H:sto-3g | 3,H:6-31g"
+
+   By default, the basis set is obtained from the local database of the |qp|.
+
+
+.. option:: -au
+
+   If present, input geometry is in atomic units.
+
+.. option:: -c <float>
+
+   Total charge of the molecule. Default is 0.
+
+.. option:: -cart
+
+   Compute |AOs| in the Cartesian basis set (6d, 10f, ...)
+
+.. option:: -d <float>
+
+   Add dummy atoms. x * (covalent radii of the atoms)
+
+.. option:: -m <int>
+
+   Spin multiplicity (2S+1) of the molecule. Default is 1.
+
+.. option:: -o <EZFIO_DIRECTORY>
+
+   Name of the created |EZFIO| directory.
+
+.. option:: -p <string>
+
+   Name of the pseudo-potential
+
+.. option:: -help, -?
+
+   Print the help text and exit
 
 
 Using custom atomic basis sets
@@ -95,12 +124,14 @@ As for the basis set, if a file with the same name as the pseudo-potential
 exists, this file will be read.
 For example, if the file containing the custom pseudo-potential is named
 ``custom.pseudo``, the basis set is named ``custom.basis``, and the *xyz*
-geometry is in ``molecule.xyz``, the following command should be used::
+geometry is in ``molecule.xyz``, the following command should be used
+
+.. code-block:: bash
 
     qp_create_ezfio_from_xyz -b custom.basis -p custom.pseudo molecule.xyz
 
 Pseudo-potential files should be given in a format very close to |GAMESS|
-format. The first line should be formatted as ``"%s GEN %d %d"`` where the
+format. The first line should be formatted as ``%s GEN %d %d`` where the
 first string is the chemical symbol, the first integer is the number of
 core electrons to be removed and the second integer is LMAX+1 as in |GAMESS|
 format.

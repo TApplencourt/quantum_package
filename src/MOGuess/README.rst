@@ -1,4 +1,6 @@
-==============
-MOGuess Module
-==============
+=======
+MOGuess
+=======
+
+Guess for |MOs|.
 

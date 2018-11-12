@@ -2,5 +2,5 @@
 DavidsonUndressed
 =================
 
-Module for main files with undressed Davidson
+Module for main files Davidson's algorithm with no dressing.
 

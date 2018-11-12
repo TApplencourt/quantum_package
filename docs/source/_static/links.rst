@@ -41,6 +41,8 @@
 .. |SLURM| replace:: `SLURM`_
 .. |ZeroMQ| replace:: `ZeroMQ`_
 
+.. |AO| replace:: :abbr:`AO (Atomic Orbital)`
+.. |AOs| replace:: :abbr:`AOs (Atomic Orbitals)`
 .. |CAS| replace:: :abbr:`CAS (Complete Active Space)`
 .. |CAS-SD| replace:: :abbr:`CAS-SD (Complete Active Space plus all Singles and Doubles)`
 .. |CCD| replace:: :abbr:`CCD (Coupled Cluster with Double Excitations)`
@@ -50,6 +52,21 @@
 .. |CI| replace:: :abbr:`CI (Configuration Interaction)`
 .. |CISD| replace:: :abbr:`CISD (Configuration Interaction with Single and Double Excitations)`
 .. |CIS| replace:: :abbr:`CIS (Configuration Interaction with Single Excitations)`
+.. |DFT| replace:: :abbr:`DFT (Density Functional Theory)`
 .. |DDCI| replace:: :abbr:`DDCI (Difference Dedicated Configuration Interaction)`
+.. |DIIS| replace:: :abbr:`DIIS (Direct Inversion of the Iterative Subspace)`
 .. |FCI| replace:: :abbr:`FCI (Full Configuration Interaction)`
 .. |HF| replace:: :abbr:`HF (Hartree-Fock)`
+.. |MO| replace:: :abbr:`MO (Molecular Orbital)`
+.. |MOs| replace:: :abbr:`MOs (Molecular Orbitals)`
+.. |MP2| replace:: :abbr:`MP2 (Moller-Plesset second order perturbative correction)`
+.. |MPI| replace:: :abbr:`MPI (Message Passing Interface)`
+.. |MRCC| replace:: :abbr:`MRCC (Multi-Reference Coupled Cluster)`
+.. |MRPT| replace:: :abbr:`MRPT (Multi-Reference Perturbation Theory)`
+.. |PT2| replace:: :abbr:`PT2 (Second order perturbative correction)`
+.. |SCF| replace:: :abbr:`SCF (Self Consistent Field)`
+
+.. |H| replace:: :math:`\hat H`
+.. |Psi| replace:: :math:`|\Psi \rangle`
+.. |S^2| replace:: :math:`\widehat{S^2}`
+

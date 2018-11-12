@@ -532,9 +532,6 @@ subroutine i_H_j_s2(key_i,key_j,Nint,hij,s2)
   integer :: spin
   select case (degree)
     case (2)
-      if (zero_doubles) then
-        hij = 0.d0
-      else
         call get_double_excitation(key_i,key_j,exc,phase,Nint)
         ! Mono alpha, mono beta
         if (exc(0,1,1) == 1) then
@@ -551,7 +548,6 @@ subroutine i_H_j_s2(key_i,key_j,Nint,hij,s2)
               exc(1,1,2),                                              &
               exc(1,2,1),                                              &
               exc(1,2,2) ,mo_integrals_map)
-          endif
         ! Double alpha
         else if (exc(0,1,1) == 2) then
           hij = phase*(get_mo_bielec_integral(                         &
@@ -638,9 +634,6 @@ subroutine i_H_j(key_i,key_j,Nint,hij)
   integer :: spin
   select case (degree)
     case (2)
-      if (zero_doubles) then
-        hij = 0.d0
-      else
         call get_double_excitation(key_i,key_j,exc,phase,Nint)
         if (exc(0,1,1) == 1) then
           ! Mono alpha, mono beta
@@ -654,7 +647,6 @@ subroutine i_H_j(key_i,key_j,Nint,hij)
               exc(1,1,2),                                              &
               exc(1,2,1),                                              &
               exc(1,2,2) ,mo_integrals_map)
-          endif
         else if (exc(0,1,1) == 2) then
           ! Double alpha
           hij = phase*(get_mo_bielec_integral(                         &
@@ -739,9 +731,6 @@ subroutine i_H_j_phase_out(key_i,key_j,Nint,hij,phase,exc,degree)
   call get_excitation_degree(key_i,key_j,degree,Nint)
   select case (degree)
     case (2)
-      if (zero_doubles) then
-        hij = 0.d0
-      else
         call get_double_excitation(key_i,key_j,exc,phase,Nint)
         if (exc(0,1,1) == 1) then
           ! Mono alpha, mono beta
@@ -775,7 +764,6 @@ subroutine i_H_j_phase_out(key_i,key_j,Nint,hij,phase,exc,degree)
               exc(2,2,2),                                              &
               exc(1,2,2) ,mo_integrals_map) )
         endif
-      endif
     case (1)
       call get_mono_excitation(key_i,key_j,exc,phase,Nint)
       !DIR$ FORCEINLINE

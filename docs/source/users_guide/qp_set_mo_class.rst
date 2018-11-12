@@ -5,21 +5,6 @@ qp_set_mo_class
 
 .. TODO
 
-Usage ::
-
-  qp_set_mo_class [FLAGS] EZFIO_DIRECTORY
-
-
-Flags ::
-
-  [-act range]    Range of active orbitals
-  [-core range]   Range of core orbitals
-  [-del range]    Range of deleted orbitals
-  [-inact range]  Range of inactive orbitals
-  [-q]            Query: print the current masks
-  [-virt range]   Range of virtual orbitals
-  [-help]         print this help text and exit
-                  (alias: -?)
 
 This command sets the orbital classes in an |EZFIO| directory.
 
@@ -54,6 +39,44 @@ The range of MOs are given like the ranges in |SLURM| commands. For example,
       example, a Carbon atom will have 2 core electrons, but a Lithium atom will have
       zero.
 
+
+Usage
+-----
+
+.. code-block:: bash
+
+   qp_set_mo_class [FLAGS] <EZFIO_DIRECTORY>
+   Flags:
+      [-act range]    [-core range]   [-del range]    
+      [-inact range]  [-q]            [-virt range]   
+      [-help]         
+
+
+.. option:: -act <range>
+
+   Range of active orbitals
+
+.. option:: -core <range>
+
+   Range of core orbitals
+
+.. option:: -del <range>
+
+   Range of deleted orbitals
+
+.. option:: -inact <range>
+
+   Range of inactive orbitals
+
+.. option:: -q
+
+   Query: print the current masks
+
+.. option:: -virt <range>
+
+   Range of virtual orbitals
+
+.. option:: -help, -?
 
 
 

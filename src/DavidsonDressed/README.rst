@@ -2,5 +2,5 @@
 DavidsonDressed
 ===============
 
-Davidson with single-column dressing
+Davidson with single-column dressing.
 

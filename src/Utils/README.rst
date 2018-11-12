@@ -1,6 +1,6 @@
-============
-Utils Module
-============
+=====
+Utils
+=====
 
-Contains general purpose utilities.
+Contains general purpose utilities (sorting, maps, etc).
 

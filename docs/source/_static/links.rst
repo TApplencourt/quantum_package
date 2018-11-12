@@ -40,3 +40,16 @@
 .. |qp| replace:: *Quantum Package*
 .. |SLURM| replace:: `SLURM`_
 .. |ZeroMQ| replace:: `ZeroMQ`_
+
+.. |CAS| replace:: :abbr:`CAS (Complete Active Space)`
+.. |CAS-SD| replace:: :abbr:`CAS-SD (Complete Active Space plus all Singles and Doubles)`
+.. |CCD| replace:: :abbr:`CCD (Coupled Cluster with Double Excitations)`
+.. |CCSD| replace:: :abbr:`CCSD (Coupled Cluster with Single and Double Excitations)`
+.. |CID| replace:: :abbr:`CID (Configuration Interaction with Double Excitations)`
+.. |CIPSI| replace:: :abbr:`CIPSI (Configuration Interaction using a Perturbative Selection)`
+.. |CI| replace:: :abbr:`CI (Configuration Interaction)`
+.. |CISD| replace:: :abbr:`CISD (Configuration Interaction with Single and Double Excitations)`
+.. |CIS| replace:: :abbr:`CIS (Configuration Interaction with Single Excitations)`
+.. |DDCI| replace:: :abbr:`DDCI (Difference Dedicated Configuration Interaction)`
+.. |FCI| replace:: :abbr:`FCI (Full Configuration Interaction)`
+.. |HF| replace:: :abbr:`HF (Hartree-Fock)`

@@ -47,9 +47,9 @@ suppress_warnings = [
 # ones.
 extensions = [
     'sphinx.ext.mathjax',
+#    'sphinx.ext.imgmath',
     'sphinx.ext.githubpages',
     'sphinxcontrib.bibtex'
-
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -134,12 +134,14 @@ latex_elements = {
 
     # Additional stuff for the LaTeX preamble.
     #
-    # 'preamble': '',
+    # 'preamble': '\usepackage{physics}\n',
 
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
 }
+
+
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,

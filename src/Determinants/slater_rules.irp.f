@@ -532,47 +532,47 @@ subroutine i_H_j_s2(key_i,key_j,Nint,hij,s2)
   integer :: spin
   select case (degree)
     case (2)
-        call get_double_excitation(key_i,key_j,exc,phase,Nint)
-        ! Mono alpha, mono beta
-        if (exc(0,1,1) == 1) then
-          if ( (exc(1,1,1) == exc(1,2,2)).and.(exc(1,1,2) == exc(1,2,1)) ) then
-            s2 =  -phase
-          endif
-          if(exc(1,1,1) == exc(1,2,2) )then
+      call get_double_excitation(key_i,key_j,exc,phase,Nint)
+      ! Mono alpha, mono beta
+      if (exc(0,1,1) == 1) then
+        if ( (exc(1,1,1) == exc(1,2,2)).and.(exc(1,1,2) == exc(1,2,1)) ) then
+          s2 =  -phase
+        endif
+        if(exc(1,1,1) == exc(1,2,2) )then
           hij = phase * big_array_exchange_integrals(exc(1,1,1),exc(1,1,2),exc(1,2,1))
-          else if (exc(1,2,1) ==exc(1,1,2))then
+        else if (exc(1,2,1) ==exc(1,1,2))then
           hij = phase * big_array_exchange_integrals(exc(1,2,1),exc(1,1,1),exc(1,2,2))
-          else
+        else
           hij = phase*get_mo_bielec_integral(                          &
               exc(1,1,1),                                              &
               exc(1,1,2),                                              &
               exc(1,2,1),                                              &
               exc(1,2,2) ,mo_integrals_map)
-        ! Double alpha
-        else if (exc(0,1,1) == 2) then
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(1,2,1),                                              &
-              exc(2,2,1) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(2,2,1),                                              &
-              exc(1,2,1) ,mo_integrals_map) )
-        ! Double beta
-        else if (exc(0,1,2) == 2) then
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(1,2,2),                                              &
-              exc(2,2,2) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(2,2,2),                                              &
-              exc(1,2,2) ,mo_integrals_map) )
         endif
+      ! Double alpha
+      else if (exc(0,1,1) == 2) then
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(1,2,1),                                              &
+            exc(2,2,1) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(2,2,1),                                              &
+            exc(1,2,1) ,mo_integrals_map) )
+      ! Double beta
+      else if (exc(0,1,2) == 2) then
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(1,2,2),                                              &
+            exc(2,2,2) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(2,2,2),                                              &
+            exc(1,2,2) ,mo_integrals_map) )
       endif
     case (1)
       call get_mono_excitation(key_i,key_j,exc,phase,Nint)
@@ -634,44 +634,44 @@ subroutine i_H_j(key_i,key_j,Nint,hij)
   integer :: spin
   select case (degree)
     case (2)
-        call get_double_excitation(key_i,key_j,exc,phase,Nint)
-        if (exc(0,1,1) == 1) then
-          ! Mono alpha, mono beta
-          if(exc(1,1,1) == exc(1,2,2) )then
+      call get_double_excitation(key_i,key_j,exc,phase,Nint)
+      if (exc(0,1,1) == 1) then
+        ! Mono alpha, mono beta
+        if(exc(1,1,1) == exc(1,2,2) )then
           hij = phase * big_array_exchange_integrals(exc(1,1,1),exc(1,1,2),exc(1,2,1))
-          else if (exc(1,2,1) ==exc(1,1,2))then
+        else if (exc(1,2,1) ==exc(1,1,2))then
           hij = phase * big_array_exchange_integrals(exc(1,2,1),exc(1,1,1),exc(1,2,2))
-          else
+        else
           hij = phase*get_mo_bielec_integral(                          &
               exc(1,1,1),                                              &
               exc(1,1,2),                                              &
               exc(1,2,1),                                              &
               exc(1,2,2) ,mo_integrals_map)
-        else if (exc(0,1,1) == 2) then
-          ! Double alpha
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(1,2,1),                                              &
-              exc(2,2,1) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(2,2,1),                                              &
-              exc(1,2,1) ,mo_integrals_map) )
-        else if (exc(0,1,2) == 2) then
-          ! Double beta
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(1,2,2),                                              &
-              exc(2,2,2) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(2,2,2),                                              &
-              exc(1,2,2) ,mo_integrals_map) )
         endif
+      else if (exc(0,1,1) == 2) then
+        ! Double alpha
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(1,2,1),                                              &
+            exc(2,2,1) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(2,2,1),                                              &
+            exc(1,2,1) ,mo_integrals_map) )
+      else if (exc(0,1,2) == 2) then
+        ! Double beta
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(1,2,2),                                              &
+            exc(2,2,2) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(2,2,2),                                              &
+            exc(1,2,2) ,mo_integrals_map) )
       endif
     case (1)
       call get_mono_excitation(key_i,key_j,exc,phase,Nint)
@@ -731,39 +731,39 @@ subroutine i_H_j_phase_out(key_i,key_j,Nint,hij,phase,exc,degree)
   call get_excitation_degree(key_i,key_j,degree,Nint)
   select case (degree)
     case (2)
-        call get_double_excitation(key_i,key_j,exc,phase,Nint)
-        if (exc(0,1,1) == 1) then
-          ! Mono alpha, mono beta
-          hij = phase*get_mo_bielec_integral(                          &
-              exc(1,1,1),                                              &
-              exc(1,1,2),                                              &
-              exc(1,2,1),                                              &
-              exc(1,2,2) ,mo_integrals_map)
-        else if (exc(0,1,1) == 2) then
-          ! Double alpha
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(1,2,1),                                              &
-              exc(2,2,1) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,1),                                              &
-              exc(2,1,1),                                              &
-              exc(2,2,1),                                              &
-              exc(1,2,1) ,mo_integrals_map) )
-        else if (exc(0,1,2) == 2) then
-          ! Double beta
-          hij = phase*(get_mo_bielec_integral(                         &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(1,2,2),                                              &
-              exc(2,2,2) ,mo_integrals_map) -                          &
-              get_mo_bielec_integral(                                  &
-              exc(1,1,2),                                              &
-              exc(2,1,2),                                              &
-              exc(2,2,2),                                              &
-              exc(1,2,2) ,mo_integrals_map) )
-        endif
+      call get_double_excitation(key_i,key_j,exc,phase,Nint)
+      if (exc(0,1,1) == 1) then
+        ! Mono alpha, mono beta
+        hij = phase*get_mo_bielec_integral(                          &
+            exc(1,1,1),                                              &
+            exc(1,1,2),                                              &
+            exc(1,2,1),                                              &
+            exc(1,2,2) ,mo_integrals_map)
+      else if (exc(0,1,1) == 2) then
+        ! Double alpha
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(1,2,1),                                              &
+            exc(2,2,1) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,1),                                              &
+            exc(2,1,1),                                              &
+            exc(2,2,1),                                              &
+            exc(1,2,1) ,mo_integrals_map) )
+      else if (exc(0,1,2) == 2) then
+        ! Double beta
+        hij = phase*(get_mo_bielec_integral(                         &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(1,2,2),                                              &
+            exc(2,2,2) ,mo_integrals_map) -                          &
+            get_mo_bielec_integral(                                  &
+            exc(1,1,2),                                              &
+            exc(2,1,2),                                              &
+            exc(2,2,2),                                              &
+            exc(1,2,2) ,mo_integrals_map) )
+      endif
     case (1)
       call get_mono_excitation(key_i,key_j,exc,phase,Nint)
       !DIR$ FORCEINLINE
@@ -3146,21 +3146,17 @@ subroutine i_H_j_double_spin(key_i,key_j,Nint,hij)
   double precision, external     :: get_mo_bielec_integral
 
   PROVIDE big_array_exchange_integrals mo_bielec_integrals_in_map
-  if (zero_doubles) then
-    hij = 0.d0
-  else
-    call get_double_excitation_spin(key_i,key_j,exc,phase,Nint)
-    hij = phase*(get_mo_bielec_integral(                             &
-        exc(1,1),                                                    &
-        exc(2,1),                                                    &
-        exc(1,2),                                                    &
-        exc(2,2), mo_integrals_map) -                                &
-        get_mo_bielec_integral(                                      &
-        exc(1,1),                                                    &
-        exc(2,1),                                                    &
-        exc(2,2),                                                    &
-        exc(1,2), mo_integrals_map) )
-  endif
+  call get_double_excitation_spin(key_i,key_j,exc,phase,Nint)
+  hij = phase*(get_mo_bielec_integral(                             &
+      exc(1,1),                                                    &
+      exc(2,1),                                                    &
+      exc(1,2),                                                    &
+      exc(2,2), mo_integrals_map) -                                &
+      get_mo_bielec_integral(                                      &
+      exc(1,1),                                                    &
+      exc(2,1),                                                    &
+      exc(2,2),                                                    &
+      exc(1,2), mo_integrals_map) )
 end
 
 subroutine i_H_j_double_alpha_beta(key_i,key_j,Nint,hij)
@@ -3179,23 +3175,19 @@ subroutine i_H_j_double_alpha_beta(key_i,key_j,Nint,hij)
 
   PROVIDE big_array_exchange_integrals mo_bielec_integrals_in_map
 
-  if (zero_doubles) then
-    hij = 0.d0
+  call get_mono_excitation_spin(key_i(1,1),key_j(1,1),exc(0,1,1),phase,Nint)
+  call get_mono_excitation_spin(key_i(1,2),key_j(1,2),exc(0,1,2),phase2,Nint)
+  phase = phase*phase2
+  if (exc(1,1,1) == exc(1,2,2)) then
+    hij = phase * big_array_exchange_integrals(exc(1,1,1),exc(1,1,2),exc(1,2,1))
+  else if (exc(1,2,1) == exc(1,1,2)) then
+    hij = phase * big_array_exchange_integrals(exc(1,2,1),exc(1,1,1),exc(1,2,2))
   else
-    call get_mono_excitation_spin(key_i(1,1),key_j(1,1),exc(0,1,1),phase,Nint)
-    call get_mono_excitation_spin(key_i(1,2),key_j(1,2),exc(0,1,2),phase2,Nint)
-    phase = phase*phase2
-    if (exc(1,1,1) == exc(1,2,2)) then
-      hij = phase * big_array_exchange_integrals(exc(1,1,1),exc(1,1,2),exc(1,2,1))
-    else if (exc(1,2,1) == exc(1,1,2)) then
-      hij = phase * big_array_exchange_integrals(exc(1,2,1),exc(1,1,1),exc(1,2,2))
-    else
-      hij = phase*get_mo_bielec_integral(                              &
-          exc(1,1,1),                                                  &
-          exc(1,1,2),                                                  &
-          exc(1,2,1),                                                  &
-          exc(1,2,2) ,mo_integrals_map)
-    endif
+    hij = phase*get_mo_bielec_integral(                              &
+        exc(1,1,1),                                                  &
+        exc(1,1,2),                                                  &
+        exc(1,2,1),                                                  &
+        exc(1,2,2) ,mo_integrals_map)
   endif
 end
 

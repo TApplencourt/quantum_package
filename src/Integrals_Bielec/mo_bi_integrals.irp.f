@@ -29,6 +29,11 @@ BEGIN_PROVIDER [ logical, mo_bielec_integrals_in_map ]
   ! If True, the map of MO bielectronic integrals is provided
   END_DOC
   
+  ! The following line avoids a subsequent crash when the memory used is more
+  ! than half of the virtual memory, due to a fork in zcat when reading arrays
+  ! with EZFIO
+  PROVIDE mo_class
+
   mo_bielec_integrals_in_map = .True.
   if (read_mo_integrals) then
     print*,'Reading the MO integrals'

@@ -18,7 +18,6 @@ Quantum Package
 
    intro/intro
    intro/selected_ci
-   intro/requirements
    intro/configure
    intro/install
 

@@ -61,14 +61,17 @@ def write_ezfio(res, filename):
     # |_ |  _   _ _|_ ._ _  ._   _
     # |_ | (/_ (_  |_ | (_) | | _>
     #
+    print "Electrons\t...\t", 
     ezfio.set_electrons_elec_alpha_num(res.num_alpha)
     ezfio.set_electrons_elec_beta_num(res.num_beta)
+    print "OK"
 
     #
     # |\ |      _ |  _  o
     # | \| |_| (_ | (/_ |
     #
 
+    print "Nuclei\t\t...\t",
     # ~#~#~#~ #
     # I n i t #
     # ~#~#~#~ #
@@ -108,12 +111,14 @@ def write_ezfio(res, filename):
     ezfio.set_nuclei_nucl_label(label)
 
     ezfio.set_nuclei_nucl_coord(coord_x + coord_y + coord_z)
+    print "OK"
 
     #                 _
     #   /\   _   _   |_)  _.  _ o  _
     #  /--\ (_) _>   |_) (_| _> | _>
     #
 
+    print "AOS\t\t...\t",
     # ~#~#~#~ #
     # I n i t #
     # ~#~#~#~ #
@@ -183,11 +188,14 @@ def write_ezfio(res, filename):
     ezfio.set_ao_basis_ao_expo(expo)
     ezfio.set_ao_basis_ao_basis("Read by resultsFile")
 
+    print "OK"
+
     #                _
     # |\/|  _   _   |_)  _.  _ o  _
     # |  | (_) _>   |_) (_| _> | _>
     #
 
+    print "MOS\t\t...\t",
     # ~#~#~#~ #
     # I n i t #
     # ~#~#~#~ #
@@ -261,7 +269,10 @@ def write_ezfio(res, filename):
     ezfio.set_mo_basis_mo_tot_num(mo_tot_num)
     ezfio.set_mo_basis_mo_occ(OccNum)
     ezfio.set_mo_basis_mo_coef(MoMatrix)
+    print "OK"
 
+
+    print "Pseudos\t\t...\t",
     try:
         lmax = 0
         nucl_charge_remove = []
@@ -328,6 +339,8 @@ def write_ezfio(res, filename):
         ezfio.set_pseudo_do_pseudo(False)
     else:
         ezfio.set_pseudo_do_pseudo(True)
+
+    print "OK"
 
         
 

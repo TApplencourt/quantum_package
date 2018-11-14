@@ -10,9 +10,9 @@ BEGIN_PROVIDER [ integer, N_det_selectors]
   double precision               :: norm, norm_max
   call write_time(6)
   N_det_selectors = N_det
-  if (threshold_selectors == 1.d0) then
-    return
-  endif
+!  if (threshold_selectors == 1.d0) then
+!    return
+!  endif
   norm = 1.d0
   do i=1,N_det
     norm = norm - psi_average_norm_contrib_sorted(i)
@@ -33,21 +33,21 @@ END_PROVIDER
   END_DOC
   integer                        :: i,k
 
-  if (threshold_selectors == 1.d0) then
-
-    do i=1,N_det_selectors
-      do k=1,N_int
-        psi_selectors(k,1,i) = psi_det(k,1,i)
-        psi_selectors(k,2,i) = psi_det(k,2,i)
-      enddo
-    enddo
-    do k=1,N_states
-      do i=1,N_det_selectors
-        psi_selectors_coef(i,k) = psi_coef(i,k)
-      enddo
-    enddo
-
-  else
+!  if (threshold_selectors == 1.d0) then
+!
+!    do i=1,N_det_selectors
+!      do k=1,N_int
+!        psi_selectors(k,1,i) = psi_det(k,1,i)
+!        psi_selectors(k,2,i) = psi_det(k,2,i)
+!      enddo
+!    enddo
+!    do k=1,N_states
+!      do i=1,N_det_selectors
+!        psi_selectors_coef(i,k) = psi_coef(i,k)
+!      enddo
+!    enddo
+!
+!  else
 
     do i=1,N_det_selectors
       do k=1,N_int
@@ -61,7 +61,7 @@ END_PROVIDER
       enddo
     enddo
 
-  endif
+!  endif
 END_PROVIDER
 
 

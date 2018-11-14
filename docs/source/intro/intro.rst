@@ -1,8 +1,14 @@
-Introduction
-============
+========
+The |qp|
+========
+
+.. image:: ../_static/qp.png
+   :align: center
+   :alt: Quantum Package
+
 
 What it is
-""""""""""
+==========
 
 The |qp| is an open-source programming environment for quantum chemistry,
 especially for `wave function methods <https://en.wikipedia.org/wiki/Ab_initio_quantum_chemistry_methods>`_.
@@ -17,7 +23,7 @@ the collaborative development, and the development of new features.
 
 
 What it is not
-""""""""""""""
+==============
 
 The |qp| is *not* a general purpose quantum chemistry program.
 First of all, it is a library. The users of the |qp| should develop
@@ -38,8 +44,8 @@ implement the new method in open-source production codes, such as `NWChem`_
 or |GAMESS|.
 
 
-Some Applications
-"""""""""""""""""
+A few examples of applications
+==============================
 
 Multiple programs were developed with the |qp|, such as:
 
@@ -54,8 +60,8 @@ Multiple programs were developed with the |qp|, such as:
 - Shifted-Bk with CIPSI :cite:`Garniron_2018`
 - CIPSI with range-separated DFT
 
-All these programs can generate ground and excited states, and spin pure wave functions
-(eigenstates of S²).
+All these programs can generate ground and excited states, and spin pure wave
+functions (eigenstates of |S^2|).
 
 
 

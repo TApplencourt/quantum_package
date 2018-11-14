@@ -65,12 +65,12 @@ EZFIO parameters
 
 .. option:: n_int
 
-   Number of integers required to represent bitstrings (set in module :ref:`bitmasks`)
+   Number of integers required to represent bitstrings (set in module :ref:`bitmask`)
 
 
 .. option:: bit_kind
 
-   (set in module :ref:`bitmasks`)
+   (set in module :ref:`bitmask`)
 
 
 .. option:: mo_label

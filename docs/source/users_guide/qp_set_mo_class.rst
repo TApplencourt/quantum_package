@@ -43,7 +43,7 @@ The range of MOs are given like the ranges in |SLURM| commands. For example,
 Usage
 -----
 
-.. code-block:: bash
+.. code:: bash
 
    qp_set_mo_class [FLAGS] <EZFIO_DIRECTORY>
    Flags:

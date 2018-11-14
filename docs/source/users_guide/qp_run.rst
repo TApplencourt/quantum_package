@@ -12,7 +12,7 @@ Command used to run a calculation.
 Usage
 -----
 
-.. code-block:: bash
+.. code:: bash
 
    qp_run [-slave] <PROGRAM> <EZFIO_DIRECTORY>
 
@@ -26,7 +26,7 @@ Usage
 Example
 -------
 
-.. code-block:: bash
+.. code:: bash
 
    qp_run FCI h2o.ezfio
 

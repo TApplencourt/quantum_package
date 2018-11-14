@@ -47,7 +47,7 @@ def main():
   if "QP_ROOT" in os.environ:
     QP_ROOT=os.environ["QP_ROOT"]
   else:
-    QP_ROOT="../../../"
+    QP_ROOT="../../"
 
   SRC = os.path.join(QP_ROOT, "src")
 

@@ -2,6 +2,7 @@
 
 .. TODO
 
+=======
 qp_edit
 =======
 
@@ -18,7 +19,7 @@ the text editor is closed, the updated data is saved into the |EZFIO| directory.
 Usage
 -----
 
-.. code-block:: bash
+.. code:: bash
 
     qp_edit [FLAGS] <EZFIO_DIRECTORY>
     Flags :

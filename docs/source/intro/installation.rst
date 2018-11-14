@@ -7,13 +7,13 @@ System configuration
 
 Set up the environment
 
-.. code-block:: bash
+.. code:: bash
 
     ./configure CONFIG_FILE
 
 For example 
 
-.. code-block:: bash
+.. code:: bash
 
     ./configure config/gfortran.cfg 
 
@@ -56,7 +56,7 @@ A configuration file named :file:`quantum_package.rc` will be created (or overwr
 upon completion of the :program:`configure` script. To finish the installation and to
 start using the |qp|, source this file in your shell
 
-.. code-block:: bash
+.. code:: bash
 
     source quantum_package.rc
 
@@ -70,7 +70,7 @@ start using the |qp|, source this file in your shell
    the network interface used for communications on the compute nodes,
    you will need to add to :file:`quantum_package.rc` 
 
-   .. code-block:: bash
+   .. code:: bash
 
        export QP_NIC=ib0
 
@@ -87,7 +87,7 @@ Compile the Progams
 Go into :file:`$QP_ROOT` and run 
 
 
-.. code-block:: bash
+.. code:: bash
 
   ninja
 

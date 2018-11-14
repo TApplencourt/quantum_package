@@ -1,10 +1,10 @@
-sudo: true
-before_script:
-  - sudo apt-get update -q
-  - sudo apt-get remove curl
-  - sudo apt-get remove zlib1g-dev
-  - sudo apt-get install autoconf
-  - sudo rm /usr/local/bin/bats
+#sudo: true
+#before_script:
+#  - sudo apt-get update -q
+#  - sudo apt-get remove curl
+#  - sudo apt-get remove zlib1g-dev
+#  - sudo apt-get install autoconf
+#  - sudo rm /usr/local/bin/bats
 
 os: linux
 
@@ -21,7 +21,6 @@ addons:
     - gcc
     - liblapack-dev
     - libblas-dev
-    - patch
 
 cache:
   directories:
@@ -33,8 +32,8 @@ python:
     - "2.7"
 
 script: 
-  - ./configure ./config/travis.cfg
+  - ./configure --install all --config ./config/travis.cfg
 #  - source ./quantum_package.rc ; cd ~ ; install_lapack.sh ; cd $QP_ROOT
   - source ./quantum_package.rc ; ninja -j 1 -v 
-  - sudo apt-get install curl
+#  - sudo apt-get install curl
   - source ./quantum_package.rc ; cd tests ; ./run_tests.sh -v

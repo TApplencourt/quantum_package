@@ -2,9 +2,18 @@
 Installation
 ============
 
+The |qp| can be downloaded on GitHub as an `archive
+<https://github.com/LCPQ/quantum_package/releases/latest>`_ or as a `git
+repository <https://github.com/LCPQ/quantum_package>`_.
+
+.. code:: bash
+
+  git clone https://github.com/LCPQ/quantum_package
+
+
 Before anything, go into your :file:`quantum_package` directory and run
 
-.. code-block:: bash
+.. code:: bash
 
    ./configure
 
@@ -45,7 +54,7 @@ When all the dependencies have been installed, go into the config directory,
 and copy the configuration file that corresponds to your architecture. Modify
 it if needed, and run :command:`configure` with :option:`configure -c`.
 
-.. code-block:: bash
+.. code:: bash
 
    cp ./config/gfortran.example config/gfortran.cfg
    ./configure -c config/gfortran.cfg
@@ -88,7 +97,7 @@ to Parameters (IRP) method.
 * Create scripts to facilitate the access to :command:`irpf90` and
   :command:`irpman` as follows
 
-.. code-block:: bash
+.. code:: bash
 
    for i in irpf90 irpman irpf90_indent
    do
@@ -114,7 +123,7 @@ ZeroMQ and its Fortran binding
 * Extract the archive, go into the :file:`zeromq-*` directory and run
   the following commands
 
-.. code-block:: bash
+.. code:: bash
 
    ./configure --prefix="$QP_ROOT" --without-libsodium
    make
@@ -128,7 +137,7 @@ ZeroMQ and its Fortran binding
 * Extract the archive, go into the :file:`f77_zmq-*` directory and run
   the following commands
 
-.. code-block:: bash
+.. code:: bash
 
    export ZMQ_H="$QP_ROOT"/include/zmq.h
    make
@@ -138,7 +147,7 @@ ZeroMQ and its Fortran binding
 
 * Copy the :file:`f77_zmq_free.h` file in the ``ZMQ`` module as follows:
 
-.. code-block:: bash
+.. code:: bash
 
    cp f77_zmq_free.h "${QP_ROOT}"/src/ZMQ/f77_zmq.h
 
@@ -155,14 +164,14 @@ OCaml
 
 * Install the OCaml compiler
 
-  .. code-block:: bash
+  .. code:: bash
 
       opam init --root="$QP_ROOT"/external/opam --comp=4.06.0
       eval `"$QP_ROOT"/bin/opam config env --root="$QP_ROOT"/external/opam`
 
 * Install the required external OCaml libraries
 
-  .. code-block:: bash
+  .. code:: bash
 
       opam install cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
 
@@ -198,7 +207,7 @@ Docopt
 
 If you have *pip*, you can do 
 
-.. code-block:: bash
+.. code:: bash
 
    pip2 install docopt
 

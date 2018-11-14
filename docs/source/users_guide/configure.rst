@@ -8,7 +8,7 @@ configure
 Usage
 -----
 
-.. code-block:: bash
+.. code:: bash
 
   ./configure [-h | -c <file> | -i <package>] 
 
@@ -27,7 +27,7 @@ Usage
 Example
 -------
 
-.. code-block:: bash
+.. code:: bash
 
      ./configure 
      ./configure -c config/gfortran.cfg

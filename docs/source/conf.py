@@ -39,7 +39,8 @@ with open("_static/links.rst",'r') as f:
     rst_epilog = f.read()
 
 suppress_warnings = [
-  'ref.citation'
+  'ref.citation',
+  'ref.option'
 ]
 
 # Add any Sphinx extension module names here, as strings. They can be

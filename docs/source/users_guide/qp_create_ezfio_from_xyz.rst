@@ -11,7 +11,7 @@ This command creates an |EZFIO| directory from a standard `xyz` file or from a
 Usage 
 -----
 
-.. code-block:: bash
+.. code:: bash
 
    qp_create_ezfio_from_xyz [FLAGS] (<xyz_file> | <zmt_file>) 
    Flags :
@@ -126,7 +126,7 @@ For example, if the file containing the custom pseudo-potential is named
 ``custom.pseudo``, the basis set is named ``custom.basis``, and the *xyz*
 geometry is in ``molecule.xyz``, the following command should be used
 
-.. code-block:: bash
+.. code:: bash
 
     qp_create_ezfio_from_xyz -b custom.basis -p custom.pseudo molecule.xyz
 

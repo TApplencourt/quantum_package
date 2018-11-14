@@ -13,7 +13,7 @@ output file : the run needs to be a single point |HF|, |DFT| or |CAS| |SCF|.
 Usage 
 -----
 
-.. code-block:: bash
+.. code:: bash
 
     qp_convert_output_to_ezfio.py <FILE.out> [-o <EZFIO_DIRECTORY>]
 
@@ -30,7 +30,7 @@ Usage
 Example
 -------
 
-.. code-block:: bash
+.. code:: bash
 
    qp_convert_output_to_ezfio.py h2o.out -o h2o
 

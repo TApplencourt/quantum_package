@@ -40,5 +40,5 @@
 
 * Programmers doc:
 
-  * Fetch all README.rst files, and IRP documentation via scripts to replace old README.rst
+  * Fetch all IRP documentation via scripts 
   * Example : Simple Hartree-Fock program from scratch

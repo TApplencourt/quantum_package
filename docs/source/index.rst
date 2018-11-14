@@ -7,25 +7,25 @@
 Quantum Package
 ===============
 
-.. image:: _static/qp.png
-   :align: center
-   :alt: Quantum Package
+.. include:: intro/intro.rst
+
 
 
 .. toctree::
    :maxdepth: 1
    :caption: Introduction
+   :hidden:
 
-   intro/intro
    intro/selected_ci
-   intro/configure
    intro/install
 
 .. toctree::
    :maxdepth: 1
    :caption: User's guide
+   :hidden:
 
-   users_guide/users_guide
+   users_guide/quickstart
+   users_guide/configure
    users_guide/interfaces
    users_guide/qp_create_ezfio_from_xyz
    users_guide/qp_convert_output_to_ezfio
@@ -42,6 +42,7 @@ Quantum Package
    :maxdepth: 1
    :caption: Modules
    :glob:
+   :hidden:
 
    modules/*
 
@@ -50,6 +51,7 @@ Quantum Package
 .. toctree::
    :maxdepth: 1
    :caption: Programmer's guide
+   :hidden:
 
    programmers_guide/programming
 
@@ -57,9 +59,11 @@ Quantum Package
 .. toctree::
    :maxdepth: 1
    :caption: Appendix
+   :hidden:
 
    appendix/benchmarks
    appendix/research
    appendix/license
+   appendix/contributors
 
 

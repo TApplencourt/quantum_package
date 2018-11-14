@@ -1,585 +1,321 @@
-#!/usr/bin/env python2
-# -*- coding: utf-8 -*-
-"""configure
+#!/bin/bash 
+#
+# Quantum Package configuration script
+#
 
-Usage: configure <config_file> 
+help()
+{
+    cat <<EOF
+Quantum Package configuration script.
 
+Usage:
+  configure -c <file>    | --config <file>
+  configure -h           | --help
+  configure -i <package> | --install <package>
 
 Options:
+  -c <file>, --config <file>            define a configuration file, in
+                                        "${QP_ROOT}/config/"
+  -h, --help                            print the help message
+  -i <package>, --install <package>     install <package>. Use at your own risk.
 
-    config_file   A config file with all the information for compiling.
-                  Example config_files are given in config/
-
-Examples:
-
-    ./configure config/gfortran.cfg 
-    ./configure config/ifort.cfg    
+Example:
+  ./configure -c config/gfortran.cfg
 
 
-"""
-
-OK="✓"
-FAIL="✗"
-import subprocess
-import os
-import sys
-
-from os.path import join
-
-if len(sys.argv) != 2:
-    print __doc__
-    sys.exit()
-
-#  __                           _
-# /__ |   _  |_   _. |   o ._ _|_ _
-# \_| |_ (_) |_) (_| |   | | | | (_)
-#
-
-try:
-  QP_ROOT = os.environ["QP_ROOT"]
-except KeyError:
-  QP_ROOT = os.getcwd()
-  os.environ["QP_ROOT"] = QP_ROOT
-
-QP_ROOT_BIN = join(QP_ROOT, "bin")
-QP_ROOT_LIB = join(QP_ROOT, "lib")
-QP_ROOT_INC = join(QP_ROOT, "include")
-QP_ROOT_INSTALL = join(QP_ROOT, "install")
-
-if "LDFLAGS" not in os.environ:
-  os.environ["LDFLAGS"] = "-L"+QP_ROOT_LIB
-
-os.environ["PATH"] = os.environ["PATH"] + ":" + QP_ROOT_BIN
-
-try:
-    os.environ["C_INCLUDE_PATH"] = os.environ["C_INCLUDE_PATH"] + ":" + QP_ROOT_INC
-except KeyError:
-    os.environ["C_INCLUDE_PATH"] = QP_ROOT_INC
-
-try:
-    os.environ["LIBRARY_PATH"] = os.environ["LIBRARY_PATH"] + ":" + QP_ROOT_LIB 
-except KeyError:
-    os.environ["LIBRARY_PATH"] = QP_ROOT_LIB 
-
-try:
-    os.environ["LD_LIBRARY_PATH"] = os.environ["LD_LIBRARY_PATH"] + ":" + QP_ROOT_LIB 
-except KeyError:
-    os.environ["LD_LIBRARY_PATH"] = QP_ROOT_LIB 
-
-d_dependency = {
-    "python": [],
-    "make": [],
-    "bats": [],
-    "gcc": [],
-    "g++": [],
-    "ocaml": ["m4", "zlib", "patch", "gcc", "zeromq", "gmp"],
-    "m4": ["make"],
-    "zlib": ["gcc", "make"],
-    "patch": ["make"],
-    "autoconf": ["make"],
-    "automake": ["make"],
-    "ezfio": ["irpf90", "make", "ninja"],
-    "irpf90": ["python"],
-    "docopt": ["python"],
-    "resultsFile": ["python"],
-    "emsl": ["python"],
-    "zeromq" : [ "g++", "make", "autoconf", "automake" ],
-    "f77zmq" : [ "zeromq", "python", "make" ],
-    "ninja": ["g++", "python"],
-    "gmp" : ["make", "g++"]
+EOF
+    exit
 }
 
-from collections import namedtuple
-
-Info = namedtuple("Info", ["url", "description", "default_path"])
-
-path_github = {"head": "http://github.com", "tail": "archive/master.tar.gz"}
-def path_gitlab(user,project,branch):
-  """For example,
-      https://gitlab.com/scemama/resultsFile/-/archive/master/resultsFile-master.tar.gz
-  """
-  return "http://gitlab.com/%(user)s/%(project)s/-/archive/%(branch)s/%(project)s-%(branch)s.tar.gz"%locals()
-
-ocaml = Info(
-    url='http://raw.github.com/ocaml/opam/master/shell/opam_installer.sh',
-    description=' OCaml, Opam and the Core library (it will take some time roughly 20min)',
-    default_path=join(QP_ROOT_BIN, "opam"))
-
-zlib = Info(
-    url='http://www.zlib.net/zlib-1.2.11.tar.gz',
-    description=' zlib',
-    default_path=join(QP_ROOT_LIB, "libz.a"))
-
-patch = Info(
-    url='ftp://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz',
-    description=' patch',
-    default_path=join(QP_ROOT_BIN, "patch"))
-
-irpf90 = Info(
-    url='{head}/LCPQ/irpf90/{tail}'.format(**path_github),
-    description=' IRPF90',
-    default_path=join(QP_ROOT_BIN, "irpf90"))
-
-docopt = Info(
-    url='{head}/docopt/docopt/{tail}'.format(**path_github),
-    description=' docopt',
-    default_path=join(QP_ROOT_INSTALL, "docopt"))
-
-resultsFile = Info(
-    url=path_gitlab("scemama","resultsFile","master"),
-    description=' resultsFile',
-    default_path=join(QP_ROOT_INSTALL, "resultsFile"))
-
-ninja = Info(
-    url='{head}/martine/ninja/{tail}'.format(**path_github),
-    description=' ninja',
-    default_path=join(QP_ROOT_BIN, "ninja"))
-
-emsl = Info(
-    url='{head}/LCPQ/EMSL_Basis_Set_Exchange_Local/{tail}'.format(**path_github),
-    description=' EMSL basis set library',
-    default_path=join(QP_ROOT_INSTALL, "emsl"))
-
-ezfio = Info(
-    url=path_gitlab("scemama","EZFIO","master"),
-    description=' EZFIO',
-    default_path=join(QP_ROOT_INSTALL, "EZFIO"))
-
-zeromq = Info(
-    url='https://github.com/zeromq/libzmq/archive/v4.2.5.tar.gz',
-    description=' ZeroMQ',
-    default_path=join(QP_ROOT_LIB, "libzmq.a"))
-
-gmp= Info(
-    url='ftp://ftp.gnu.org/gnu/gmp/gmp-6.1.2.tar.bz2',
-    description=' The GNU Multiple Precision Arithmetic Library',
-    default_path=join(QP_ROOT_LIB, "libgmp.a"))
-
-f77zmq = Info(
-    url='{head}/zeromq/f77_zmq/{tail}'.format(**path_github),
-    description=' F77-ZeroMQ',
-    default_path=join(QP_ROOT_LIB, "libf77zmq.a") )
-
-bats = Info(
-    url='https://github.com/sstephenson/bats/archive/master.tar.gz',
-    description=' Bash Automated Testing System',
-    default_path=join(QP_ROOT_INSTALL, "bats"))
-
-d_info = dict()
-
-for m in ["ocaml", "zlib", "patch", "irpf90", "docopt",
-          "resultsFile", "ninja", "emsl", "ezfio", 
-          "zeromq", "f77zmq", "bats", "gmp"]: 
-    exec ("d_info['{0}']={0}".format(m))
-
-
-def find_path(bin_, l_installed, var_for_qp_root=False):
-    """Use the global variable
-    * l_installed
-    * d_info
-    """
-
-    try:
-        locate = l_installed[bin_]
-    except KeyError:
-        locate = d_info[bin_].default_path
-
-    if var_for_qp_root:
-        locate = locate.replace(QP_ROOT, "${QP_ROOT}")
-
-    return locate
-
-
-#  _
-# |_    ._   _ _|_ o  _  ._
-# | |_| | | (_  |_ | (_) | |
-#
-def check_output(*popenargs, **kwargs):
-    """Run command with arguments and return its output as a string.
-
-    Backported from Python 2.7 as it's implemented as pure python on stdlib.
-
-    >>> check_output(['/usr/bin/python', '--version'])
-    Python 2.6.2
-    """
-    process = subprocess.Popen(stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE, *popenargs, **kwargs)
-    output, unused_err = process.communicate()
-    retcode = process.poll()
-    if retcode:
-        cmd = kwargs.get("args")
-        if cmd is None:
-            cmd = popenargs[0]
-        error = subprocess.CalledProcessError(retcode, cmd)
-        error.output = output
-#        print output
-#        print unused_err
-        raise error
-    return output
-
-
-def checking(d_dependency):
-    """
-    For each key in d_dependency check if it is avalabie 
-    """
-
-    def check_python():
-        req_version = (2, 6)
-        cur_version = sys.version_info
-
-        # Check python
-        if cur_version >= req_version:
-            return 1
-        else:
-            print "To old version (need >2.5). Abort"
-            sys.exit(1)
-
-    def check_availability(binary):
-        """
-        If avalable return the path where the binary 
-        can be found, else return 0
-        """
-
-        if binary == "python":
-            check_python()
-
-        try:
-            a = check_output(["which", binary])
-
-            if binary == "irpf90":
-                version = check_output("irpf90 -v".split()).strip()
-
-                from distutils.version import LooseVersion
-                if LooseVersion(version) < LooseVersion("1.7.2"):
-                    return 0
-                else:
-                    return a
-
-            return a
-
-        except (OSError,subprocess.CalledProcessError):
-            default_path = d_info[binary].default_path
-            if os.path.exists(default_path):
-                return default_path
-            else:
-                return 0
-
-    def get_list_descendant(d_dependency, l_installed, l_needed):
-        """
-        Descendant : a node reachable by repeated proceeding from parent to child.
-        """
-        d_need_genealogy = dict()
-
-        for need in l_needed:
-            d_need_genealogy[need] = None
-            for childen in d_dependency[need]:
-                if childen not in l_installed:
-                    d_need_genealogy[childen] = None
-        return d_need_genealogy.keys()
-
-        return d_need_genealogy.keys()
-        print """
- _
-|_)  _     o  _
-| \ (/_ \/ | (/_ \/\/
-
-    """
-
-    print "Checking what you need to install and what is avalaible"
-    print ""
-    l_installed = dict()
-    l_needed = []
-
-    # Check all the others
-    length = max(map(len, d_dependency))
-
-    for i in d_dependency.keys():
-        print "Checking {0:>{1}}...".format(i, length),
-
-        r = check_availability(i)
-        if r:
-            print OK+" ( {0} )".format(r.strip())
-            l_installed[i] = r.strip()
-        else:
-            print FAIL
-            l_needed.append(i)
-    print ""
-
-    # Expand the needed stuff for all the genealogy
-    l_install_descendant = get_list_descendant(d_dependency, l_installed,
-                                               l_needed)
-
-    return l_installed, l_install_descendant
-
-
-def installation(l_install_descendant):
-    """
-    Installing all the list
-    0 install ninja
-    1 create ninja
-    2 run ninja
-    """
-
-    def create_rule_ninja():
-
-        l_rules = [
-            "rule download",
-            "  command = wget --no-check-certificate ${url} -O ${out} -o /dev/null",
-            "  description = Downloading ${descr}", ""
-        ]
-
-        l_rules += [
-            "rule install",
-            "  command = ./scripts/install_${target}.sh > _build/${target}.log 2>&1",
-            "  description = Installing ${descr}", ""
-        ]
-
-        l_rules += [
-            "rule install_verbose",
-            '  command = bash -o pipefail -c "./scripts/install_${target}.sh | tee _build/${target}.log 2>&1"  ',
-            "  description = Installing ${descr}", "  pool = console", ""
-        ]
-
-        return l_rules
-
-    def splitext(path):
-        for ext in ['.tar.gz', '.tar.bz2']:
-            if path.endswith(ext):
-                return path[:-len(ext)], path[-len(ext):]
-        return os.path.splitext(path)
-
-    print """
-___
- |  ._   _ _|_  _. | |  _. _|_ o  _  ._
-_|_ | | _>  |_ (_| | | (_|  |_ | (_) | |
-
-"""
-
-    d_print = {
-        "install_ninja": "Install ninja...",
-        "build": "Creating build.ninja...",
-        "install": "Installing the dependencies using Ninja..."
-    }
-
-    length = max(map(len, d_print.values()))
-
-    def str_info(key):
-        return "{0:<{1}}".format(d_print[key], length)
-
-    if "ninja" in l_install_descendant:
-
-        print str_info("install_ninja"),
-
-        url = d_info["ninja"].url
-        extension = splitext(url)[1]
-        path_archive = "Downloads/{0}{1}".format("ninja", extension)
-
-        l_cmd = ["set -x ;", "cd install &&",
-                 "wget {0} -O {1} &&".format(url, path_archive),
-                 "./scripts/install_ninja.sh &&", "cd -"]
-
-        try:
-            check_output(" ".join(l_cmd), shell=True)
-        except:
-            raise
-        else:
-            print OK
-
-        l_install_descendant.remove("ninja")
-
-    print str_info("build"),
-    l_string = create_rule_ninja()
-
-    l_build = []
-
-    for need in l_install_descendant:
-
-        url = d_info[need].url
-        extension = splitext(url)[1]
-
-        archive_path = "Downloads/{0}{1}".format(need, extension)
-
-        descr = d_info[need].description
-        default_path = d_info[need].default_path
-
-        # Build to download
-        l_build += ["build {0}: download".format(archive_path),
-                    "   url = {0}".format(url), "   descr = {0}".format(descr),
-                    ""]
-
-        # Build to install
-        l_dependency = [d_info[i].default_path for i in d_dependency[need]
-                        if i in l_install_descendant]
-        str_dependency = " ".join(l_dependency)
-
-        rule = "install" if need != "ocaml" else "install_verbose"
-
-        l_build += ["build {0}: {1} {2} {3}".format(default_path, rule,
-                                                    archive_path,
-                                                    str_dependency),
-                    "   target = {0}".format(need),
-                    "   descr = {0}".format(descr), ""]
-
-    l_string += l_build
-
-    path = join(QP_ROOT_INSTALL, "build.ninja")
-    with open(path, "w+") as f:
-        f.write("\n".join(l_string))
-
-    print OK+" ({0})".format(path)
-
-    print str_info("install"),
-    print "Running"
-    try:
-        path_ninja = find_path("ninja", l_installed)
-        subprocess.check_call("cd install ;{0}".format(path_ninja), shell=True)
-    except:
-        prefix = os.path.join('install', '_build')
-        for filename in os.listdir(prefix):
-            if filename.endswith(".log"):
-                with open( os.path.join(prefix,filename) ,'r') as f:
-                    print "\n\n"
-                    print "=-=-=-=-=-=- %s =-=-=-=-=-=-" %(filename)
-                    print f.read()
-                    print "=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n\n"
-        print "Error in installation of dependencies"
-        sys.exit(1)
-    else:
-        print r"""
- _________
-< Success >
- ---------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-            """
-
-
-def create_ninja_and_rc(l_installed):
-    print """
- _
-|_ o ._   _. | o _   _
-|  | | | (_| | | /_ (/_
-
-"""
-
-    d_print = {"qp_root": "Creating quantum_package.rc...",
-               "build": "Creating build.ninja..."}
-
-    length = max(map(len, d_print.values()))
-
-    def str_info(key):
-        return "{0:<{1}}".format(d_print[key], length)
-
-    print str_info("qp_root"),
-    python_path = [join(QP_ROOT, "scripts"), join(QP_ROOT, "install")]
-
-    l_python = [join("${QP_ROOT}", "scripts")]
-    for dir_ in python_path:
-        for folder in os.listdir(dir_):
-            path = join(dir_, folder)
-            if os.path.isdir(path):
-                path = path.replace(QP_ROOT,"${QP_ROOT}")
-                l_python.append(path)
-
-    path_ezfio = find_path('ezfio', l_installed, var_for_qp_root=True)
-    path_irpf90 = find_path("irpf90", l_installed, var_for_qp_root=True)
-    path_ninja = find_path("ninja", l_installed, var_for_qp_root=True)
-
-    l_rc = [
-        'export QP_ROOT={0}'.format(QP_ROOT),
-        'export QP_EZFIO={0}'.format(path_ezfio.replace(QP_ROOT,"${QP_ROOT}")),
-        'export QP_PYTHON={0}'.format(":".join(l_python)), "",
-        'export IRPF90={0}'.format(path_irpf90.replace(QP_ROOT,"${QP_ROOT}")),
-        'export NINJA={0}'.format(path_ninja.replace(QP_ROOT,"${QP_ROOT}")),
-        'function qp_prepend_export () {',
-        'eval "value_1="\${$1}""',
-        'if [[ -z $value_1 ]] ; then',
-        '    echo "${2}:"',
-        'else',
-        '    echo "${2}:${value_1}"',
-        'fi',
-        '}',
-        'export PYTHONPATH=$(qp_prepend_export "PYTHONPATH" "${QP_EZFIO}/Python":"${QP_PYTHON}")',
-        'export PATH=$(qp_prepend_export "PATH" "${QP_PYTHON}":"${QP_ROOT}"/bin:"${QP_ROOT}"/ocaml)',
-        'export LD_LIBRARY_PATH=$(qp_prepend_export "LD_LIBRARY_PATH" "${QP_ROOT}"/lib:"${QP_ROOT}"/lib64)',
-        'export LIBRARY_PATH=$(qp_prepend_export "LIBRARY_PATH" "${QP_ROOT}"/lib:"${QP_ROOT}"/lib64)',
-        'export C_INCLUDE_PATH=$(qp_prepend_export "C_INCLUDE_PATH" "${QP_ROOT}"/include)',
-        '',
-        'if [[ $SHELL == "/bin/bash" ]] ; then',
-        '  source ${QP_ROOT}/install/EZFIO/Bash/ezfio.sh',
-        'fi',
-        '',
-        '# Choose the correct network interface',
-        '# export QP_NIC=ib0',
-        '# export QP_NIC=eth0',
-        ''
-    ]
-
-    qp_opam_root = os.getenv('OPAMROOT')
-    if not qp_opam_root:
-        qp_opam_root = '${HOME}/.opam'
-    l_rc.append('export QP_OPAM={0}'.format(qp_opam_root))
-    l_rc.append('source ${QP_OPAM}/opam-init/init.sh > /dev/null 2> /dev/null || true')
-    l_rc.append('')
-
-    path = join(QP_ROOT, "quantum_package.rc")
-    with open(path, "w+") as f:
-        f.write("\n".join(l_rc))
-
-    print OK+" ({0})".format(path)
-
-    command = ['bash', '-c', 'source {0} && env'.format(path)]
-    proc = subprocess.Popen(command, stdout=subprocess.PIPE)
-    for line in proc.stdout:
-        (key, _, value) = line.partition("=")
-        os.environ[key] = value.strip()
-
-    print str_info("build"),
-
-    qp_create_ninja = os.path.join(QP_ROOT, "scripts", "compilation",
-                                   "qp_create_ninja.py")
-
-    l = [qp_create_ninja, "create", "--development"] + sys.argv[1:]
-
-    try:
-        with open('/dev/null', 'w') as dnull:
-            subprocess.check_call(" ".join(l), shell=True, stderr=dnull)
-    except:
-        print "[ FAIL ]"
-        print "Check the validity of the config file provided ({0})".format(sys.argv[1])
-        print "Exit..."
-        raise
-        sys.exit(1)
-
-    else:
-        print OK
-
-
-def recommendation():
-    path = join(QP_ROOT, "quantum_package.rc")
-    print "Now :"
-    print ""
-    print "   source {0}".format(path)
-    print "   ninja"
-    print ""
-
-
-if __name__ == '__main__':
-
-    l_installed, l_install_descendant = checking(d_dependency)
-
-    if l_install_descendant:
-        print "The following will be installed:"
-        for i in l_install_descendant:
-            print "* {0}".format(i)
-
-        installation(l_install_descendant)
-    else:
-        print "Perfect, nothing to install"
-    create_ninja_and_rc(l_installed)
-
-    recommendation()
+
+PACKAGES=""
+
+while : ; do
+    case "$1" in
+        "") 
+            break;;
+        -c|--config)
+            CONFIG="$2"
+            shift;;
+        -i|--install)
+            PACKAGES="${PACKAGE} $2"
+            shift;;
+        -h|--help)
+            help;;
+        *)
+            echo "unknown option $1, try --help"
+            exit 2;;
+    esac
+    shift
+done
+
+# Trim leading and trailing spaces
+PACKAGES=$(echo $PACKAGES | xargs)
+
+
+
+sed "s!^export QP_ROOT=.*\$!export QP_ROOT=\"$PWD\"!" quantum_package.rc.default > quantum_package.rc
+
+echo "quantum_package.rc created."
+
+source quantum_package.rc
+
+
+
+
+
+
+function fail() {
+        echo "Please refer to INSTALL.md to install the missing dependencies."
+        exit 1
+}
+
+function success() {
+        echo ""
+        echo "Configuration successful."
+        exit 1
+}
+
+function error() {
+        echo "Error : $1"
+        exit 2
+}
+
+function download() {
+        wget --no-check-certificate $1 -O $2 || error "Unable to download $1"
+}
+
+function find_exe() {
+        which $1 2> /dev/null || echo 'not_found'
+}
+
+function find_python_lib() {
+        python2 -c "import $1" &> /dev/null && echo "$1" || echo 'not_found'
+}
+
+function find_lib() {
+        echo "int main() { return 0; }" > "${QP_ROOT}"/external/tmp.c
+        gcc $1 "${QP_ROOT}"/external/tmp.c -o "${QP_ROOT}"/external/tmp.exe 2> /dev/null
+        if [[ -x "${QP_ROOT}"/external/tmp.exe ]] ; then
+                rm "${QP_ROOT}"/external/tmp.exe "${QP_ROOT}"/external/tmp.c
+                echo "$1"
+        else
+                rm "${QP_ROOT}"/external/tmp.c
+                echo "not_found"
+        fi
+}
+
+function find_dir() {
+        if [[ -d $1 ]] ; then
+                echo "$1"
+        else
+                echo "not_found"
+        fi
+}
+
+
+if [[ "${PACKAGES}.x" != ".x" ]] ; then
+        echo ""
+	echo "#########################################################"
+	echo "#                                                       #"
+	echo "#       Automatic installation of dependencies          #"
+	echo "#                                                       #"
+	echo "# USE AT YOUR OWN RISK :                                #"
+	echo "# No support will be provided by the quantum package    #"
+	echo "# developers for the installation of external software. #"
+	echo "#                                                       #"
+	echo "# You may refer to the INSTALL.md file for help.        #"
+	echo "#                                                       #"
+	echo "#########################################################"
+        echo ""
+fi
+
+if [[ "${PACKAGES}" == "all" ]] ; then
+        PACKAGES="ninja irpf90 zeromq f77zmq ocaml ezfio emsl docopt"
+fi
+
+
+for PACKAGE in ${PACKAGES} ; do
+
+    if [[ "${PACKAGE}" == "ninja" ]] ; then
+
+            download \
+              "https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip" \
+              "${QP_ROOT}"/external/ninja.zip
+            unzip "${QP_ROOT}"/external/ninja.zip -d "${QP_ROOT}"/bin
+
+
+    elif [[ "${PACKAGE}" == "irpf90" ]] ; then
+
+            download \
+              "https://github.com/scemama/irpf90/archive/v1.7.2.tar.gz" \
+              "${QP_ROOT}"/external/irpf90.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf irpf90.tar.gz
+            cd irpf90-*
+            make
+            for i in irpf90 irpman irpf90_indent
+            do
+                    cat << EOF > "${QP_ROOT}"/bin/$i
+#!/bin/sh
+exec $PWD/bin/$i \$@
+EOF
+
+                    chmod +x "${QP_ROOT}"/bin/$i
+            done
+            cd "${QP_ROOT}"
+    
+
+    elif [[ "${PACKAGE}" == "zeromq" ]] ; then
+
+            download \
+              "https://github.com/zeromq/libzmq/releases/download/v4.2.5/zeromq-4.2.5.tar.gz" \
+              "${QP_ROOT}"/external/zeromq.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf zeromq.tar.gz
+            cd zeromq-*
+            ./configure --prefix="$QP_ROOT" --without-libsodium --enable-libunwind=no
+            make
+            make install
+            cd "${QP_ROOT}"
+
+
+    elif [[ "${PACKAGE}" == "f77zmq" ]] ; then
+
+            download \
+              "https://github.com/scemama/f77_zmq/archive/v4.2.5.tar.gz" \
+              "${QP_ROOT}"/external/f77_zmq.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf f77_zmq.tar.gz
+            cd f77_zmq-*
+            export ZMQ_H="$QP_ROOT"/include/zmq.h
+            make
+            cp libf77zmq.a "${QP_ROOT}"/lib
+            cp libf77zmq.so "${QP_ROOT}"/lib
+            cp f77_zmq_free.h "${QP_ROOT}"/src/ZMQ/f77_zmq.h
+            cd "${QP_ROOT}"
+
+    
+    elif [[ "${PACKAGE}" == "ocaml" ]] ; then
+
+            download \
+              "https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh" \
+              "${QP_ROOT}"/bin/opam
+            chmod +x "${QP_ROOT}"/bin/opam
+            opam init --root="$QP_ROOT"/external/opam --comp=4.07.0
+            eval `"$QP_ROOT"/bin/opam config env --root="$QP_ROOT"/external/opam`
+            opam install -y cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
+
+            
+    elif [[ "${PACKAGE}" == "ezfio" ]] ; then
+
+            download \
+              "https://gitlab.com/scemama/EZFIO/-/archive/master/EZFIO-master.tar.gz"
+              "${QP_ROOT}"/external/ezfio.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf ezfio.tar.gz
+            mv EZFIO-* ezfio
+            cd "${QP_ROOT}"
+
+            
+    elif [[ "${PACKAGE}" == "emsl" ]] ; then
+
+            download \
+              "https://github.com/LCPQ/EMSL_Basis_Set_Exchange_Local/archive/v1.0.tar.gz" \
+              "${QP_ROOT}"/external/EMSL.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf EMSL.tar.gz
+            mv EMSL_Basis* emsl
+            cd "${QP_ROOT}"
+
+
+    elif [[ "${PACKAGE}" == "docopt" ]] ; then
+
+            download \
+              "https://github.com/docopt/docopt/archive/0.6.2.tar.gz" \
+              "${QP_ROOT}"/external/docopt.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf docopt.tar.gz 
+            cp docopt-*/docopt.py "${QP_ROOT}/scripts"
+            cd "${QP_ROOT}"
+
+
+    elif [[ "${PACKAGE}" == "resultsfile" ]] ; then
+
+            download \
+              "https://gitlab.com/scemama/resultsFile/-/archive/master/resultsFile-master.tar.gz" \
+              "${QP_ROOT}"/external/resultsFile.tar.gz
+            cd "${QP_ROOT}"/external
+            tar -zxf resultsFile.tar.gz 
+            cp -r resultsFile-master/resultsFile "${QP_ROOT}/scripts"
+            cd "${QP_ROOT}"
+
+    fi
+done
+        
+
+NINJA=$(find_exe ninja)
+if [[ "${NINJA}" == "not_found" ]] ; then
+        echo "Ninja is not installed."
+        fail
+fi
+
+IRPF90=$(find_exe irpf90)
+if [[ "${IRPF90}" == "not_found" ]] ; then
+        echo "IRPf90 is not installed."
+        fail
+fi
+
+ZEROMQ=$(find_lib -lzmq)
+if [[ "${ZEROMQ}" == "not_found" ]] ; then
+        echo "ZeroMQ is not installed."
+        fail
+fi
+
+F77ZMQ=$(find_lib -lzmq -lf77zmq)
+if [[ "${F77ZMQ}" == "not_found" ]] ; then
+        echo "Fortran binding of ZeroMQ is not installed."
+        fail
+fi
+
+OPAM=$(find_exe opam)
+if [[ "${OPAM}" == "not_found" ]] ; then
+        echo "OPAM package manager is not installed."
+        fail
+fi
+
+OCAML=$(find_exe ocaml)
+if [[ "${OCAML}" == "not_found" ]] ; then
+        echo "OCaml compiler is not installed."
+        fail
+fi
+
+EZFIO=$(find_dir "${QP_ROOT}"/external/ezfio)
+if [[ "${EZFIO}" == "not_found" ]] ; then
+        echo "EZFIO is not installed."
+        fail
+fi
+
+EMSL=$(find_dir "${QP_ROOT}"/external/emsl)
+if [[ "${EMSL}" == "not_found" ]] ; then
+        echo "EMSL is not installed."
+        fail
+fi
+
+DOCOPT=$(find_python_lib docopt)
+if [[ "${DOCOPT}" == "not_found" ]] ; then
+        echo "docopt is not installed."
+        fail
+fi
+
+echo "All dependencies installed."
+
+
+
+if [[ -n $CONFIG ]] ; then
+
+        "${QP_ROOT}"/scripts/compilation/qp_create_ninja create --development "${CONFIG}"
+fi
+
+
 

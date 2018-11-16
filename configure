@@ -214,6 +214,8 @@ ${QP_ROOT}/bin
 EOF
                 echo "export QP_OPAM=${OPAMROOT}" >> "${QP_ROOT}"/quantum_package.rc
                 echo "source ${QP_OPAM}/opam-init/init.sh > /dev/null 2> /dev/null || true" >> "${QP_ROOT}"/quantum_package.rc
+                export QP_OPAM=${OPAMROOT}
+                source ${QP_OPAM}/opam-init/init.sh > /dev/null 2> /dev/null || true
 
             else
                 # Conventional commands

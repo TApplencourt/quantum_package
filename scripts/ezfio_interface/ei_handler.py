@@ -160,7 +160,7 @@ def get_type_dict():
 
         # Untouch
         b = r.find('let untouched = "')
-        e = r.find('"', b)
+        e = r.find('let parse_input', b)
 
         l_un = [i for i in r[b:e].splitlines() if i.strip().startswith("module")]
 

@@ -1,8 +1,8 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Usage: qp_create_ninja.py create <config_file> (--development | --production)
-       qp_create_ninja.py update
+Usage: qp_create_ninja create <config_file> (--development | --production)
+       qp_create_ninja update
 
 """
 
@@ -37,7 +37,7 @@ from qp_path import QP_ROOT, QP_SRC, QP_EZFIO
 
 LIB = "" # join(QP_ROOT, "lib", "rdtsc.o") 
 EZFIO_LIB = join(QP_ROOT, "lib", "libezfio_irp.a") 
-ZMQ_LIB = join(QP_ROOT, "lib", "libf77zmq.a") + " "  + join(QP_ROOT, "lib", "libzmq.a") + " -lstdc++ -lrt"
+ZMQ_LIB = join(QP_ROOT, "lib", "libf77zmq.a") + " "  + join(QP_ROOT, "lib", "libzmq.a") + " -lstdc++ -lrt -ldl"
 ROOT_BUILD_NINJA = join(QP_ROOT, "config", "build.ninja")
 
 header = r"""#
@@ -264,7 +264,7 @@ def ninja_ezfio_rule():
     l_flag = ["export {0}='${0}'".format(flag)
               for flag in ["FC", "FCFLAGS", "IRPF90"]]
 
-    install_lib_ezfio = join(QP_ROOT, 'install', 'EZFIO', "lib", "libezfio_irp.a")
+    install_lib_ezfio = join(QP_EZFIO, "lib", "libezfio_irp.a")
     l_cmd = ["cd {0}".format(QP_EZFIO)] + l_flag
     l_cmd += ["rm -f make.config ; ninja && rm -f {1} ; ln -sf {0} {1}".format(install_lib_ezfio, EZFIO_LIB)]
 
@@ -654,9 +654,8 @@ def ninja_module_build(path_module, d_binaries):
 
     path_readme = os.path.join(path_module.abs, "README.rst")
 
-    l_string = ["build module_{0}: phony {1} {2}".format(path_module.rel,
-                                                             " ".join(l_abs_bin),
-                                                             path_readme), ""]
+    l_string = ["build module_{0}: phony {1}".format(path_module.rel,
+                                                             " ".join(l_abs_bin)) ]
 
     return l_string
 
@@ -690,13 +689,20 @@ def save_subninja_file(path_module):
                  "  description = Cleaning module {0}".format(path_module.rel),
                  ""]
 
+    l_string += ["rule executables",
+                 "  command = make -C {0} executables .gitignore qp_edit.native qp_run.native".format(join(QP_ROOT,"ocaml")),
+                 "  description = Updating OCaml executables",
+                 ""]
+
     l_string += ["build dummy_target: update_build_ninja_root", "",
                  "build all: make_all_binaries dummy_target", "",
                  "build local: make_local_binaries dummy_target", "",
+                 "build executables: executables local dummy_target", "",
                  "default local", "", "build clean: make_clean dummy_target",
                  ""]
 
     path_ninja_cur = join(path_module.abs, "build.ninja")
+
     with open(path_ninja_cur, "w") as f:
         f.write(header)
         f.write("\n".join(l_string))
@@ -736,6 +742,7 @@ def create_build_ninja_global():
                  "", ]
 
     path_ninja_cur = join(QP_ROOT, "build.ninja")
+
     with open(path_ninja_cur, "w") as f:
         f.write(header)
         f.write("\n".join(l_string))
@@ -833,7 +840,7 @@ if __name__ == "__main__":
         if module not in d_binaries:
             l_msg = ["{0} is a root module but does not contain a main file.",
                      "- Create it in {0}",
-                     "- Or delete {0} `qp_module.py uninstall {0}`",
+                     "- Or delete {0} `qp_module uninstall {0}`",
                      "- Or install a module that needs {0} with a main "]
 
             print "\n".join(l_msg).format(module.rel)

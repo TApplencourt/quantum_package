@@ -234,7 +234,7 @@ if __name__ == '__main__':
 
     for module in l_module:
         if not is_module(module):
-            print "{0} is not a valide module. Abort".format(module)
+            print "{0} is not a valid module. Abort".format(module)
             print "No NEED in it"
             sys.exit(1)
 

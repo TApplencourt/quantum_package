@@ -12,5 +12,5 @@ except:
 else:
     QP_SRC = os.path.join(QP_ROOT, "src")
     QP_PLUGINS = os.path.join(QP_ROOT, "plugins")
-    QP_EZFIO = os.path.join(QP_ROOT, "install", "EZFIO")
+    QP_EZFIO = os.environ["QP_EZFIO"]
     QP_OCAML = os.path.join(QP_ROOT, "ocaml")

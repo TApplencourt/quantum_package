@@ -23,11 +23,12 @@ from functools import reduce
 
 try:
     QP_ROOT = os.environ["QP_ROOT"]
+    QP_EZFIO = os.environ["QP_EZFIO"]
 except:
     print "Error: QP_ROOT environment variable not found."
     sys.exit(1)
 else:
-    sys.path = [ QP_ROOT + "/install/EZFIO/Python", 
+    sys.path = [ QP_EZFIO + "/Python", 
                  QP_ROOT + "/install/resultsFile", 
                  QP_ROOT + "/install", 
                  QP_ROOT + "/scripts"] + sys.path

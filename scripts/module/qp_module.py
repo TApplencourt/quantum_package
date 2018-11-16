@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 """
 Usage:
-       qp_module.py create -n <name> [<children_modules>...]
-       qp_module.py download -n <name> [<path_folder>...]
-       qp_module.py install <name>...
-       qp_module.py list (--installed | --available-local)
-       qp_module.py uninstall <name>
+       qp_module create -n <name> [<children_modules>...]
+       qp_module download -n <name> [<path_folder>...]
+       qp_module install <name>...
+       qp_module list (--installed | --available-local)
+       qp_module uninstall <name>
 Options:
     list: List all the modules available
     create: Create a new module
@@ -59,32 +59,32 @@ def save_new_module(path, l_child):
         f.write("""
   implicit none
   BEGIN_DOC
-! TODO
+! TODO : Put the documentation of the program here
   END_DOC
   print *, 'Hello world'
   end
 """)
 
 def main(arguments):
-    if arguments["list"]:
 
-        if arguments["--installed"]:
-            l_repository = [QP_SRC]
-        elif arguments["--available-local"]:
-            l_repository = [QP_PLUGINS]
-
-        m_instance = ModuleHandler(l_repository)
-
-        for module in sorted(m_instance.l_module):
-            print "* {0}".format(module)
-
-    elif arguments["create"]:
-        m_instance = ModuleHandler([QP_SRC])
-
-        l_children = arguments["<children_modules>"]
-
-        name = arguments["<name>"][0]
-
+    if arguments in ["list_installed", "list_plugins"]:
+        if arguments["list_installed"]:            
+            l_repository = [QP_SRC]                
+        elif arguments["list_plugins"]:            
+            l_repository = [QP_PLUGINS]            
+                                                   
+        m_instance = ModuleHandler(l_repository)   
+                                                   
+        for module in sorted(m_instance.l_module): 
+            print "* {0}".format(module)           
+                                                   
+    if arguments["create"]:                        
+        m_instance = ModuleHandler([QP_SRC])       
+                                                   
+        l_children = arguments["<needed_modules>"] 
+                                                   
+        name = arguments["<name>"][0]              
+      
         path = os.path.join(QP_PLUGINS, name)
 
         print "Created module:"
@@ -172,7 +172,7 @@ def main(arguments):
                         print "Your src directory is broken. Please remove %s" % des
                         raise
             try:
-                subprocess.check_call(["qp_create_ninja.py", "update"])
+                subprocess.check_call(["qp_create_ninja", "update"])
             except:
                 raise
 

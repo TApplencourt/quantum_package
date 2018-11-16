@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 
-import os
+import os, sys
 import ConfigParser
 
 
@@ -16,6 +16,10 @@ def get_compilation_option(pwd_cfg, flag_name):
     """
     Return the flag compilation of a compile.cfg located in pwd_cfg
     """
+    if not os.path.isfile(pwd_cfg):
+        print "Configuration file %s not found"%(pwd_cfg)
+        sys.exit(1)
+
     config = ConfigParser.ConfigParser()
     config.read(pwd_cfg)
 

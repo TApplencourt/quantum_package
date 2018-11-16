@@ -40,7 +40,7 @@ fi
 
 
 # Comment these lines if you have a system-wide OCaml installation
-export QP_OPAM=${QP_ROOT}/external/opam
+export QP_OPAM=${QP_OPAM:-${QP_ROOT}/external/opam}
 source ${QP_OPAM}/opam-init/init.sh > /dev/null 2> /dev/null || true
 
 

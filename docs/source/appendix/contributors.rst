@@ -10,16 +10,19 @@ Anthony Scemama
   | Toulouse, France
   | scemama@irsamc.ups-tlse.fr 
 
+
 Emmanuel Giner
   | `Laboratoire de Chimie Theorique <http://www.lct.jussieu.fr/>`_
   | CNRS - Sorbonne Université
   | Paris, France
   | emmanuel.giner@lct.jussieu.fr
 
+
 Thomas Applencourt
   | `Argonne Leadership Computing Facility <http://www.alcf.anl.gov/>`_
   | Argonne, USA
   | tapplencourt@anl.gov
+
 
 
 The following people have contributed (by alphabetical order):
@@ -28,6 +31,7 @@ The following people have contributed (by alphabetical order):
 * Chandler Bennet
 * Michel Caffarel
 * Grégoire David
+* Madeline Galbraith 
 * Yann Garniron
 * Kevin Gasperich
 * Pierre-François Loos
@@ -37,6 +41,7 @@ The following people have contributed (by alphabetical order):
 * Lorenzo Tenti
 * Julien Toulouse
 * Mikaël Véril
+
 
 If you have contributed and don't appear in this list, please modify this file
 and submit a pull request.

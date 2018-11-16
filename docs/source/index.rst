@@ -3,10 +3,6 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-===============
-Quantum Package
-===============
-
 .. include:: intro/intro.rst
 
 
@@ -54,6 +50,7 @@ Quantum Package
    :hidden:
 
    programmers_guide/programming
+   programmers_guide/ezfio
 
 
 .. toctree::

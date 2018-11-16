@@ -75,7 +75,7 @@ The expected energy is ``-92.8278566979`` au.
 
 .. important:: TODO
 
-  .. include:: ../work.rst
+  .. include:: /work.rst
 
   * qp_run
   * qp_convert

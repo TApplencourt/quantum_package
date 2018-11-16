@@ -10,7 +10,7 @@ Usage:
                   [--ezfio_config]
                   [--ocaml]
                   [--ezfio_default]
-    ei_handler.py list_supported_type
+    ei_handler.py list_supported_types
     ei_handler.py ocaml_global
 
 By default all the option are executed.
@@ -106,9 +106,9 @@ def is_bool(str_):
 def get_type_dict():
     """
     This function makes the correspondance between the type of value read in
-    ezfio.cfg into the f90 and OCaml Type
+    EZFIO.cfg into the f90 and OCaml type.
     return fancy_type[fancy_type] = namedtuple('Type', 'ocaml fortran')
-    For example fancy_type['Ndet'].fortran = interger
+    For example fancy_type['Ndet'].fortran = integer
                                   .ocaml   = int
     """
 
@@ -160,7 +160,7 @@ def get_type_dict():
 
         # Untouch
         b = r.find('let untouched = "')
-        e = r.find(';;', b)
+        e = r.find('"', b)
 
         l_un = [i for i in r[b:e].splitlines() if i.strip().startswith("module")]
 
@@ -759,8 +759,8 @@ if __name__ == "__main__":
     #  |  ._  o _|_
     # _|_ | | |  |_
     #
-    if arguments["list_supported_type"]:
-        for i in get_type_dict():
+    if arguments["list_supported_types"]:
+        for i in sorted(get_type_dict()):
             print i
         sys.exit(0)
 

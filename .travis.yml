@@ -32,7 +32,7 @@ python:
     - "2.7"
 
 script: 
-  - ./configure --install all --config ./config/travis.cfg
+  - OPAMROOT=$HOME/.opam ./configure --install all --config ./config/travis.cfg
 #  - source ./quantum_package.rc ; cd ~ ; install_lapack.sh ; cd $QP_ROOT
   - source ./quantum_package.rc ; ninja -j 1 -v 
 #  - sudo apt-get install curl

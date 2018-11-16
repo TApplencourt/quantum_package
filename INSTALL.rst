@@ -89,7 +89,7 @@ to Parameters (IRP) method.
 
 * Download the latest version of IRPF90
   here : `<https://github.com/scemama/irpf90/releases/latest>`_ and move
-  the downloaded archive in the :file:`"$QP_ROOT"/external` directory
+  the downloaded archive in the :file:`${QP_ROOT}/external` directory
 
 * Extract the archive and go into the :file:`irpf90-*` directory to run
   :command:`make``
@@ -101,12 +101,12 @@ to Parameters (IRP) method.
 
    for i in irpf90 irpman irpf90_indent
    do
-   cat << EOF > "$QP_ROOT"/bin/$i
+   cat << EOF > ${QP_ROOT}/bin/$i
    #!/bin/sh
    exec $PWD/bin/$i \$@
    EOF
 
-   chmod +x "$QP_ROOT"/bin/$i 
+   chmod +x ${QP_ROOT}/bin/$i 
    done
 
 
@@ -118,38 +118,38 @@ ZeroMQ and its Fortran binding
 
 * Download the latest stable version of ZeroMQ
   here : `<https://github.com/zeromq/libzmq/releases/latest>`_ and move the
-  downloaded archive in the :file:`"$QP_ROOT"/external` directory
+  downloaded archive in the :file:`${QP_ROOT}/external` directory
 
 * Extract the archive, go into the :file:`zeromq-*` directory and run
   the following commands
 
 .. code:: bash
 
-   ./configure --prefix="$QP_ROOT" --without-libsodium
+   ./configure --prefix="${QP_ROOT}" --without-libsodium
    make
    make install
 
 
 * Download the Fortran binding
   here : `<https://github.com/zeromq/f77_zmq/releases/latest>`_ and move
-  the downloaded archive in the :file:`"$QP_ROOT"/external` directory
+  the downloaded archive in the :file:`${QP_ROOT}/external` directory
 
 * Extract the archive, go into the :file:`f77_zmq-*` directory and run
   the following commands
 
 .. code:: bash
 
-   export ZMQ_H="$QP_ROOT"/include/zmq.h
+   export ZMQ_H=${QP_ROOT}/include/zmq.h
    make
-   cp libf77zmq.a "${QP_ROOT}"/lib
-   cp libf77zmq.so "${QP_ROOT}"/lib
+   cp libf77zmq.a ${QP_ROOT}/lib
+   cp libf77zmq.so ${QP_ROOT}/lib
 
 
 * Copy the :file:`f77_zmq_free.h` file in the ``ZMQ`` module as follows:
 
 .. code:: bash
 
-   cp f77_zmq_free.h "${QP_ROOT}"/src/ZMQ/f77_zmq.h
+   cp f77_zmq_free.h ${QP_ROOT}/src/ZMQ/f77_zmq.h
 
 
 
@@ -158,16 +158,37 @@ OCaml
 
 *OCaml* is a general purpose programming language with an emphasis on expressiveness and safety.
 
-* Download the installer of the OPAM package manager here : `<//raw.githubusercontent.com/ocaml/opam/master/shell/install.sh>`_
+* Download the installer of the OPAM package manager here :
+  `<//raw.githubusercontent.com/ocaml/opam/master/shell/install.sh>`_
+  and move it in the :file:`${QP_ROOT}/external` directory
 
-* Copy it as :file:`"$QP_ROOT"/bin/opam`
+* If you use OCaml only with the |qp|, you can install the OPAM directory 
+  containing the compiler and all the installed libraries in the
+  :file:`${QP_ROOT}/external` directory as
+
+  .. code:: bash
+       
+     export OPAMROOT=${QP_ROOT}/external/opam
+
+
+* Run the installer
+
+  .. code:: bash
+       
+     echo ${QP_ROOT}/bin
+     ${QP_ROOT}/external/opam_installer.sh --no-backup --fresh
+
+  You the :command:`opam` command can be installed in the :file:`${QP_ROOT}/bin`
+  directory. To do this, take the output of ``echo ${QP_ROOT}/bin`` and
+  use it as an answer to where :command:`opam` should be installed.
+  
 
 * Install the OCaml compiler
 
   .. code:: bash
 
-      opam init --root="$QP_ROOT"/external/opam --comp=4.06.0
-      eval `"$QP_ROOT"/bin/opam config env --root="$QP_ROOT"/external/opam`
+      opam init --disable-sandboxing --comp=4.07.0
+      eval `${QP_ROOT}/bin/opam env`
 
 * Install the required external OCaml libraries
 
@@ -182,9 +203,9 @@ EZFIO
 *EZFIO* is the Easy Fortran Input/Output library generator.
 
 * Download EZFIO here : `<https://github.com/scemama/EZFIO/releases/latest>`_ and move
-  the downloaded archive in the :file:`"$QP_ROOT"/external` directory
+  the downloaded archive in the :file:`${QP_ROOT}/external` directory
 
-* Extract the archive, and rename it as :file:`"$QP_ROOT"/external/ezfio`
+* Extract the archive, and rename it as :file:`${QP_ROOT}/external/ezfio`
 
 
 EMSL Basis Sets
@@ -195,9 +216,9 @@ EMSL Basis Sets
 
 * Download the archive
   here : `<https://github.com/LCPQ/EMSL_Basis_Set_Exchange_Local/releases/latest>`_
-  and move the downloaded archive in the :file:`"$QP_ROOT"/external` directory
+  and move the downloaded archive in the :file:`${QP_ROOT}/external` directory
 
-* Extract the archive, and rename it as :file:`"$QP_ROOT"/external/emsl`.
+* Extract the archive, and rename it as :file:`${QP_ROOT}/external/emsl`.
 
 
 Docopt

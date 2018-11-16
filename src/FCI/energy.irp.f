@@ -16,13 +16,12 @@ BEGIN_PROVIDER [ double precision, pt2_E0_denominator, (N_states) ]
      pt2_E0_denominator(1:N_states) = psi_energy(1:N_states)
    else if (h0_type == "Barycentric") then
      pt2_E0_denominator(1:N_states) = barycentric_electronic_energy(1:N_states)
+   else if (h0_type == "Variance") then
+     pt2_E0_denominator(1:N_states) = 1.d0-nuclear_repulsion
    else
      print *,  h0_type, ' not implemented'
      stop
    endif
-! call ezfio_get_full_ci_zmq_energy(pt2_E0_denominator(1))
-! pt2_E0_denominator(1) -= nuclear_repulsion
-! pt2_E0_denominator(1:N_states) = HF_energy - nuclear_repulsion
   call write_double(6,pt2_E0_denominator(1)+nuclear_repulsion, 'PT2 Energy denominator')
  else
    pt2_E0_denominator = -huge(1.d0)

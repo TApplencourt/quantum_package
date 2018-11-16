@@ -66,7 +66,7 @@ source quantum_package.rc
 
 
 function fail() {
-        echo "Please refer to INSTALL.md to install the missing dependencies."
+        echo "Please refer to INSTALL.rst to install the missing dependencies."
         exit 1
 }
 
@@ -124,20 +124,20 @@ if [[ "${PACKAGES}.x" != ".x" ]] ; then
 	echo "# No support will be provided by the quantum package    #"
 	echo "# developers for the installation of external software. #"
 	echo "#                                                       #"
-	echo "# You may refer to the INSTALL.md file for help.        #"
+	echo "# You may refer to the INSTALL.rst file for help.       #"
 	echo "#                                                       #"
 	echo "#########################################################"
         echo ""
 fi
 
-if [[ "${PACKAGES}" == "all" ]] ; then
+if [[ ${PACKAGES} = all ]] ; then
         PACKAGES="ninja irpf90 zeromq f77zmq ocaml ezfio emsl docopt"
 fi
 
 
 for PACKAGE in ${PACKAGES} ; do
 
-    if [[ "${PACKAGE}" == "ninja" ]] ; then
+    if [[ ${PACKAGE} = ninja ]] ; then
 
             download \
               "https://github.com/ninja-build/ninja/releases/download/v1.8.2/ninja-linux.zip" \
@@ -145,7 +145,7 @@ for PACKAGE in ${PACKAGES} ; do
             unzip "${QP_ROOT}"/external/ninja.zip -d "${QP_ROOT}"/bin
 
 
-    elif [[ "${PACKAGE}" == "irpf90" ]] ; then
+    elif [[ ${PACKAGE} = irpf90 ]] ; then
 
             download \
               "https://github.com/scemama/irpf90/archive/v1.7.2.tar.gz" \
@@ -166,7 +166,7 @@ EOF
             cd "${QP_ROOT}"
     
 
-    elif [[ "${PACKAGE}" == "zeromq" ]] ; then
+    elif [[ ${PACKAGE} = zeromq ]] ; then
 
             download \
               "https://github.com/zeromq/libzmq/releases/download/v4.2.5/zeromq-4.2.5.tar.gz" \
@@ -180,7 +180,7 @@ EOF
             cd "${QP_ROOT}"
 
 
-    elif [[ "${PACKAGE}" == "f77zmq" ]] ; then
+    elif [[ ${PACKAGE} = f77zmq ]] ; then
 
             download \
               "https://github.com/scemama/f77_zmq/archive/v4.2.5.tar.gz" \
@@ -196,21 +196,28 @@ EOF
             cd "${QP_ROOT}"
 
     
-    elif [[ "${PACKAGE}" == "ocaml" ]] ; then
+    elif [[ ${PACKAGE} = ocaml ]] ; then
 
             download \
               "https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh" \
-              "${QP_ROOT}"/bin/opam
-            chmod +x "${QP_ROOT}"/bin/opam
-            opam init --root="$QP_ROOT"/external/opam --comp=4.07.0
-            eval `"$QP_ROOT"/bin/opam config env --root="$QP_ROOT"/external/opam`
+              "${QP_ROOT}"/external/opam_installer.sh
+            chmod +x "${QP_ROOT}"/external/opam_installer.sh
+            export OPAMROOT=${OPAMROOT:-${QP_ROOT}/external/opam}
+            rm -f ${QP_ROOT}/bin/opam
+            cat << EOF | ${QP_ROOT}/external/opam_installer.sh --no-backup --fresh
+${QP_ROOT}/bin
+
+
+EOF
+            ${QP_ROOT}/bin/opam init --disable-sandboxing --verbose --yes
+            eval $(${QP_ROOT}/bin/opam env)
             opam install -y cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
 
             
-    elif [[ "${PACKAGE}" == "ezfio" ]] ; then
+    elif [[ ${PACKAGE} = ezfio ]] ; then
 
             download \
-              "https://gitlab.com/scemama/EZFIO/-/archive/master/EZFIO-master.tar.gz"
+              "https://gitlab.com/scemama/EZFIO/-/archive/master/EZFIO-master.tar.gz" \
               "${QP_ROOT}"/external/ezfio.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf ezfio.tar.gz
@@ -218,7 +225,7 @@ EOF
             cd "${QP_ROOT}"
 
             
-    elif [[ "${PACKAGE}" == "emsl" ]] ; then
+    elif [[ ${PACKAGE} = emsl ]] ; then
 
             download \
               "https://github.com/LCPQ/EMSL_Basis_Set_Exchange_Local/archive/v1.0.tar.gz" \
@@ -229,7 +236,7 @@ EOF
             cd "${QP_ROOT}"
 
 
-    elif [[ "${PACKAGE}" == "docopt" ]] ; then
+    elif [[ ${PACKAGE} = docopt ]] ; then
 
             download \
               "https://github.com/docopt/docopt/archive/0.6.2.tar.gz" \
@@ -240,7 +247,7 @@ EOF
             cd "${QP_ROOT}"
 
 
-    elif [[ "${PACKAGE}" == "resultsfile" ]] ; then
+    elif [[ ${PACKAGE} = resultsfile ]] ; then
 
             download \
               "https://gitlab.com/scemama/resultsFile/-/archive/master/resultsFile-master.tar.gz" \
@@ -255,55 +262,55 @@ done
         
 
 NINJA=$(find_exe ninja)
-if [[ "${NINJA}" == "not_found" ]] ; then
+if [[ ${NINJA} = not_found ]] ; then
         echo "Ninja is not installed."
         fail
 fi
 
 IRPF90=$(find_exe irpf90)
-if [[ "${IRPF90}" == "not_found" ]] ; then
+if [[ ${IRPF90} = not_found ]] ; then
         echo "IRPf90 is not installed."
         fail
 fi
 
 ZEROMQ=$(find_lib -lzmq)
-if [[ "${ZEROMQ}" == "not_found" ]] ; then
+if [[ ${ZEROMQ} = not_found ]] ; then
         echo "ZeroMQ is not installed."
         fail
 fi
 
 F77ZMQ=$(find_lib -lzmq -lf77zmq)
-if [[ "${F77ZMQ}" == "not_found" ]] ; then
+if [[ ${F77ZMQ} = not_found ]] ; then
         echo "Fortran binding of ZeroMQ is not installed."
         fail
 fi
 
 OPAM=$(find_exe opam)
-if [[ "${OPAM}" == "not_found" ]] ; then
+if [[ ${OPAM} = not_found ]] ; then
         echo "OPAM package manager is not installed."
         fail
 fi
 
 OCAML=$(find_exe ocaml)
-if [[ "${OCAML}" == "not_found" ]] ; then
+if [[ ${OCAML} = not_found ]] ; then
         echo "OCaml compiler is not installed."
         fail
 fi
 
 EZFIO=$(find_dir "${QP_ROOT}"/external/ezfio)
-if [[ "${EZFIO}" == "not_found" ]] ; then
+if [[ ${EZFIO} = not_found ]] ; then
         echo "EZFIO is not installed."
         fail
 fi
 
 EMSL=$(find_dir "${QP_ROOT}"/external/emsl)
-if [[ "${EMSL}" == "not_found" ]] ; then
+if [[ ${EMSL} = not_found ]] ; then
         echo "EMSL is not installed."
         fail
 fi
 
 DOCOPT=$(find_python_lib docopt)
-if [[ "${DOCOPT}" == "not_found" ]] ; then
+if [[ ${DOCOPT} = not_found ]] ; then
         echo "docopt is not installed."
         fail
 fi

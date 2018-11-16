@@ -1,7 +1,7 @@
 Some research made with the |qp|
 ================================
 
-.. bibliography:: ../research.bib
+.. bibliography:: /research.bib
    :style: unsrt
    :all:
 

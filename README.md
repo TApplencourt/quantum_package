@@ -1,11 +1,3 @@
-## IMPORTANT
-
-If you have problems upgrading to the current version, first try
-`qp_upgrade_ocaml.sh`. If it fails, then consider re-installing everything from
-scratch including the OCaml compiler.  To do this, you will have to remove the
-`quantum_package` directory **and** the `$HOME/.opam` directory as well.
-
-
 
 ![QP](https://raw.githubusercontent.com/LCPQ/quantum_package/master/data/qp.png)     
 [![Build Status](https://travis-ci.org/LCPQ/quantum_package.svg?branch=master)](https://travis-ci.org/LCPQ/quantum_package)
@@ -27,63 +19,7 @@ Demo
 
 # Installation
 
-
-## Requirements
-* Fortran compiler (`ifort` and `gfortran` are tested)
-* Python >= 2.6
-* GNU make
-* Bash
-* Blas/Lapack
-* unzip
-* g++ (For ninja)
-
-## Standard installation
-
-### 1) Configure
-
-    $ ./configure.py <config_file> 
-    
-For example you can type `./configure.py config/gfortran.cfg`
-
-This command has two purposes :
-
- - Download and install all the requirements.
-   Installing OCaml and the Core library may take some time (up to 20min on an old machine).
- - Create the file which contains all the dependencies for the binaries.  
-   It's not a Makefile, but a Ninja file (so don't type `make` it's hopeless, type `ninja` instead)
-
-#### Compilation Flags (`<config_file>`)
-
-`<config_file>` is the path to the file which contains all the compilation flags (optimization flags, Lapack libary, etc). There are two example configure files in  ``$QP_ROOT/config`` : ``ifort.cfg`` and ``gfortran.cfg``.  You can copy these files to create a new file adapted to your architecture. 
-
-### 2) Load environment variables
- 
-    source quantum_package.rc
-    
-This file contains all the environment variables needed by the quantum package both to compile and run. This should also be done before running calculations.
-
-### Optional) Add some modules
-
-```
-Usage:
-       qp_module.py create -n <name> [<children_modules>...]
-       qp_module.py download -n <name> [<path_folder>...]
-       qp_module.py install <name>...
-       qp_module.py list (--installed | --available-local)
-       qp_module.py uninstall <name>
-```
-
- For exemple you can type :
-`qp_module.py install Full_CI`
-
-### 3) Compiling the Fortran
-
-Just type `ninja` if you are in `$QP_ROOT`. The compilation will take approximately 3 min.
-
-### 5) Testing if all is ok
-
-    cd tests ; ./run_tests.sh
-
+See [INSTALL.rst].
 
 # Note on EZFIO.cfg
 

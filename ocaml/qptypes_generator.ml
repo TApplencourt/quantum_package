@@ -223,14 +223,17 @@ end = struct
   type t = 
   | EN
   | Barycentric
+  | Variance
   [@@deriving sexp]
 
   let to_string = function
   | EN -> \"EN\"
+  | Variance -> \"Variance\"
   | Barycentric -> \"Barycentric\"
   let of_string  s = 
     match (String.lowercase_ascii s) with
     | \"en\"  -> EN
+    | \"variance\"  -> Variance
     | \"barycentric\" -> Barycentric
     | _ -> raise (Invalid_argument (\"Wrong Perturbation type : \"^s))
 end

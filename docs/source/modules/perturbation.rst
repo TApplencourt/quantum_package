@@ -104,6 +104,6 @@ EZFIO parameters
 
 .. option:: h0_type
 
-   Type of zeroth-order Hamiltonian [ EN | Barycentric ]
+   Type of zeroth-order Hamiltonian [ EN | Barycentric | Variance ]
 
    Default: EN

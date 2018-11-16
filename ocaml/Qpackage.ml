@@ -134,7 +134,7 @@ let ezfio_work ezfio_file =
   begin
     match Sys.is_directory result with
     | `Yes -> ()
-    | _ -> Unix.mkdir result
+    | _ -> Ezfio.set_work_empty false
   end;
   result
 ;;

@@ -28,6 +28,7 @@ IRPF90_temp
 Makefile.depend
 .ninja_deps
 .ninja_log
+ezfio_interface.irp.f
 tags
 EOF
   

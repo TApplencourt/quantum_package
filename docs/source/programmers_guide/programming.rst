@@ -10,5 +10,5 @@ the `IRPF90`_ code generator. A gitbook can be found `here <http://scemama.gitbo
 .. interface integrals MO => FCIDUMP
 .. TODO : molden module in resultsFile
 
-.. include:: ../work.rst
+.. include:: /work.rst
 

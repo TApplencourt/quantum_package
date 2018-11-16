@@ -19,13 +19,13 @@ then
 fi
 
 
-export EMSL_API_ROOT="${QP_ROOT}"/install/emsl
+export EMSL_API_ROOT="${QP_ROOT}"/external/emsl
 
 tmpfile="$1"
 shift
 
 # Case insensitive basis in input
-#basis=$( ${EMSL_API_ROOT}/EMSL_api.py list_basis | cut -d "'" -f 2 | grep -i "^${1}\$")
+#basis=$( python2 ${EMSL_API_ROOT}/EMSL_api.py list_basis | cut -d "'" -f 2 | grep -i "^${1}\$")
 
 basis="$1"
 shift
@@ -46,4 +46,4 @@ then
   exit 1
 fi
 
-${EMSL_API_ROOT}/EMSL_api.py get_basis_data --treat_l --save --path="${tmpfile}" --basis="${basis}"
+python2 ${EMSL_API_ROOT}/EMSL_api.py get_basis_data --treat_l --save --path="${tmpfile}" --basis="${basis}"

@@ -699,7 +699,11 @@ subroutine fill_buffer_double(i_generator, sp, h1, h2, bannedOrb, banned, fock_d
         variance(istate) = variance(istate) + alpha_h_psi * alpha_h_psi 
         norm(istate) = norm(istate) + coef * coef 
 
-        sum_e_pert = sum_e_pert + e_pert * state_average_weight(istate)
+        if (h0_type /= "Variance") then
+          sum_e_pert = sum_e_pert + e_pert * state_average_weight(istate)
+        else
+          sum_e_pert = sum_e_pert - alpha_h_psi * alpha_h_psi * state_average_weight(istate)
+        endif
       end do
       
       if(sum_e_pert <= buf%mini) then

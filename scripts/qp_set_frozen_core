@@ -42,7 +42,12 @@ def main(arguments):
     ezfio.set_filename(filename)
 
     nb = 0
-    if not ezfio.pseudo_do_pseudo:
+    try:
+        do_pseudo = ezfio.pseudo_do_pseudo
+    except:
+        do_pseudo = False
+
+    if not do_pseudo:
         for charge in ezfio.nuclei_nucl_charge:
             if charge < 5:
                 pass

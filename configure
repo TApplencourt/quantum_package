@@ -202,16 +202,27 @@ EOF
               "https://raw.githubusercontent.com/ocaml/opam/master/shell/install.sh" \
               "${QP_ROOT}"/external/opam_installer.sh
             chmod +x "${QP_ROOT}"/external/opam_installer.sh
-            export OPAMROOT=${OPAMROOT:-${QP_ROOT}/external/opam}
             rm -f ${QP_ROOT}/bin/opam
-            cat << EOF | ${QP_ROOT}/external/opam_installer.sh --no-backup --fresh
+
+            if [[ ${TRAVIS} = true ]] ; then
+                # Special commands for Travis CI
+                export OPAMROOT=${HOME}/.opam
+                cat << EOF | ${QP_ROOT}/external/opam_installer.sh --no-backup 
 ${QP_ROOT}/bin
 
 
 EOF
-            ${QP_ROOT}/bin/opam init --disable-sandboxing --verbose --yes
+            else
+                # Conventional commands
+                export OPAMROOT=${OPAMROOT:-${QP_ROOT}/external/opam}
+                echo ${QP_ROOT}/bin
+                ${QP_ROOT}/external/opam_installer.sh 
+            fi
+
+            ${QP_ROOT}/bin/opam init --disable-sandboxing --verbose --yes --comp=4.07.0
+
             eval $(${QP_ROOT}/bin/opam env)
-            opam install -y cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
+            opam install -y ocamlbuild cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
 
             
     elif [[ ${PACKAGE} = ezfio ]] ; then

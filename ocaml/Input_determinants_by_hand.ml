@@ -100,9 +100,6 @@ end = struct
       Ezfio.get_determinants_n_states (), 
       Ezfio.get_determinants_read_wf  ()
     in
-    Printf.eprintf "nstates : %d\n" n_states;
-    Printf.eprintf "old_nstates : %d\n" old_nstates;
-    Printf.eprintf "read_wf  : %s\n" (if read_wf then "true" else "false");
     if read_wf && old_nstates <> n_states then
       Printf.eprintf "Warning : n_states could not be changed because read_wf is true\n%!"
     else

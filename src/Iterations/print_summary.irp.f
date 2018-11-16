@@ -82,7 +82,7 @@ subroutine print_summary(e_,pt2_,error_,variance_,norm_)
         (e_(i)+ pt2_(i) - (e_(1) + pt2_(1))) * 27.211396641308d0
     enddo
     print *,  '-----'
-    print*, 'Variational + perturbative Energy difference (au | eV)'
+    print*, 'Variational + renormalized perturbative Energy difference (au | eV)'
     do i=2, N_states_p
       print*,'Delta E = ', (e_(i)+ pt2_(i)*f(i) - (e_(1) + pt2_(1)*f(1))), &
         (e_(i)+ pt2_(i)*f(i) - (e_(1) + pt2_(1)*f(1))) * 27.211396641308d0

@@ -134,7 +134,7 @@ let ezfio_work ezfio_file =
   begin
     match Sys.is_directory result with
     | `Yes -> ()
-    | _ -> Ezfio.set_work_empty false
+    | _ -> ( Ezfio.set_file ezfio_file ; Ezfio.set_work_empty false)
   end;
   result
 ;;

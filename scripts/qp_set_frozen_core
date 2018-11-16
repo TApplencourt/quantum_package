@@ -1,36 +1,71 @@
 #!/usr/bin/env python2
 
+
+"""
+Automatically finds n, the number of core electrons. Calls qp_set_mo_class
+setting all MOs as Active, except the n/2 first ones which are set as Core.
+If pseudo-potentials are used, all the MOs are set as Active.
+
+For elements on the right of the periodic table, qp_set_frozen_core will work
+as expected. But for elements on the left, a small core will be chosen. For
+example, a Carbon atom will have 2 core electrons, but a Lithium atom will have
+zero. 
+
+
+Usage:
+      qp_set_frozen_core [-q] <EZFIO_DIRECTORY>
+
+Options:
+    -q        Prints in the standard output the number of core electrons
+
+"""
+
 import os
 import sys
+import os.path
+import shutil
 
-sys.path = [ os.environ["QP_ROOT"]+"/install/EZFIO/Python" ] + sys.path
+try:
+    from docopt import docopt
+    from qp_path import QP_SRC, QP_ROOT, QP_PLUGINS
+except ImportError:
+    print "source .quantum_package.rc"
+    raise
+
+
 from ezfio import ezfio
 
 
-filename = sys.argv[1]
-if filename == '-q': filename = sys.argv[2]
+def main(arguments):
 
-ezfio.set_filename(filename)
+    filename = arguments["<EZFIO_DIRECTORY>"]
+    ezfio.set_filename(filename)
 
-nb = 0
-if not ezfio.pseudo_do_pseudo:
-  for charge in ezfio.nuclei_nucl_charge:
-    if charge < 5:
-        pass
-    elif charge < 13:
-        nb += 1
+    nb = 0
+    if not ezfio.pseudo_do_pseudo:
+        for charge in ezfio.nuclei_nucl_charge:
+            if charge < 5:
+                pass
+            elif charge < 13:
+                nb += 1
+            else:
+                nb += 5
+
+    mo_tot_num = ezfio.mo_basis_mo_tot_num
+
+    if arguments["-q"]:
+        print nb
+        sys.exit(0)
+
+    if nb == 0:
+        os.system( """qp_set_mo_class -act "[1-%d]" %s""" % 
+            (mo_tot_num, sys.argv[1]) )
     else:
-        nb += 5
+        os.system( """qp_set_mo_class -core "[1-%d]" -act "[%d-%d]" %s""" % 
+            (nb, nb+1, mo_tot_num, sys.argv[1]) )
 
-mo_tot_num = ezfio.mo_basis_mo_tot_num
 
-if len(sys.argv)>2:
-  if '-q' in sys.argv:
-    print nb
-    sys.exit(0)
 
-if nb == 0:
-  os.system( """qp_set_mo_class -act "[1-%d]" %s"""%(mo_tot_num, sys.argv[1]) )
-else:
-  os.system( """qp_set_mo_class -core "[1-%d]" -act "[%d-%d]" %s"""%(nb, nb+1, mo_tot_num, sys.argv[1]) )
-
+if __name__ == '__main__':
+  arguments = docopt(__doc__)
+  main(arguments)

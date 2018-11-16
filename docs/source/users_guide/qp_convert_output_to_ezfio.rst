@@ -1,9 +1,9 @@
-.. _qp_convert_output_to_ezfio.py:
+.. _qp_convert_output_to_ezfio:
 
-qp_convert_output_to_ezfio.py
-=============================
+qp_convert_output_to_ezfio
+==========================
 
-.. program:: qp_convert_output_to_ezfio.py
+.. program:: qp_convert_output_to_ezfio
 
 This Python script uses the `resultsFile`_ Python library to gather the
 geometry, |AOs| and |MOs| from output files of |GAMESS| or Gaussian, and creates an
@@ -15,7 +15,7 @@ Usage
 
 .. code:: bash
 
-    qp_convert_output_to_ezfio.py <FILE.out> [-o <EZFIO_DIRECTORY>]
+    qp_convert_output_to_ezfio <FILE.out> [-o <EZFIO_DIRECTORY>]
 
 .. option:: -o <EZFIO_DIRECTORY>
 
@@ -32,6 +32,6 @@ Example
 
 .. code:: bash
 
-   qp_convert_output_to_ezfio.py h2o.out -o h2o
+   qp_convert_output_to_ezfio h2o.out -o h2o
 
 

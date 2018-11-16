@@ -24,7 +24,7 @@ function eq() {
 #    |  ._  o _|_ 
 #   _|_ | | |  |_ 
 #                 
-source ${QP_ROOT}/install/EZFIO/Bash/ezfio.sh
+source ${QP_EZFIO}/Bash/ezfio.sh
 TEST_DIR=${QP_ROOT}/tests/work/
 
 mkdir -p "${TEST_DIR}"

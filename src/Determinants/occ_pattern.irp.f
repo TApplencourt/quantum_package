@@ -110,13 +110,13 @@ recursive subroutine  rec_occ_pattern_to_dets(list_todo,nt,list_a,na,d,nd,sze,am
       stop 'bug in rec_occ_pattern_to_dets'
     endif
     do i=1,na
-      iint = ishft(list_a(i)-1,-bit_kind_shift) + 1
-      ipos = list_a(i)-ishft((iint-1),bit_kind_shift)-1
+      iint = shiftr(list_a(i)-1,bit_kind_shift) + 1
+      ipos = list_a(i)-shiftl((iint-1),bit_kind_shift)-1
       d(iint,1,nd) = ibset( d(iint,1,nd), ipos )
     enddo
     do i=1,nt
-      iint = ishft(list_todo(i)-1,-bit_kind_shift) + 1
-      ipos = list_todo(i)-ishft((iint-1),bit_kind_shift)-1
+      iint = shiftr(list_todo(i)-1,bit_kind_shift) + 1
+      ipos = list_todo(i)-shiftl((iint-1),bit_kind_shift)-1
       d(iint,2,nd) = ibset( d(iint,2,nd), ipos )
     enddo
   else

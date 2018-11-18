@@ -18,16 +18,13 @@
 .. toctree::
    :maxdepth: 1
    :caption: User's guide
+   :glob:
    :hidden:
 
    users_guide/quickstart
    users_guide/configure
    users_guide/interfaces
-   users_guide/qp_create_ezfio_from_xyz
-   users_guide/qp_convert_output_to_ezfio
-   users_guide/qp_edit
-   users_guide/qp_run
-   users_guide/qp_set_mo_class
+   users_guide/qp_*
    users_guide/natural_orbitals
    users_guide/plugins
    users_guide/excited_states
@@ -36,7 +33,7 @@
 
 .. toctree::
    :maxdepth: 1
-   :caption: Modules
+   :caption: Index of Modules
    :glob:
    :hidden:
 

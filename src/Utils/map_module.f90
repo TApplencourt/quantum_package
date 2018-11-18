@@ -26,7 +26,7 @@ module map_module
  integer, parameter             :: key_kind = 8
  integer, parameter             :: map_size_kind = 8
  
- integer,   parameter           :: map_shift = -15
+ integer,   parameter           :: map_shift = 15
  integer*8, parameter           :: map_mask  = ibset(0_8,15)-1_8
 
  type cache_map_type
@@ -95,7 +95,7 @@ subroutine map_init(map,keymax)
   call omp_set_lock(map%lock)
   
   map%n_elements = 0_8
-  map%map_size = ishft(keymax,map_shift)
+  map%map_size = shiftr(keymax,map_shift)
   map%consolidated = .False.
   
   allocate(map%map(0_8:map%map_size),stat=err)
@@ -430,7 +430,7 @@ subroutine map_update(map, key, value, sze, thr)
     i=1
     do while (i<=sze)
       if (key(i) /= 0_8) then
-        idx_cache = ishft(key(i),map_shift)
+        idx_cache = shiftr(key(i),map_shift)
         if (omp_test_lock(map%map(idx_cache)%lock)) then
           local_map%key => map%map(idx_cache)%key
           local_map%value => map%map(idx_cache)%value
@@ -462,7 +462,7 @@ subroutine map_update(map, key, value, sze, thr)
           if (i>sze) then
             i=1
           endif
-          if ( (ishft(key(i),map_shift) /= idx_cache).or.(key(i)==0_8)) then
+          if ( (shiftr(key(i),map_shift) /= idx_cache).or.(key(i)==0_8)) then
             exit
           endif
         enddo
@@ -500,12 +500,12 @@ subroutine map_append(map, key, value, sze)
   integer(cache_key_kind)        :: cache_key
   
   do i=1,sze
-    idx_cache = ishft(key(i),map_shift)
+    idx_cache = shiftr(key(i),map_shift)
     call omp_set_lock(map%map(idx_cache)%lock)
     n_elements = map%map(idx_cache)%n_elements + 1
     ! Assert that the map has a proper size
     if (n_elements == map%map(idx_cache)%map_size) then
-      call cache_map_reallocate(map%map(idx_cache), n_elements+ ishft(n_elements,-1))
+      call cache_map_reallocate(map%map(idx_cache), n_elements+ shiftr(n_elements,1))
     endif
     cache_key = int(iand(key(i),map_mask),2)
     map%map(idx_cache)%value(n_elements) = value(i)
@@ -533,7 +533,7 @@ subroutine map_get(map, key, value)
   integer(cache_map_size_kind)   :: idx
   
   ! index in tha pointers array
-  idx_cache = ishft(key,map_shift)
+  idx_cache = shiftr(key,map_shift)
   !DIR$ FORCEINLINE
   call cache_map_get_interval(map%map(idx_cache), key, value, 1, map%map(idx_cache)%n_elements,idx)
 end
@@ -574,13 +574,13 @@ subroutine map_get_many(map, key, value, sze)
   
   allocate(idx(sze))
   do i=1,sze
-    idx_cache = ishft(key(i),map_shift)
+    idx_cache = shiftr(key(i),map_shift)
     iend = map%map(idx_cache)%n_elements
     !DIR$ FORCEINLINE
     call search_key_big_interval(key(i),map%map(idx_cache)%key, iend, idx(i), 1, iend)
   enddo
   do i=1,sze
-    idx_cache = ishft(key(i),map_shift)
+    idx_cache = shiftr(key(i),map_shift)
     if (idx(i) > 0) then
       value(i) = map%map(idx_cache)%value(idx(i))
     else
@@ -605,7 +605,7 @@ subroutine map_exists_many(map, key, sze)
   idx_cache_prev = -1_map_size_kind
   allocate(idx(sze))
   do i=1,sze
-    idx_cache = ishft(key(i),map_shift)
+    idx_cache = shiftr(key(i),map_shift)
     iend = map%map(idx_cache)%n_elements
     if (idx_cache == idx_cache_prev) then
       if ((idx(i-1) > 0_cache_map_size_kind).and.(idx(i-1) < iend)) then
@@ -620,7 +620,7 @@ subroutine map_exists_many(map, key, sze)
     idx_cache_prev = idx_cache
   enddo
   do i=1,sze
-    idx_cache = ishft(key(i),map_shift)
+    idx_cache = shiftr(key(i),map_shift)
     if (idx(i) <= 0) then
       key(i) = 0_key_kind
     endif
@@ -663,37 +663,37 @@ subroutine search_key_big_interval(key,X,sze,idx,ibegin_in,iend_in)
   iend   = min(iend_in,sze)
   if ((cache_key > X(ibegin)) .and. (cache_key < X(iend))) then
     
-    istep = ishft(iend-ibegin,-1)
+    istep = shiftr(iend-ibegin,1)
     idx = ibegin + istep
     do while (istep > 64)
       idx = ibegin + istep
       ! TODO : Cache misses 
       if (cache_key < X(idx)) then
         iend = idx
-        istep = ishft(idx-ibegin,-1)
+        istep = shiftr(idx-ibegin,1)
         idx = ibegin + istep
         if (cache_key < X(idx)) then
           iend = idx
-          istep = ishft(idx-ibegin,-1)
+          istep = shiftr(idx-ibegin,1)
           cycle
         else if (cache_key > X(idx)) then
           ibegin = idx
-          istep = ishft(iend-idx,-1)
+          istep = shiftr(iend-idx,1)
           cycle
         else
           return
         endif
       else if (cache_key > X(idx)) then
         ibegin = idx
-        istep = ishft(iend-idx,-1)
+        istep = shiftr(iend-idx,1)
         idx = idx + istep
         if (cache_key < X(idx)) then
           iend = idx
-          istep = ishft(idx-ibegin,-1)
+          istep = shiftr(idx-ibegin,1)
           cycle
         else if (cache_key > X(idx)) then
           ibegin = idx
-          istep = ishft(iend-idx,-1)
+          istep = shiftr(iend-idx,1)
           cycle
         else
           return
@@ -771,21 +771,21 @@ subroutine search_key_value_big_interval(key,value,X,Y,sze,idx,ibegin_in,iend_in
   iend   = min(iend_in,sze)
   if ((cache_key > X(ibegin)) .and. (cache_key < X(iend))) then
     
-    istep = ishft(iend-ibegin,-1)
+    istep = shiftr(iend-ibegin,1)
     idx = ibegin + istep
     do while (istep > 64)
       idx = ibegin + istep
       if (cache_key < X(idx)) then
         iend = idx
-        istep = ishft(idx-ibegin,-1)
+        istep = shiftr(idx-ibegin,1)
         idx = ibegin + istep
         if (cache_key < X(idx)) then
           iend = idx
-          istep = ishft(idx-ibegin,-1)
+          istep = shiftr(idx-ibegin,1)
           cycle
         else if (cache_key > X(idx)) then
           ibegin = idx
-          istep = ishft(iend-idx,-1)
+          istep = shiftr(iend-idx,1)
           cycle
         else
           value = Y(idx)
@@ -793,15 +793,15 @@ subroutine search_key_value_big_interval(key,value,X,Y,sze,idx,ibegin_in,iend_in
         endif
       else if (cache_key > X(idx)) then
         ibegin = idx
-        istep = ishft(iend-idx,-1)
+        istep = shiftr(iend-idx,1)
         idx = idx + istep
         if (cache_key < X(idx)) then
           iend = idx
-          istep = ishft(idx-ibegin,-1)
+          istep = shiftr(idx-ibegin,1)
           cycle
         else if (cache_key > X(idx)) then
           ibegin = idx
-          istep = ishft(iend-idx,-1)
+          istep = shiftr(iend-idx,1)
           cycle
         else
           value = Y(idx)
@@ -890,7 +890,7 @@ subroutine get_cache_map(map,map_idx,keys,values,n_elements)
   integer(cache_map_size_kind)   :: i
   integer(key_kind)              :: shift
   
-  shift = ishft(map_idx,-map_shift)
+  shift = shiftl(map_idx,map_shift)
   
   n_elements = map%map(map_idx)%n_elements
   do i=1,n_elements

@@ -43,7 +43,7 @@ subroutine get_excitation_degree(key1,key2,degree,Nint)
 
     case default
       integer :: lmax
-      lmax = ishft(Nint,1)
+      lmax = shiftl(Nint,1)
       do l=1,lmax
         xorvec(l) = xor( key1(l), key2(l))
       enddo
@@ -51,7 +51,7 @@ subroutine get_excitation_degree(key1,key2,degree,Nint)
   
   end select
 
-  degree = ishft(degree,-1)
+  degree = shiftr(degree,1)
   
 end
 
@@ -239,22 +239,22 @@ subroutine get_double_excitation(det1,det2,exc,phase,Nint)
         ASSERT (low >= 0)
         ASSERT (high > 0)
 
-        k = ishft(high,-bit_kind_shift)+1
-        j = ishft(low,-bit_kind_shift)+1
+        k = shiftr(high,bit_kind_shift)+1
+        j = shiftr(low,bit_kind_shift)+1
         m = iand(high,bit_kind_size-1)
         n = iand(low,bit_kind_size-1)
         
         if (j==k) then
           nperm = nperm + popcnt(iand(det1(j,ispin),           &
-              iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                    not(ishft(1_bit_kind,n))+1_bit_kind)) )
+              iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                    not(shiftl(1_bit_kind,n))+1_bit_kind)) )
         else
           nperm = nperm + popcnt(                                    &
                iand(det1(j,ispin),                                   &
                     iand(not(0_bit_kind),                            &
-                         (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                         (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
                + popcnt(iand(det1(k,ispin),                          &
-                             (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                             (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
 
           do i=j+1,k-1
             nperm = nperm + popcnt(det1(i,ispin))
@@ -271,22 +271,22 @@ subroutine get_double_excitation(det1,det2,exc,phase,Nint)
           ASSERT (low > 0)
           ASSERT (high > 0)
 
-          k = ishft(high,-bit_kind_shift)+1
-          j = ishft(low,-bit_kind_shift)+1
+          k = shiftr(high,bit_kind_shift)+1
+          j = shiftr(low,bit_kind_shift)+1
           m = iand(high,bit_kind_size-1)
           n = iand(low,bit_kind_size-1)
           
           if (j==k) then
             nperm = nperm + popcnt(iand(det1(j,ispin),           &
-                iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                    not(ishft(1_bit_kind,n))+1_bit_kind)) )
+                iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                    not(shiftl(1_bit_kind,n))+1_bit_kind)) )
           else
             nperm = nperm + popcnt(                                    &
                  iand(det1(j,ispin),                                   &
                       iand(not(0_bit_kind),                            &
-                           (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                           (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
                  + popcnt(iand(det1(k,ispin),                          &
-                               (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                               (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
     
             do i=j+1,k-1
               nperm = nperm + popcnt(det1(i,ispin))
@@ -322,12 +322,12 @@ subroutine get_phasemask_bit(det1, pm, Nint)
   do ispin=1,2
   tmp = 0_8
   do i=1,Nint
-    pm(i,ispin) = xor(det1(i,ispin), ishft(det1(i,ispin), 1))
-    pm(i,ispin) = xor(pm(i,ispin), ishft(pm(i,ispin), 2))
-    pm(i,ispin) = xor(pm(i,ispin), ishft(pm(i,ispin), 4))
-    pm(i,ispin) = xor(pm(i,ispin), ishft(pm(i,ispin), 8))
-    pm(i,ispin) = xor(pm(i,ispin), ishft(pm(i,ispin), 16))
-    pm(i,ispin) = xor(pm(i,ispin), ishft(pm(i,ispin), 32))
+    pm(i,ispin) = xor(det1(i,ispin), shiftl(det1(i,ispin), 1))
+    pm(i,ispin) = xor(pm(i,ispin), shiftl(pm(i,ispin), 2))
+    pm(i,ispin) = xor(pm(i,ispin), shiftl(pm(i,ispin), 4))
+    pm(i,ispin) = xor(pm(i,ispin), shiftl(pm(i,ispin), 8))
+    pm(i,ispin) = xor(pm(i,ispin), shiftl(pm(i,ispin), 16))
+    pm(i,ispin) = xor(pm(i,ispin), shiftl(pm(i,ispin), 32))
     pm(i,ispin) = xor(pm(i,ispin), tmp)
     if(iand(popcnt(det1(i,ispin)), 1) == 1) tmp = not(tmp)
   end do
@@ -393,22 +393,22 @@ subroutine get_mono_excitation(det1,det2,exc,phase,Nint)
       ASSERT (low >= 0)
       ASSERT (high > 0)
 
-      k = ishft(high,-bit_kind_shift)+1
-      j = ishft(low,-bit_kind_shift)+1
+      k = shiftr(high,bit_kind_shift)+1
+      j = shiftr(low,bit_kind_shift)+1
       m = iand(high,bit_kind_size-1)
       n = iand(low,bit_kind_size-1)
       
       if (j==k) then
         nperm = nperm + popcnt(iand(det1(j,ispin),           &
-            iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+            iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
       else
         nperm = nperm + popcnt(                                    &
              iand(det1(j,ispin),                                   &
                   iand(not(0_bit_kind),                            &
-                       (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                       (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
              + popcnt(iand(det1(k,ispin),                          &
-                           (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                           (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
 
         do i=j+1,k-1
           nperm = nperm + popcnt(det1(i,ispin))
@@ -1428,7 +1428,7 @@ subroutine get_excitation_degree_vector_mono(key1,key2,degree,Nint,sze,idx)
       if (d > 2) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1445,7 +1445,7 @@ subroutine get_excitation_degree_vector_mono(key1,key2,degree,Nint,sze,idx)
       if (d > 2) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -1464,7 +1464,7 @@ subroutine get_excitation_degree_vector_mono(key1,key2,degree,Nint,sze,idx)
       if (d > 2) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -1483,7 +1483,7 @@ subroutine get_excitation_degree_vector_mono(key1,key2,degree,Nint,sze,idx)
       if (d > 2) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -1526,7 +1526,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange(key1,key2,degree,Nint,s
       if (d > 4)cycle
       if (d ==4)then  
        if(popcnt(xor(key_tmp(1,1),key_tmp(1,2))) == 0)then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else 
@@ -1534,7 +1534,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange(key1,key2,degree,Nint,s
        endif
 !      pause
       else 
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1584,7 +1584,7 @@ subroutine get_excitation_degree_vector_double_alpha_beta(key1,key2,degree,Nint,
       degree_alpha = popcnt(key_tmp(1,1))
       degree_beta  = popcnt(key_tmp(1,2))
       if(degree_alpha .ge.3 .or. degree_beta .ge.3 )cycle !! no double excitations of same spin
-      degree(l) = ishft(d,-1)
+      degree(l) = shiftr(d,1)
       idx(l) = i
       l = l+1
     enddo
@@ -1604,7 +1604,7 @@ subroutine get_excitation_degree_vector_double_alpha_beta(key1,key2,degree,Nint,
       degree_alpha = popcnt(key_tmp(1,1)) + popcnt(key_tmp(2,1)) 
       degree_beta  = popcnt(key_tmp(1,2)) + popcnt(key_tmp(2,2)) 
       if(degree_alpha .ge.3 .or. degree_beta .ge.3 )cycle !! no double excitations of same spin
-      degree(l) = ishft(d,-1)
+      degree(l) = shiftr(d,1)
       idx(l) = i
         l = l+1
     enddo
@@ -1629,7 +1629,7 @@ subroutine get_excitation_degree_vector_double_alpha_beta(key1,key2,degree,Nint,
       degree_alpha = popcnt(key_tmp(1,1)) + popcnt(key_tmp(2,1)) + popcnt(key_tmp(3,1)) 
       degree_beta  = popcnt(key_tmp(1,2)) + popcnt(key_tmp(2,2)) + popcnt(key_tmp(3,2)) 
       if(degree_alpha .ge.3 .or. degree_beta .ge.3 )cycle !! no double excitations of same spin
-      degree(l) = ishft(d,-1)
+      degree(l) = shiftr(d,1)
       idx(l) = i
       l = l+1
     enddo
@@ -1651,7 +1651,7 @@ subroutine get_excitation_degree_vector_double_alpha_beta(key1,key2,degree,Nint,
         degree_beta  += popcnt(key_tmp(m,2)) 
       enddo
       if(degree_alpha .ge.3 .or. degree_beta .ge.3 )cycle !! no double excitations of same spin
-      degree(l) = ishft(d,-1)
+      degree(l) = shiftr(d,1)
       idx(l) = i
       l = l+1
     enddo
@@ -1706,11 +1706,11 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
       if (d > 4)cycle
       if (d ==4)then  
        if(exchange_1 .eq. 0 ) then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else if (exchange_1 .eq. 2 .and. exchange_2.eq.2)then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else 
@@ -1718,7 +1718,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
        endif
 !      pause
       else 
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1738,11 +1738,11 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
       if (d > 4)cycle
       if (d ==4)then  
        if(exchange_1 .eq. 0 ) then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else if (exchange_1 .eq. 2 .and. exchange_2.eq.2)then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else 
@@ -1750,7 +1750,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
        endif
 !      pause
       else 
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1775,11 +1775,11 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
       if (d > 4)cycle
       if (d ==4)then  
        if(exchange_1 .eq. 0 ) then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else if (exchange_1 .eq. 2 .and. exchange_2.eq.2)then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else 
@@ -1787,7 +1787,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
        endif
 !      pause
       else 
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1810,11 +1810,11 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
       if (d > 4)cycle
       if (d ==4)then  
        if(exchange_1 .eq. 0 ) then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else if (exchange_1 .eq. 2 .and. exchange_2.eq.2)then
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
        else 
@@ -1822,7 +1822,7 @@ subroutine get_excitation_degree_vector_mono_or_exchange_verbose(key1,key2,degre
        endif
 !      pause
       else 
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1859,7 +1859,7 @@ subroutine get_excitation_degree_vector(key1,key2,degree,Nint,sze,idx)
       if (d > 4) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l) = i
         l = l+1
       endif
@@ -1875,7 +1875,7 @@ subroutine get_excitation_degree_vector(key1,key2,degree,Nint,sze,idx)
       if (d > 4) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -1893,7 +1893,7 @@ subroutine get_excitation_degree_vector(key1,key2,degree,Nint,sze,idx)
       if (d > 4) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -1910,7 +1910,7 @@ subroutine get_excitation_degree_vector(key1,key2,degree,Nint,sze,idx)
       if (d > 4) then
         cycle
       else
-        degree(l) = ishft(d,-1)
+        degree(l) = shiftr(d,1)
         idx(l)    = i
         l         = l+1
       endif
@@ -2075,9 +2075,9 @@ subroutine a_operator(iorb,ispin,key,hjj,Nint,na,nb)
   ASSERT (ispin < 3)
   ASSERT (Nint > 0)
   
-  k = ishft(iorb-1,-bit_kind_shift)+1
+  k = shiftr(iorb-1,bit_kind_shift)+1
   ASSERT (k>0)
-  l = iorb - ishft(k-1,bit_kind_shift)-1
+  l = iorb - shiftl(k-1,bit_kind_shift)-1
   key(k,ispin) = ibclr(key(k,ispin),l)
   other_spin = iand(ispin,1)+1
   
@@ -2126,9 +2126,9 @@ subroutine ac_operator(iorb,ispin,key,hjj,Nint,na,nb)
   ASSERT (tmp(1) == elec_alpha_num)
   ASSERT (tmp(2) == elec_beta_num)
   
-  k = ishft(iorb-1,-bit_kind_shift)+1
+  k = shiftr(iorb-1,bit_kind_shift)+1
   ASSERT (k >0)
-  l = iorb - ishft(k-1,bit_kind_shift)-1
+  l = iorb - shiftl(k-1,bit_kind_shift)-1
   ASSERT (l >= 0)
   key(k,ispin) = ibset(key(k,ispin),l)
   other_spin = iand(ispin,1)+1
@@ -2197,22 +2197,22 @@ subroutine get_double_excitation_phase_new(det1,det2,exc,phase,Nint)
         ASSERT (low >= 0)
         ASSERT (high > 0)
 
-        k = ishft(high,-bit_kind_shift)
-        j = ishft(low,-bit_kind_shift)
+        k = shiftr(high,bit_kind_shift)
+        j = shiftr(low,bit_kind_shift)
         m = iand(high,bit_kind_size-1)
         n = iand(low,bit_kind_size-1)
         
         if (j==k) then
           nperm = nperm + popcnt(iand(det1(j,ispin),           &
-              iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+              iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
         else
           nperm = nperm + popcnt(                                    &
                iand(det1(j,ispin),                                   &
                     iand(not(0_bit_kind),                            &
-                         (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                         (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
                + popcnt(iand(det1(k,ispin),                          &
-                             (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                             (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
 
           do i=j+1,k-1
             nperm = nperm + popcnt(det1(i,ispin))
@@ -2229,22 +2229,22 @@ subroutine get_double_excitation_phase_new(det1,det2,exc,phase,Nint)
           ASSERT (low > 0)
           ASSERT (high > 0)
 
-          k = ishft(high,-bit_kind_shift)
-          j = ishft(low,-bit_kind_shift)
+          k = shiftr(high,bit_kind_shift)
+          j = shiftr(low,bit_kind_shift)
           m = iand(high,bit_kind_size-1)
           n = iand(low,bit_kind_size-1)
           
           if (j==k) then
             nperm = nperm + popcnt(iand(det1(j,ispin),           &
-                iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+                iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
           else
             nperm = nperm + popcnt(                                    &
                  iand(det1(j,ispin),                                   &
                       iand(not(0_bit_kind),                            &
-                           (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                           (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
                  + popcnt(iand(det1(k,ispin),                          &
-                               (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                               (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
     
             do i=j+1,k-1
               nperm = nperm + popcnt(det1(i,ispin))
@@ -2300,10 +2300,10 @@ subroutine get_double_excitation_phase(det1,det2,exc,phase,Nint)
         high = max(exc(1,1,ispin), exc(1,2,ispin))
 
         ASSERT (low > 0)
-        j = ishft(low-1,-bit_kind_shift)+1   ! Find integer in array(Nint)
+        j = shiftr(low-1,bit_kind_shift)+1   ! Find integer in array(Nint)
         n = iand(low-1,bit_kind_size-1)+1        ! mod(low,bit_kind_size)
         ASSERT (high > 0)
-        k = ishft(high-1,-bit_kind_shift)+1
+        k = shiftr(high-1,bit_kind_shift)+1
         m = iand(high-1,bit_kind_size-1)+1
 
         if (j==k) then
@@ -2328,10 +2328,10 @@ subroutine get_double_excitation_phase(det1,det2,exc,phase,Nint)
           high = max(exc(i,1,ispin), exc(i,2,ispin))
 
           ASSERT (low > 0)
-          j = ishft(low-1,-bit_kind_shift)+1   ! Find integer in array(Nint)
+          j = shiftr(low-1,bit_kind_shift)+1   ! Find integer in array(Nint)
           n = iand(low-1,bit_kind_size-1)+1        ! mod(low,bit_kind_size)
           ASSERT (high > 0)
-          k = ishft(high-1,-bit_kind_shift)+1
+          k = shiftr(high-1,bit_kind_shift)+1
           m = iand(high-1,bit_kind_size-1)+1
 
           if (j==k) then
@@ -2477,7 +2477,7 @@ subroutine get_excitation_degree_spin(key1,key2,degree,Nint)
   
   end select
 
-  degree = ishft(degree,-1)
+  degree = shiftr(degree,1)
   
 end
 
@@ -2604,7 +2604,7 @@ subroutine get_excitation_degree_spin_new(key1,key2,degree,Nint)
   
   end select
 
-  degree = ishft(degree,-1)
+  degree = shiftr(degree,1)
   
 end
 
@@ -2752,22 +2752,22 @@ subroutine get_double_excitation_spin_new(det1,det2,exc,phase,Nint)
       ASSERT (low >= 0)
       ASSERT (high > 0)
 
-      k = ishft(high,-bit_kind_shift)
-      j = ishft(low,-bit_kind_shift)
+      k = shiftr(high,bit_kind_shift)
+      j = shiftr(low,bit_kind_shift)
       m = iand(high,bit_kind_size-1)
       n = iand(low,bit_kind_size-1)
       
       if (j==k) then
         nperm = nperm + popcnt(iand(det1(j),                 &
-            iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+            iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
       else
         nperm = nperm + popcnt(                                    &
              iand(det1(j),                                         &
                   iand(not(0_bit_kind),                            &
-                       (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                       (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
              + popcnt(iand(det1(k),                                &
-                           (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                           (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
 
         do i=j+1,k-1
           nperm = nperm + popcnt(det1(i))
@@ -2784,22 +2784,22 @@ subroutine get_double_excitation_spin_new(det1,det2,exc,phase,Nint)
         ASSERT (low > 0)
         ASSERT (high > 0)
 
-        k = ishft(high,-bit_kind_shift)
-        j = ishft(low,-bit_kind_shift)
+        k = shiftr(high,bit_kind_shift)
+        j = shiftr(low,bit_kind_shift)
         m = iand(high,bit_kind_size-1)
         n = iand(low,bit_kind_size-1)
         
         if (j==k) then
           nperm = nperm + popcnt(iand(det1(j),                 &
-              iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+              iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
         else
           nperm = nperm + popcnt(                                    &
                iand(det1(j),                                         &
                     iand(not(0_bit_kind),                            &
-                         (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                         (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
                + popcnt(iand(det1(k),                                &
-                             (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                             (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
   
           do i=j+1,k-1
             nperm = nperm + popcnt(det1(i))
@@ -2877,22 +2877,22 @@ subroutine get_mono_excitation_spin_new(det1,det2,exc,phase,Nint)
     ASSERT (low >= 0)
     ASSERT (high > 0)
 
-    k = ishft(high,-bit_kind_shift)
-    j = ishft(low,-bit_kind_shift)
+    k = shiftr(high,bit_kind_shift)
+    j = shiftr(low,bit_kind_shift)
     m = iand(high,bit_kind_size-1)
     n = iand(low,bit_kind_size-1)
     
     if (j==k) then
       nperm = nperm + popcnt(iand(det1(j),                 &
-          iand( ishft(1_bit_kind,m)-1_bit_kind,            &
-                  not(ishft(1_bit_kind,n))+1_bit_kind)) )
+          iand( shiftl(1_bit_kind,m)-1_bit_kind,            &
+                  not(shiftl(1_bit_kind,n))+1_bit_kind)) )
     else
       nperm = nperm + popcnt(                                    &
            iand(det1(j),                                         &
                 iand(not(0_bit_kind),                            &
-                     (not(ishft(1_bit_kind,n)) + 1_bit_kind) ))) &
+                     (not(shiftl(1_bit_kind,n)) + 1_bit_kind) ))) &
            + popcnt(iand(det1(k),                                &
-                         (ishft(1_bit_kind,m) - 1_bit_kind ) ))
+                         (shiftl(1_bit_kind,m) - 1_bit_kind ) ))
 
       do i=j+1,k-1
         nperm = nperm + popcnt(det1(i))
@@ -2972,10 +2972,10 @@ subroutine get_double_excitation_spin(det1,det2,exc,phase,Nint)
       high = max(exc(1,1), exc(1,2))
       
       ASSERT (low > 0)
-      j = ishft(low-1,-bit_kind_shift)+1   ! Find integer in array(Nint)
+      j = shiftr(low-1,bit_kind_shift)+1   ! Find integer in array(Nint)
       n = iand(low-1,bit_kind_size-1)+1        ! mod(low,bit_kind_size)
       ASSERT (high > 0)
-      k = ishft(high-1,-bit_kind_shift)+1
+      k = shiftr(high-1,bit_kind_shift)+1
       m = iand(high-1,bit_kind_size-1)+1
       
       if (j==k) then
@@ -3000,10 +3000,10 @@ subroutine get_double_excitation_spin(det1,det2,exc,phase,Nint)
         high = max(exc(i,1), exc(i,2))
         
         ASSERT (low > 0)
-        j = ishft(low-1,-bit_kind_shift)+1   ! Find integer in array(Nint)
+        j = shiftr(low-1,bit_kind_shift)+1   ! Find integer in array(Nint)
         n = iand(low-1,bit_kind_size-1)+1        ! mod(low,bit_kind_size)
         ASSERT (high > 0)
-        k = ishft(high-1,-bit_kind_shift)+1
+        k = shiftr(high-1,bit_kind_shift)+1
         m = iand(high-1,bit_kind_size-1)+1
         
         if (j==k) then
@@ -3089,10 +3089,10 @@ subroutine get_mono_excitation_spin(det1,det2,exc,phase,Nint)
     high = max(exc(1,1),exc(1,2))
     
     ASSERT (low > 0)
-    j = ishft(low-1,-bit_kind_shift)+1   ! Find integer in array(Nint)
+    j = shiftr(low-1,bit_kind_shift)+1   ! Find integer in array(Nint)
     n = iand(low-1,bit_kind_size-1)+1      ! mod(low,bit_kind_size)
     ASSERT (high > 0)
-    k = ishft(high-1,-bit_kind_shift)+1
+    k = shiftr(high-1,bit_kind_shift)+1
     m = iand(high-1,bit_kind_size-1)+1
     if (j==k) then
       nperm = popcnt(iand(det1(j),                                   &

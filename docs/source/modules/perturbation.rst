@@ -98,7 +98,7 @@ EZFIO parameters
 
    The selection process stops at a fixed correlation ratio (useful for getting same accuracy between molecules).
 
-   Defined as :math:`\frac{E_{CI}-E_{HF}} {E_{CI}+E_{PT2} - E_{HF}}`.
+   Defined as :math:`{E_{CI}-E_{HF}}/{E_{CI}+E_{PT2} - E_{HF}}`.
 
    Default: 1.00
 

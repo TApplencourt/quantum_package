@@ -1,10 +1,10 @@
 .. _qp_edit:
 
-.. TODO
-
 =======
 qp_edit
 =======
+
+.. TODO
 
 This command reads the content of the |EZFIO| directory and creates a temporary
 file containing the data. The data is presented as a *ReStructured Text* (rst)

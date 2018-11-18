@@ -9,13 +9,13 @@ subroutine mo_bielec_integrals_index(i,j,k,l,i1)
   integer(key_kind)              :: p,q,r,s,i2
   p = min(i,k)
   r = max(i,k)
-  p = p+ishft(r*r-r,-1)
+  p = p+shiftr(r*r-r,1)
   q = min(j,l)
   s = max(j,l)
-  q = q+ishft(s*s-s,-1)
+  q = q+shiftr(s*s-s,1)
   i1 = min(p,q)
   i2 = max(p,q)
-  i1 = i1+ishft(i2*i2-i2,-1)
+  i1 = i1+shiftr(i2*i2-i2,1)
 end
 
 
@@ -420,7 +420,7 @@ subroutine add_integrals_to_map(mask_ijkl)
       if (abs(c) < thr_coef) then
         cycle
       endif
-      j1 = ishft((l*l-l),-1)
+      j1 = shiftr((l*l-l),1)
       do j0 = 1, n_j
         j = list_ijkl(j0,2)
         if (j > l)  then
@@ -429,7 +429,7 @@ subroutine add_integrals_to_map(mask_ijkl)
         j1 += 1
         do k0 = 1, n_k
           k = list_ijkl(k0,3)
-          i1 = ishft((k*k-k),-1)
+          i1 = shiftr((k*k-k),1)
           if (i1<=j1) then
             continue
           else
@@ -712,7 +712,7 @@ subroutine add_integrals_to_map_three_indices(mask_ijk)
       endif
       do k0 = 1, n_k
         k = list_ijkl(k0,3)
-        i1 = ishft((k*k-k),-1)
+        i1 = shiftr((k*k-k),1)
         bielec_tmp_1 = 0.d0
         j0 = l0
         j = list_ijkl(j0,2)
@@ -756,7 +756,7 @@ subroutine add_integrals_to_map_three_indices(mask_ijk)
       endif
       do k0 = 1, n_k
         k = list_ijkl(k0,3)
-        i1 = ishft((k*k-k),-1)
+        i1 = shiftr((k*k-k),1)
         bielec_tmp_1 = 0.d0
         j0 = k0
         j = list_ijkl(k0,2)
@@ -994,7 +994,7 @@ subroutine add_integrals_to_map_no_exit_34(mask_ijkl)
       if (abs(c) < thr_coef) then
         cycle
       endif
-      j1 = ishft((l*l-l),-1)
+      j1 = shiftr((l*l-l),1)
       do j0 = 1, n_j
         j = list_ijkl(j0,2)
         if (j > l)  then
@@ -1003,7 +1003,7 @@ subroutine add_integrals_to_map_no_exit_34(mask_ijkl)
         j1 += 1
         do k0 = 1, n_k
           k = list_ijkl(k0,3)
-          i1 = ishft((k*k-k),-1)
+          i1 = shiftr((k*k-k),1)
           bielec_tmp_1 = 0.d0
           do i0 = 1, n_i
             i = list_ijkl(i0,1)

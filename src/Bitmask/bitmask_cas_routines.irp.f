@@ -548,8 +548,8 @@ logical function is_i_in_virtual(i)
  integer :: accu
  is_i_in_virtual = .False.
  key= 0_bit_kind
- k = ishft(i-1,-bit_kind_shift)+1
- j = i-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i-1,bit_kind_shift)+1
+ j = i-shiftl(k-1,bit_kind_shift)-1
  key(k) = ibset(key(k),j)
  accu = 0
  do k = 1, N_int

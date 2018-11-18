@@ -424,7 +424,7 @@ double precision function F_integral(n,p)
     F_integral = sqpi * sqrt_p
     return
   endif
-  F_integral = sqpi * 0.5d0**n * sqrt_p**(n+1) * fact(n)/fact(ishft(n,-1))
+  F_integral = sqpi * 0.5d0**n * sqrt_p**(n+1) * fact(n)/fact(shiftr(n,1))
 end
 
 
@@ -501,7 +501,7 @@ double precision function rint_sum(n_pt_out,rho,d1)
     endif
     
     do i=2,n_pt_out,2
-      n = ishft(i,-1)
+      n = shiftr(i,1)
       rint_sum = rint_sum + d1(i)*rint1(n,rho)
     enddo
     
@@ -526,7 +526,7 @@ double precision function rint_sum(n_pt_out,rho,d1)
       di = di+2.d0
     enddo
     do i=42,n_pt_out,2
-      n = ishft(i,-1)
+      n = shiftr(i,1)
       rint_sum = rint_sum + d1(i)*rint_large_n(n,rho)
     enddo
     
@@ -603,7 +603,7 @@ double precision function rint1(n,rho)
   rho_tmp = 1.d0
   do k=1,20
     rho_tmp = -rho_tmp*rho
-    diff=rho_tmp*fact_inv(k)*inv_int(ishft(k+n,1)+1)
+    diff=rho_tmp*fact_inv(k)*inv_int(shiftl(k+n,1)+1)
     rint1=rint1+diff
     if (dabs(diff) > eps) then
       cycle

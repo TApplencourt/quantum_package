@@ -116,10 +116,11 @@ from which the |kalpha| are generated.
 We then define **selector** determinants, a truncated wave function 
 used in the computation of |ealpha|.
 
-For calculations in the |FCI| space, the determinants are sorted by
-decreasing `|c_I|^2`, and thresholds are used on the squared norm of the wave
-function. The default is to use :ref:`threshold_generators` = 0.99 for the
-generators, and :ref:`threshold_selectors` = 0.999 for the selectors.
+For calculations in the |FCI| space, the determinants are sorted by decreasing
+`|c_I|^2`, and thresholds are used on the squared norm of the wave function.
+The default is to use :option:`determinants threshold_generators` = 0.99 for
+the generators, and :option:`determinants threshold_selectors` = 0.999 for the
+selectors.
 
 The computation of |EPT| using a truncated wave function is biased,
 so if an accurate estimate of the |FCI| energy is desired, it is preferable

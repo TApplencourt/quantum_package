@@ -459,7 +459,7 @@ subroutine filter_connected_i_H_psi0_SC2(key1,key2,Nint,sze,idx,idx_repeat)
     degree = degree+ popcnt(xor( ref_bitmask(m,1), key2(m,1))) +            &
         popcnt(xor( ref_bitmask(m,2), key2(m,2)))
   enddo
-  degree = ishft(degree,-1)
+  degree = shiftr(degree,1)
   
   l_repeat=1
   l=1

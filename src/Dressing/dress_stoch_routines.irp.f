@@ -149,7 +149,7 @@ END_PROVIDER
 !  end do
 !  dress_M_m(dress_N_cp_max) = N_det_generators+1
   do i=1, dress_N_cp_max-1
-    dress_M_m(i) = ishft(1,i+3)
+    dress_M_m(i) = shiftl(1,i+3)
   end do
   dress_M_m(dress_N_cp_max) = N_det_generators+1
 
@@ -634,7 +634,7 @@ integer function dress_find_sample(v, w)
   r = N_det_generators
 
   do while(r-l > 1)
-    i = ishft(r+l,-1)
+    i = shiftr(r+l,1)
     if(w(i) < v) then
       l = i
     else

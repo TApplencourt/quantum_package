@@ -24,13 +24,13 @@ subroutine bielec_integrals_index(i,j,k,l,i1)
   integer(key_kind)              :: p,q,r,s,i2
   p = min(i,k)
   r = max(i,k)
-  p = p+ishft(r*r-r,-1)
+  p = p+shiftr(r*r-r,1)
   q = min(j,l)
   s = max(j,l)
-  q = q+ishft(s*s-s,-1)
+  q = q+shiftr(s*s-s,1)
   i1 = min(p,q)
   i2 = max(p,q)
-  i1 = i1+ishft(i2*i2-i2,-1)
+  i1 = i1+shiftr(i2*i2-i2,1)
 end
 
 subroutine bielec_integrals_index_reverse(i,j,k,l,i1)
@@ -42,10 +42,10 @@ subroutine bielec_integrals_index_reverse(i,j,k,l,i1)
   i = 0
   i2   = ceiling(0.5d0*(dsqrt(8.d0*dble(i1)+1.d0)-1.d0))
   l(1) = ceiling(0.5d0*(dsqrt(8.d0*dble(i2)+1.d0)-1.d0))
-  i3   = i1 - ishft(i2*i2-i2,-1)
+  i3   = i1 - shiftr(i2*i2-i2,1)
   k(1) = ceiling(0.5d0*(dsqrt(8.d0*dble(i3)+1.d0)-1.d0))
-  j(1) = int(i2 - ishft(l(1)*l(1)-l(1),-1),4)
-  i(1) = int(i3 - ishft(k(1)*k(1)-k(1),-1),4)
+  j(1) = int(i2 - shiftr(l(1)*l(1)-l(1),1),4)
+  i(1) = int(i3 - shiftr(k(1)*k(1)-k(1),1),4)
 
               !ijkl
   i(2) = i(1) !ilkj
@@ -139,9 +139,9 @@ BEGIN_PROVIDER [ double precision, ao_integrals_cache, (0:64*64*64*64) ]
          !DIR$ FORCEINLINE
          call map_get(ao_integrals_map,idx,integral)
          ii = l-ao_integrals_cache_min
-         ii = ior( ishft(ii,6), k-ao_integrals_cache_min)
-         ii = ior( ishft(ii,6), j-ao_integrals_cache_min)
-         ii = ior( ishft(ii,6), i-ao_integrals_cache_min)
+         ii = ior( shiftl(ii,6), k-ao_integrals_cache_min)
+         ii = ior( shiftl(ii,6), j-ao_integrals_cache_min)
+         ii = ior( shiftl(ii,6), i-ao_integrals_cache_min)
          ao_integrals_cache(ii) = integral
        enddo
      enddo
@@ -181,9 +181,9 @@ double precision function get_ao_bielec_integral(i,j,k,l,map) result(result)
       call map_get(map,idx,tmp)
     else
       ii = l-ao_integrals_cache_min
-      ii = ior( ishft(ii,6), k-ao_integrals_cache_min)
-      ii = ior( ishft(ii,6), j-ao_integrals_cache_min)
-      ii = ior( ishft(ii,6), i-ao_integrals_cache_min)
+      ii = ior( shiftl(ii,6), k-ao_integrals_cache_min)
+      ii = ior( shiftl(ii,6), j-ao_integrals_cache_min)
+      ii = ior( shiftl(ii,6), i-ao_integrals_cache_min)
       tmp = ao_integrals_cache(ii)
     endif
   endif
@@ -367,9 +367,9 @@ BEGIN_PROVIDER [ double precision, mo_integrals_cache, (0_8:128_8*128_8*128_8*12
          !DIR$ FORCEINLINE
          call map_get(mo_integrals_map,idx,integral)
          ii = l-mo_integrals_cache_min_8
-         ii = ior( ishft(ii,7), k-mo_integrals_cache_min_8)
-         ii = ior( ishft(ii,7), j-mo_integrals_cache_min_8)
-         ii = ior( ishft(ii,7), i-mo_integrals_cache_min_8)
+         ii = ior( shiftl(ii,7), k-mo_integrals_cache_min_8)
+         ii = ior( shiftl(ii,7), j-mo_integrals_cache_min_8)
+         ii = ior( shiftl(ii,7), i-mo_integrals_cache_min_8)
          mo_integrals_cache(ii) = integral
        enddo
      enddo
@@ -405,9 +405,9 @@ double precision function get_mo_bielec_integral(i,j,k,l,map)
     get_mo_bielec_integral = dble(tmp)
   else
     ii_8 = int(l,8)-mo_integrals_cache_min_8
-    ii_8 = ior( ishft(ii_8,7), int(k,8)-mo_integrals_cache_min_8)
-    ii_8 = ior( ishft(ii_8,7), int(j,8)-mo_integrals_cache_min_8)
-    ii_8 = ior( ishft(ii_8,7), int(i,8)-mo_integrals_cache_min_8)
+    ii_8 = ior( shiftl(ii_8,7), int(k,8)-mo_integrals_cache_min_8)
+    ii_8 = ior( shiftl(ii_8,7), int(j,8)-mo_integrals_cache_min_8)
+    ii_8 = ior( shiftl(ii_8,7), int(i,8)-mo_integrals_cache_min_8)
     get_mo_bielec_integral = mo_integrals_cache(ii_8)
   endif
 end
@@ -453,25 +453,25 @@ subroutine get_mo_bielec_integrals(j,k,l,sze,out_val,map)
   ii0 = ior(ii0, j-mo_integrals_cache_min)
 
   ii0_8 = int(l,8)-mo_integrals_cache_min_8
-  ii0_8 = ior( ishft(ii0_8,7), int(k,8)-mo_integrals_cache_min_8)
-  ii0_8 = ior( ishft(ii0_8,7), int(j,8)-mo_integrals_cache_min_8)
+  ii0_8 = ior( shiftl(ii0_8,7), int(k,8)-mo_integrals_cache_min_8)
+  ii0_8 = ior( shiftl(ii0_8,7), int(j,8)-mo_integrals_cache_min_8)
 
   q = min(j,l)
   s = max(j,l)
-  q = q+ishft(s*s-s,-1)
+  q = q+shiftr(s*s-s,1)
 
   do i=1,sze
     ii = ior(ii0, i-mo_integrals_cache_min)
     if (iand(ii, -128) == 0) then
-      ii_8 = ior( ishft(ii0_8,7), int(i,8)-mo_integrals_cache_min_8)
+      ii_8 = ior( shiftl(ii0_8,7), int(i,8)-mo_integrals_cache_min_8)
       out_val(i) = mo_integrals_cache(ii_8)
     else
       p = min(i,k)
       r = max(i,k)
-      p = p+ishft(r*r-r,-1)
+      p = p+shiftr(r*r-r,1)
       i1 = min(p,q)
       i2 = max(p,q)
-      idx = i1+ishft(i2*i2-i2,-1)
+      idx = i1+shiftr(i2*i2-i2,1)
       !DIR$ FORCEINLINE
       call map_get(map,idx,tmp)
       out_val(i) = dble(tmp)
@@ -686,7 +686,7 @@ subroutine communicate_$ao_integrals()
         do k=1,copy_n
           copy_val(k) = buffer_val(k)[j]
           copy_key(k) = buffer_key(k)[j]
-          copy_key(k) = copy_key(k)+ishft(i,-map_shift)
+          copy_key(k) = copy_key(k)+shiftl(i,map_shift)
         enddo
         call map_append($ao_integrals_map, copy_key, copy_val, copy_n )
       endif

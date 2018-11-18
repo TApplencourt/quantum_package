@@ -169,7 +169,7 @@ integer function get_index_in_psi_det_alpha_unique(key,Nint)
   !DIR$ FORCEINLINE
   det_search = spin_det_search_key(psi_det_alpha_unique(1,1),Nint)
 
-  istep = ishft(iend-ibegin,-1)
+  istep = shiftr(iend-ibegin,1)
   i=ibegin+istep
   do while (istep > 0)
     !DIR$ FORCEINLINE
@@ -181,7 +181,7 @@ integer function get_index_in_psi_det_alpha_unique(key,Nint)
     else
       ibegin = i
     endif
-    istep = ishft(iend-ibegin,-1)
+    istep = shiftr(iend-ibegin,1)
     i = ibegin + istep
   end do
 
@@ -249,7 +249,7 @@ integer function get_index_in_psi_det_beta_unique(key,Nint)
   !DIR$ FORCEINLINE
   det_search = spin_det_search_key(psi_det_beta_unique(1,1),Nint)
 
-  istep = ishft(iend-ibegin,-1)
+  istep = shiftr(iend-ibegin,1)
   i=ibegin+istep
   do while (istep > 0)
     !DIR$ FORCEINLINE
@@ -261,7 +261,7 @@ integer function get_index_in_psi_det_beta_unique(key,Nint)
     else
       ibegin = i
     endif
-    istep = ishft(iend-ibegin,-1)
+    istep = shiftr(iend-ibegin,1)
     i = ibegin + istep
   end do
 

@@ -58,7 +58,7 @@ BEGIN_TEMPLATE
   integer                        :: itmp
   integer                        :: i, j
    
-  c = x( ishft(first+last,-1) )
+  c = x( shiftr(first+last,1) )
   i = first
   j = last
   do
@@ -134,7 +134,7 @@ BEGIN_TEMPLATE
       endif
     endif
     i=l
-    j = ishft(l,1)
+    j = shiftl(l,1)
     do while (j<k)
       if ( x(j) < x(j+1) ) then
         j=j+1
@@ -143,7 +143,7 @@ BEGIN_TEMPLATE
         x(i) = x(j)
         iorder(i) = iorder(j)
         i = j
-        j = ishft(j,1)
+        j = shiftl(j,1)
       else
         j = k+1
       endif
@@ -153,7 +153,7 @@ BEGIN_TEMPLATE
         x(i) = x(j)
         iorder(i) = iorder(j)
         i = j
-        j = ishft(j,1)
+        j = shiftl(j,1)
       else
         j = k+1
       endif
@@ -199,7 +199,7 @@ BEGIN_TEMPLATE
       endif
     endif
     i=l
-    j = ishft(l,1)
+    j = shiftl(l,1)
     do while (j<k)
       if ( x(j) < x(j+1) ) then
         j=j+1
@@ -208,7 +208,7 @@ BEGIN_TEMPLATE
         x(i) = x(j)
         iorder(i) = iorder(j)
         i = j
-        j = ishft(j,1)
+        j = shiftl(j,1)
       else
         j = k+1
       endif
@@ -218,7 +218,7 @@ BEGIN_TEMPLATE
         x(i) = x(j)
         iorder(i) = iorder(j)
         i = j
-        j = ishft(j,1)
+        j = shiftl(j,1)
       else
         j = k+1
       endif

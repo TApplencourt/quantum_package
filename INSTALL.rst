@@ -60,6 +60,12 @@ it if needed, and run :command:`configure` with :option:`configure -c`.
    ./configure -c config/gfortran.cfg
 
 
+.. note::
+
+   The ``popcnt`` instruction accelerates *a lot* the programs, so the
+   SSE4.2, AVX or AVX2 instruction sets should be enabled in the
+   configuration file if possible.
+
 
 Help for installing external dependencies
 =========================================

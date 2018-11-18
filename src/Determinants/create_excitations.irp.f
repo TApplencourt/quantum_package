@@ -17,13 +17,13 @@ subroutine do_mono_excitation(key_in,i_hole,i_particle,ispin,i_ok)
  ASSERT (i_particle <= mo_tot_num)
  i_ok = 1
  ! hole
- k = ishft(i_hole-1,-bit_kind_shift)+1
- j = i_hole-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_hole-1,bit_kind_shift)+1
+ j = i_hole-shiftl(k-1,bit_kind_shift)-1
  key_in(k,ispin) = ibclr(key_in(k,ispin),j)
 
  ! particle
- k = ishft(i_particle-1,-bit_kind_shift)+1
- j = i_particle-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_particle-1,bit_kind_shift)+1
+ j = i_particle-shiftl(k-1,bit_kind_shift)-1
  key_in(k,ispin) = ibset(key_in(k,ispin),j)
  integer :: n_elec_tmp
  n_elec_tmp = 0    
@@ -54,8 +54,8 @@ subroutine do_spin_flip(key_in,i_flip,ispin,i_ok)
  integer(bit_kind) :: key_tmp(N_int,2)
  i_ok = -1
  key_tmp = 0_bit_kind
- k = ishft(i_flip-1,-bit_kind_shift)+1
- j = i_flip-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_flip-1,bit_kind_shift)+1
+ j = i_flip-shiftl(k-1,bit_kind_shift)-1
  key_tmp(k,1) = ibset(key_tmp(k,1),j)
  integer :: other_spin(2)
  other_spin(1) = 2
@@ -85,8 +85,8 @@ logical function is_spin_flip_possible(key_in,i_flip,ispin)
  integer(bit_kind) :: key_tmp(N_int,2)
  is_spin_flip_possible = .False. 
  key_tmp = 0_bit_kind
- k = ishft(i_flip-1,-bit_kind_shift)+1
- j = i_flip-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_flip-1,bit_kind_shift)+1
+ j = i_flip-shiftl(k-1,bit_kind_shift)-1
  key_tmp(k,1) = ibset(key_tmp(k,1),j)
  integer :: other_spin(2)
  other_spin(1) = 2
@@ -109,8 +109,8 @@ subroutine set_bit_to_integer(i_physical,key,Nint)
  integer, intent(in) :: i_physical,Nint
  integer(bit_kind), intent(inout) :: key(Nint)
  integer :: k,j,i
- k = ishft(i_physical-1,-bit_kind_shift)+1
- j = i_physical-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_physical-1,bit_kind_shift)+1
+ j = i_physical-shiftl(k-1,bit_kind_shift)-1
  key(k) = ibset(key(k),j)
 end
 
@@ -121,8 +121,8 @@ subroutine clear_bit_to_integer(i_physical,key,Nint)
  integer, intent(in) :: i_physical,Nint
  integer(bit_kind), intent(inout) :: key(Nint)
  integer :: k,j,i
- k = ishft(i_physical-1,-bit_kind_shift)+1
- j = i_physical-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_physical-1,bit_kind_shift)+1
+ j = i_physical-shiftl(k-1,bit_kind_shift)-1
  key(k) = ibclr(key(k),j)
 end
 

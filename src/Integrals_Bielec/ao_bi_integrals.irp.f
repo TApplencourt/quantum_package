@@ -625,7 +625,7 @@ double precision function ERI(alpha,beta,delta,gama,a_x,b_x,c_x,d_x,a_y,b_y,c_y,
   p = alpha + beta
   q = delta + gama
   ASSERT (p+q >= 0.d0)
-  n_pt =  ishft( nx+ny+nz,1 )
+  n_pt =  shiftl( nx+ny+nz,1 )
   
   coeff = pi_5_2 / (p * q * dsqrt(p+q))
   if (n_pt == 0) then
@@ -655,7 +655,7 @@ subroutine integrale_new(I_f,a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z,p,q
   double precision               :: I_f, pq_inv, p10_1, p10_2, p01_1, p01_2,rho,pq_inv_2
   integer :: ix,iy,iz, jx,jy,jz, sx,sy,sz
   
-  j = ishft(n_pt,-1)
+  j = shiftr(n_pt,1)
   ASSERT (n_pt > 1)
   pq_inv = 0.5d0/(p+q)
   pq_inv_2 = pq_inv + pq_inv
@@ -779,7 +779,7 @@ integer function n_pt_sup(a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z)
   !       Ix(a_x,b_x,c_x,d_x) * Iy(a_y,b_y,c_y,d_y) * Iz(a_z,b_z,c_z,d_z)
   END_DOC
   integer                        :: a_x,b_x,c_x,d_x,a_y,b_y,c_y,d_y,a_z,b_z,c_z,d_z
-  n_pt_sup =  ishft( a_x+b_x+c_x+d_x + a_y+b_y+c_y+d_y + a_z+b_z+c_z+d_z,1 )
+  n_pt_sup =  shiftl( a_x+b_x+c_x+d_x + a_y+b_y+c_y+d_y + a_z+b_z+c_z+d_z,1 )
 end
 
 
@@ -1175,9 +1175,9 @@ subroutine compute_ao_integrals_jl(j,l,n_integrals,buffer_i,buffer_value)
   
   n_integrals = 0
   
-  j1 = j+ishft(l*l-l,-1)
+  j1 = j+shiftr(l*l-l,1)
   do k = 1, ao_num           ! r1
-    i1 = ishft(k*k-k,-1)
+    i1 = shiftr(k*k-k,1)
     if (i1 > j1) then
       exit
     endif

@@ -10,8 +10,8 @@ logical function is_the_hole_in_det(key_in,ispin,i_hole)
  do i = 1, N_int
   itest(i) = 0_bit_kind
  enddo
- k = ishft(i_hole-1,-bit_kind_shift)+1
- j = i_hole-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_hole-1,bit_kind_shift)+1
+ j = i_hole-shiftl(k-1,bit_kind_shift)-1
  itest(k) = ibset(itest(k),j)
  j = 0
  do i = 1, N_int
@@ -38,8 +38,8 @@ logical function is_the_particl_in_det(key_in,ispin,i_particl)
  do i = 1, N_int
   itest(i) = 0_bit_kind
  enddo
- k = ishft(i_particl-1,-bit_kind_shift)+1
- j = i_particl-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_particl-1,bit_kind_shift)+1
+ j = i_particl-shiftl(k-1,bit_kind_shift)-1
  itest(k) = ibset(itest(k),j)
  j = 0
  do i = 1, N_int

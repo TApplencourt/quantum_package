@@ -44,8 +44,8 @@ subroutine modify_bitmasks_for_hole(i_hole)
    enddo
  enddo
 
- k = ishft(i_hole-1,-bit_kind_shift)+1
- j = i_hole-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_hole-1,bit_kind_shift)+1
+ j = i_hole-shiftl(k-1,bit_kind_shift)-1
  do m = 1, N_generators_bitmask
   do l = 1, 3
    i = index_holes_bitmask(l)
@@ -67,8 +67,8 @@ subroutine modify_bitmasks_for_hole_in_out(i_hole)
 ! the electrons occupying i_hole
  END_DOC
 
- k = ishft(i_hole-1,-bit_kind_shift)+1
- j = i_hole-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_hole-1,bit_kind_shift)+1
+ j = i_hole-shiftl(k-1,bit_kind_shift)-1
  do m = 1, N_generators_bitmask
   do l = 1, 3
    i = index_holes_bitmask(l)
@@ -102,8 +102,8 @@ subroutine modify_bitmasks_for_particl(i_part)
    enddo
  enddo
 
- k = ishft(i_part-1,-bit_kind_shift)+1
- j = i_part-ishft(k-1,bit_kind_shift)-1
+ k = shiftr(i_part-1,bit_kind_shift)+1
+ j = i_part-shiftl(k-1,bit_kind_shift)-1
  do m = 1, N_generators_bitmask
   do l = 1, 3
    i = index_particl_bitmask(l)

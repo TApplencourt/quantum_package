@@ -22,12 +22,12 @@ subroutine $subroutine_diexc(key_in, key_prev, hole_1,particl_1, hole_2, particl
   do sp=1,2
     do ni=1,N_int
       do i=1,bit_kind_size
-        if(iand(1_bit_kind,ishft(key_in(ni, sp), -(i-1))) == 0) then
+        if(iand(1_bit_kind,shiftr(key_in(ni, sp), (i-1))) == 0) then
           cycle
         end if
         mi = (ni-1)*bit_kind_size+i
-        status(mi, sp) = int(iand(1_bit_kind,ishft(hole_1(ni, sp), -(i-1))),4)
-        status(mi, sp) = status(mi, sp) + 2*int(iand(1_bit_kind,ishft(hole_2(ni, sp), -(i-1))),4)
+        status(mi, sp) = int(iand(1_bit_kind,shiftr(hole_1(ni,sp),(i-1))),4)
+        status(mi, sp) = status(mi, sp) + 2*int(iand(1_bit_kind,shiftr(hole_2(ni,sp),(i-1))),4)
         if(status(mi, sp) /= 0 .and. mi > highest) then
           highest = mi
         end if
@@ -88,16 +88,16 @@ subroutine $subroutine_diexcP(key_in, fs1, fh1, particl_1, fs2, fh2, particl_2, 
     p2_mask(k,1) = 0_bit_kind
     p2_mask(k,2) = 0_bit_kind
   enddo
-  p1_mask(ishft(fh1-1,-bit_kind_shift) + 1, fs1) = ishft(one,iand(fh1-1,bit_kind_size-1))
-  p2_mask(ishft(fh2-1,-bit_kind_shift) + 1, fs2) = ishft(one,iand(fh2-1,bit_kind_size-1))
+  p1_mask(shiftr(fh1-1,bit_kind_shift) + 1, fs1) = shiftl(one,iand(fh1-1,bit_kind_size-1))
+  p2_mask(shiftr(fh2-1,bit_kind_shift) + 1, fs2) = shiftl(one,iand(fh2-1,bit_kind_size-1))
   
   do k=1,N_int
     key_mask(k,1) = key_in(k,1)
     key_mask(k,2) = key_in(k,2)
   enddo
 
-  key_mask(ishft(fh1-1,-bit_kind_shift) + 1, fs1) -= ishft(one,iand(fh1-1,bit_kind_size-1))
-  key_mask(ishft(fh2-1,-bit_kind_shift) + 1, fs2) -= ishft(one,iand(fh2-1,bit_kind_size-1))
+  key_mask(shiftr(fh1-1,bit_kind_shift) + 1, fs1) -= shiftl(one,iand(fh1-1,bit_kind_size-1))
+  key_mask(shiftr(fh2-1,bit_kind_shift) + 1, fs2) -= shiftl(one,iand(fh2-1,bit_kind_size-1))
   
       
   call $subroutine_diexcOrg(key_in, key_mask, p1_mask, particl_1, p2_mask, particl_2, fock_diag_tmp, i_generator, iproc_in $parameters )
@@ -218,11 +218,11 @@ subroutine $subroutine_diexcOrg(key_in,key_mask,hole_1,particl_1,hole_2, particl
       ASSERT (j_a > 0)
       ASSERT (j_a <= mo_tot_num)
       hole = key_in
-      k = ishft(i_a-1,-bit_kind_shift)+1
-      j = i_a-ishft(k-1,bit_kind_shift)-1
+      k = shiftr(i_a-1,bit_kind_shift)+1
+      j = i_a-shiftl(k-1,bit_kind_shift)-1
       hole(k,ispin) = ibclr(hole(k,ispin),j)
-      k_a = ishft(j_a-1,-bit_kind_shift)+1
-      l_a = j_a-ishft(k_a-1,bit_kind_shift)-1
+      k_a = shiftr(j_a-1,bit_kind_shift)+1
+      l_a = j_a-shiftl(k_a-1,bit_kind_shift)-1
       hole(k_a,ispin) = ibset(hole(k_a,ispin),l_a)
       
       !!!! Second couple hole particle
@@ -268,12 +268,12 @@ subroutine $subroutine_diexcOrg(key_in,key_mask,hole_1,particl_1,hole_2, particl
           hole = hole_save
           i_b = ib_jb_pairs(1,kk)
           j_b = ib_jb_pairs(2,kk)
-          k = ishft(i_b-1,-bit_kind_shift)+1
-          j = i_b-ishft(k-1,bit_kind_shift)-1
+          k = shiftr(i_b-1,bit_kind_shift)+1
+          j = i_b-shiftl(k-1,bit_kind_shift)-1
           hole(k,other_spin) = ibclr(hole(k,other_spin),j)
           key = hole
-          k = ishft(j_b-1,-bit_kind_shift)+1
-          l = j_b-ishft(k-1,bit_kind_shift)-1
+          k = shiftr(j_b-1,bit_kind_shift)+1
+          l = j_b-shiftl(k-1,bit_kind_shift)-1
           key(k,other_spin) = ibset(key(k,other_spin),l)
           $filter2h2p_double
           $filter_only_1h1p_double
@@ -323,12 +323,12 @@ subroutine $subroutine_diexcOrg(key_in,key_mask,hole_1,particl_1,hole_2, particl
         hole = hole_save
         i_b = ib_jb_pairs(1,kk)
         j_b = ib_jb_pairs(2,kk)
-        k = ishft(i_b-1,-bit_kind_shift)+1
-        j = i_b-ishft(k-1,bit_kind_shift)-1
+        k = shiftr(i_b-1,bit_kind_shift)+1
+        j = i_b-shiftl(k-1,bit_kind_shift)-1
         hole(k,ispin) = ibclr(hole(k,ispin),j)
         key = hole
-        k = ishft(j_b-1,-bit_kind_shift)+1
-        l = j_b-ishft(k-1,bit_kind_shift)-1
+        k = shiftr(j_b-1,bit_kind_shift)+1
+        l = j_b-shiftl(k-1,bit_kind_shift)-1
         key(k,ispin) = ibset(key(k,ispin),l)
         $filter2h2p_double
         $filter_only_1h1p_double
@@ -473,12 +473,12 @@ subroutine $subroutine_monoexc(key_in, hole_1,particl_1,fock_diag_tmp,i_generato
       i_a = ia_ja_pairs(1,ii,ispin)
       j_a = ia_ja_pairs(2,ii,ispin)
       hole = key_in
-      k = ishft(i_a-1,-bit_kind_shift)+1
-      j = i_a-ishft(k-1,bit_kind_shift)-1
+      k = shiftr(i_a-1,bit_kind_shift)+1
+      j = i_a-shiftl(k-1,bit_kind_shift)-1
   $filterhole
       hole(k,ispin) = ibclr(hole(k,ispin),j)
-      k_a = ishft(j_a-1,-bit_kind_shift)+1
-      l_a = j_a-ishft(k_a-1,bit_kind_shift)-1
+      k_a = shiftr(j_a-1,bit_kind_shift)+1
+      l_a = j_a-shiftl(k_a-1,bit_kind_shift)-1
   $filterparticle
       hole(k_a,ispin) = ibset(hole(k_a,ispin),l_a)
       $only_2p_single

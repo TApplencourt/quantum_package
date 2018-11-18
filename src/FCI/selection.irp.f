@@ -12,12 +12,12 @@ subroutine get_mask_phase(det1, pm, Nint)
   do ispin=1,2
   tmp = 0_8
   do i=1,Nint
-    pm(i,ispin) = ieor(det1(i,ispin), ishft(det1(i,ispin), 1))
-    pm(i,ispin) = ieor(pm(i,ispin), ishft(pm(i,ispin), 2))
-    pm(i,ispin) = ieor(pm(i,ispin), ishft(pm(i,ispin), 4))
-    pm(i,ispin) = ieor(pm(i,ispin), ishft(pm(i,ispin), 8))
-    pm(i,ispin) = ieor(pm(i,ispin), ishft(pm(i,ispin), 16))
-    pm(i,ispin) = ieor(pm(i,ispin), ishft(pm(i,ispin), 32))
+    pm(i,ispin) = ieor(det1(i,ispin), shiftl(det1(i,ispin), 1))
+    pm(i,ispin) = ieor(pm(i,ispin), shiftl(pm(i,ispin), 2))
+    pm(i,ispin) = ieor(pm(i,ispin), shiftl(pm(i,ispin), 4))
+    pm(i,ispin) = ieor(pm(i,ispin), shiftl(pm(i,ispin), 8))
+    pm(i,ispin) = ieor(pm(i,ispin), shiftl(pm(i,ispin), 16))
+    pm(i,ispin) = ieor(pm(i,ispin), shiftl(pm(i,ispin), 32))
     pm(i,ispin) = ieor(pm(i,ispin), tmp)
     if(iand(popcnt(det1(i,ispin)), 1) == 1) tmp = not(tmp)
   end do
@@ -74,24 +74,24 @@ double precision function get_phase_bi(phasemask, s1, s2, h1, p1, h2, p2, Nint)
   integer :: p1_int, p2_int
   integer :: h1_bit, h2_bit
   integer :: p1_bit, p2_bit
-  h1_int = ishft(h1-1,-bit_kind_shift)+1
-  h1_bit = h1 - ishft(h1_int-1,bit_kind_shift)-1
+  h1_int = shiftr(h1-1,bit_kind_shift)+1
+  h1_bit = h1 - shiftl(h1_int-1,bit_kind_shift)-1
 
-  h2_int = ishft(h2-1,-bit_kind_shift)+1
-  h2_bit = h2 - ishft(h2_int-1,bit_kind_shift)-1
+  h2_int = shiftr(h2-1,bit_kind_shift)+1
+  h2_bit = h2 - shiftl(h2_int-1,bit_kind_shift)-1
 
-  p1_int = ishft(p1-1,-bit_kind_shift)+1
-  p1_bit = p1 - ishft(p1_int-1,bit_kind_shift)-1
+  p1_int = shiftr(p1-1,bit_kind_shift)+1
+  p1_bit = p1 - shiftl(p1_int-1,bit_kind_shift)-1
 
-  p2_int = ishft(p2-1,-bit_kind_shift)+1
-  p2_bit = p2 - ishft(p2_int-1,bit_kind_shift)-1
+  p2_int = shiftr(p2-1,bit_kind_shift)+1
+  p2_bit = p2 - shiftl(p2_int-1,bit_kind_shift)-1
 
 
   ! Put the phasemask bits at position 0, and add them all
-  h1_bit = int(ishft(phasemask(h1_int,s1),-h1_bit))
-  p1_bit = int(ishft(phasemask(p1_int,s1),-p1_bit))
-  h2_bit = int(ishft(phasemask(h2_int,s2),-h2_bit))
-  p2_bit = int(ishft(phasemask(p2_int,s2),-p2_bit))
+  h1_bit = int(shiftr(phasemask(h1_int,s1),h1_bit))
+  p1_bit = int(shiftr(phasemask(p1_int,s1),p1_bit))
+  h2_bit = int(shiftr(phasemask(h2_int,s2),h2_bit))
+  p2_bit = int(shiftr(phasemask(p2_int,s2),p2_bit))
 
   np = h1_bit + p1_bit + h2_bit + p2_bit
 

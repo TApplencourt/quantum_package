@@ -54,8 +54,8 @@ subroutine list_to_bitstring( string, list, n_elements, Nint)
   string = 0_bit_kind
   
   do i=1,n_elements
-    iint = ishft(list(i)-1,-bit_kind_shift) + 1
-    ipos = list(i)-ishft((iint-1),bit_kind_shift)-1
+    iint = shiftr(list(i)-1,bit_kind_shift) + 1
+    ipos = list(i)-shiftl((iint-1),bit_kind_shift)-1
     string(iint) = ibset( string(iint), ipos )
   enddo
   
@@ -88,7 +88,7 @@ subroutine bitstring_to_str( output, string, Nint )
         output(ibuf:ibuf) = '-'
       endif
       ibuf = ibuf+1
-      itemp = ishft(itemp,1)
+      itemp = shiftl(itemp,1)
     enddo
   enddo
   output(ibuf:ibuf) = '|'

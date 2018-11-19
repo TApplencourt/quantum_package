@@ -22,6 +22,9 @@ addons:
     - liblapack-dev
     - libblas-dev
 
+env:
+  - OPAMROOT=$HOME/.opam
+
 cache:
   directories:
   - $HOME/.opam/

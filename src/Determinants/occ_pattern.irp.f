@@ -41,7 +41,11 @@ subroutine occ_pattern_to_dets_size(o,sze,n_alpha,Nint)
     bmax += popcnt( o(k,1) )
     amax -= popcnt( o(k,2) )
   enddo
-  sze = binom_int(bmax, amax)
+  if (binom_int(bmax, amax) > huge(1)) then
+    print *,  irp_here, ': Too many determinants to generate'
+    stop 1
+  endif
+  sze = int(binom_int(bmax, amax),4)
 end
 
 
@@ -80,7 +84,7 @@ subroutine occ_pattern_to_dets(o,d,sze,n_alpha,Nint)
   enddo
 
   v = shiftl(1,n_alpha_in_single) - 1
-  sze = binom_int(n,n_alpha_in_single)
+  sze = int(binom_int(n,n_alpha_in_single),4)
   do i=1,sze
     ! Initialize with doubly occupied MOs
     d(:,1,i) = o(:,2)

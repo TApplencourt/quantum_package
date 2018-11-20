@@ -131,7 +131,7 @@ if [[ "${PACKAGES}.x" != ".x" ]] ; then
 fi
 
 if [[ ${PACKAGES} = all ]] ; then
-        PACKAGES="ninja irpf90 zeromq f77zmq ocaml ezfio emsl docopt"
+        PACKAGES="ninja irpf90 zeromq f77zmq ocaml ezfio emsl docopt resultsFile"
 fi
 
 
@@ -152,6 +152,7 @@ for PACKAGE in ${PACKAGES} ; do
               "${QP_ROOT}"/external/irpf90.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf irpf90.tar.gz
+            rm irpf90.tar.gz
             cd irpf90-*
             make
             for i in irpf90 irpman irpf90_indent
@@ -173,6 +174,7 @@ EOF
               "${QP_ROOT}"/external/zeromq.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf zeromq.tar.gz
+            rm zeromq.tar.gz
             cd zeromq-*
             ./configure --prefix="$QP_ROOT" --without-libsodium --enable-libunwind=no
             make
@@ -187,12 +189,13 @@ EOF
               "${QP_ROOT}"/external/f77_zmq.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf f77_zmq.tar.gz
+            rm f77_zmq.tar.gz
             cd f77_zmq-*
             export ZMQ_H="$QP_ROOT"/include/zmq.h
             make
             cp libf77zmq.a "${QP_ROOT}"/lib
             cp libf77zmq.so "${QP_ROOT}"/lib
-            cp f77_zmq_free.h "${QP_ROOT}"/src/ZMQ/f77_zmq.h
+            cp f77_zmq_free.h "${QP_ROOT}"/include
             cd "${QP_ROOT}"
 
     
@@ -220,6 +223,7 @@ EOF
                 echo ${QP_ROOT}/bin
                 ${QP_ROOT}/external/opam_installer.sh 
             fi
+            rm ${QP_ROOT}/external/opam_installer.sh
 
             ${QP_ROOT}/bin/opam init --disable-sandboxing --verbose --yes --comp=4.07.0
 
@@ -256,7 +260,8 @@ EOF
               "${QP_ROOT}"/external/docopt.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf docopt.tar.gz 
-            cp docopt-*/docopt.py "${QP_ROOT}/scripts"
+            mv docopt-*/docopt.py "${QP_ROOT}/external/Python"
+            rm -rf docopt-*/ docopt.tar.gz
             cd "${QP_ROOT}"
 
 
@@ -267,7 +272,8 @@ EOF
               "${QP_ROOT}"/external/resultsFile.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf resultsFile.tar.gz 
-            cp -r resultsFile-master/resultsFile "${QP_ROOT}/scripts/"
+            mv resultsFile-master/resultsFile "${QP_ROOT}/external/Python"
+            rm -rf resultsFile-master resultsFile.tar.gz
             cd "${QP_ROOT}"
 
     fi
@@ -325,6 +331,12 @@ fi
 DOCOPT=$(find_python_lib docopt)
 if [[ ${DOCOPT} = not_found ]] ; then
         echo "docopt is not installed."
+        fail
+fi
+
+RESULTSFILE=$(find_python_lib resultsFile)
+if [[ ${RESULTSFILE} = not_found ]] ; then
+        echo "resultsFile is not installed."
         fail
 fi
 

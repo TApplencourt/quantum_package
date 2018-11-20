@@ -9,7 +9,7 @@ export QP_ROOT=
 export IRPF90=${QP_ROOT}/bin/irpf90
 export NINJA=${QP_ROOT}/bin/ninja
 export QP_EZFIO=${QP_ROOT}/external/ezfio
-export QP_PYTHON=${QP_ROOT}/scripts:${QP_ROOT}/scripts/ezfio_interface:${QP_ROOT}/scripts/utility:${QP_ROOT}/scripts/module:${QP_ROOT}/scripts/pseudo:${QP_ROOT}/scripts/compilation:${QP_EZFIO}
+export QP_PYTHON=${QP_ROOT}/scripts:${QP_ROOT}/scripts/ezfio_interface:${QP_ROOT}/scripts/utility:${QP_ROOT}/scripts/module:${QP_ROOT}/scripts/pseudo:${QP_ROOT}/scripts/compilation:${QP_EZFIO}/Python:${QP_ROOT}/scripts/resultsFile
 
 function qp_prepend_export () {
 eval "value_1="\${$1}""

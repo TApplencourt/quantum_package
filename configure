@@ -267,7 +267,7 @@ EOF
               "${QP_ROOT}"/external/resultsFile.tar.gz
             cd "${QP_ROOT}"/external
             tar -zxf resultsFile.tar.gz 
-            cp -r resultsFile-master/resultsFile "${QP_ROOT}/scripts"
+            cp -r resultsFile-master/resultsFile "${QP_ROOT}/scripts/"
             cd "${QP_ROOT}"
 
     fi

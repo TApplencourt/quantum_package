@@ -28,27 +28,6 @@ double precision function binom_func(i,j)
 end
 
 
-FUNCTION n_combinations(n,k) RESULT(r)
-    IMPLICIT NONE
-
-    INTEGER(4), INTENT(IN) :: n,k
-    INTEGER(8)             :: r
-    INTEGER(4)             :: d, n0
-
-    IF (k > n) THEN
-        r = 0
-        RETURN
-    ELSE
-        r = 1
-    ENDIF
-
-    n0 = n
-    DO d=1, k
-        r = (r*n0) / d
-        n0 = n0 - 1
-    ENDDO
-END FUNCTION n_combinations
-
  BEGIN_PROVIDER [ double precision, binom, (0:40,0:40) ]
 &BEGIN_PROVIDER [ double precision, binom_transp, (0:40,0:40) ]
   implicit none

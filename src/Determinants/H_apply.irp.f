@@ -284,7 +284,7 @@ subroutine remove_duplicates_in_psi_det(found_duplicates)
   endif
   psi_det = psi_det_sorted
   psi_coef = psi_coef_sorted
-  TOUCH psi_det psi_coef psi_det_sorted_bit psi_coef_sorted_bit
+  SOFT_TOUCH psi_det psi_coef psi_det_sorted_bit psi_coef_sorted_bit
   deallocate (duplicate,bit_tmp)
 end
 

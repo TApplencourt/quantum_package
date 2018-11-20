@@ -7,11 +7,8 @@ integer*8 function det_search_key(det,Nint)
   integer, intent(in) :: Nint
   integer(bit_kind), intent(in) :: det(Nint,2)
   integer :: i
-  det_search_key = iand(det(1,1),det(1,2))
-  do i=2,Nint
-    det_search_key = ieor(det_search_key,iand(det(i,1),det(i,2)))
-  enddo
-  det_search_key = iand(huge(det(1,1)),det_search_key)
+  i = shiftr(elec_alpha_num, bit_kind_shift)+1
+  det_search_key = shiftr(ior(det(i,1),det(i,2)),1)
 end
 
 
@@ -24,11 +21,8 @@ integer*8 function occ_pattern_search_key(det,Nint)
   integer, intent(in) :: Nint
   integer(bit_kind), intent(in) :: det(Nint,2)
   integer :: i
-  occ_pattern_search_key = ieor(det(1,1),det(1,2))
-  do i=2,Nint
-    occ_pattern_search_key = ieor(occ_pattern_search_key,iand(det(i,1),det(i,2)))
-  enddo
-  occ_pattern_search_key = iand(huge(det(1,1)),occ_pattern_search_key)
+  i = shiftr(elec_alpha_num, bit_kind_shift)+1
+  occ_pattern_search_key = shiftr(ior(det(i,1),det(i,2)),1)
 end
 
 

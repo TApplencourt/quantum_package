@@ -336,19 +336,19 @@ end subroutine
    ! function.
    END_DOC
    
-   call sort_dets_by_det_search_key(N_det, psi_det, psi_coef,        &
+   call sort_dets_by_det_search_key(N_det, psi_det, psi_coef, size(psi_coef,1),       &
        psi_det_sorted_bit, psi_coef_sorted_bit, N_states)
 
 END_PROVIDER
  
-subroutine sort_dets_by_det_search_key(Ndet, det_in, coef_in, det_out, coef_out, N_st)
+subroutine sort_dets_by_det_search_key(Ndet, det_in, coef_in, sze, det_out, coef_out, N_st)
    use bitmasks
    implicit none
-   integer, intent(in)            :: Ndet, N_st
-   integer(bit_kind), intent(in)  :: det_in  (N_int,2,psi_det_size)
-   double precision , intent(in)  :: coef_in(psi_det_size,N_st)
-   integer(bit_kind), intent(out) :: det_out (N_int,2,psi_det_size)
-   double precision , intent(out) :: coef_out(psi_det_size,N_st)
+   integer, intent(in)            :: Ndet, N_st, sze
+   integer(bit_kind), intent(in)  :: det_in  (N_int,2,sze)
+   double precision , intent(in)  :: coef_in(sze,N_st)
+   integer(bit_kind), intent(out) :: det_out (N_int,2,sze)
+   double precision , intent(out) :: coef_out(sze,N_st)
    BEGIN_DOC
    ! Determinants are sorted are sorted according to their det_search_key.
    ! Useful to accelerate the search of a random determinant in the wave

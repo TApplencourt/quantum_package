@@ -151,7 +151,7 @@ END_PROVIDER
  ! Reference determinants sorted to accelerate the search of a random determinant in the wave
  ! function.
  END_DOC
- call sort_dets_by_det_search_key(N_det_ref, psi_non_ref, psi_non_ref_coef, &
+ call sort_dets_by_det_search_key(N_det_ref, psi_non_ref, psi_non_ref_coef, size(psi_non_ref_coef,1), &
      psi_non_ref_sorted_bit, psi_non_ref_coef_sorted_bit, N_states)
 
 END_PROVIDER

@@ -28,6 +28,27 @@ double precision function binom_func(i,j)
 end
 
 
+FUNCTION n_combinations(n,k) RESULT(r)
+    IMPLICIT NONE
+
+    INTEGER(4), INTENT(IN) :: n,k
+    INTEGER(8)             :: r
+    INTEGER(4)             :: d, n0
+
+    IF (k > n) THEN
+        r = 0
+        RETURN
+    ELSE
+        r = 1
+    ENDIF
+
+    n0 = n
+    DO d=1, k
+        r = (r*n0) / d
+        n0 = n0 - 1
+    ENDDO
+END FUNCTION n_combinations
+
  BEGIN_PROVIDER [ double precision, binom, (0:40,0:40) ]
 &BEGIN_PROVIDER [ double precision, binom_transp, (0:40,0:40) ]
   implicit none
@@ -40,6 +61,22 @@ end
     do l=0,40
       binom(k,l) = dexp( logfact(k)-logfact(l)-logfact(k-l) )
       binom_transp(l,k) = binom(k,l)
+    enddo
+  enddo
+END_PROVIDER
+
+
+ BEGIN_PROVIDER [ integer*8, binom_int, (0:40,0:40) ]
+&BEGIN_PROVIDER [ integer*8, binom_int_transp, (0:40,0:40) ]
+  implicit none
+  BEGIN_DOC
+  ! Binomial coefficients, as integers*8
+  END_DOC
+  integer                        :: k,l
+  double precision               :: logfact
+  do l=0,40
+    do k=0,40
+      binom_int(k,l) = int(binom(k,l)+0.1d0,8)
     enddo
   enddo
 END_PROVIDER

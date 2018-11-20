@@ -3,7 +3,12 @@ subroutine det_to_occ_pattern(d,o,Nint)
   use bitmasks
   implicit none
   BEGIN_DOC
-  ! Transform a determinant to an occupation pattern
+  ! Transforms a determinant to an occupation pattern
+  !
+  ! occ(:,1) : Single occupations
+  ! 
+  ! occ(:,2) : Double occupations
+  !
   END_DOC
   integer          ,intent(in)   :: Nint
   integer(bit_kind),intent(in)   :: d(Nint,2)
@@ -17,6 +22,7 @@ subroutine det_to_occ_pattern(d,o,Nint)
   enddo
 end
 
+
 subroutine occ_pattern_to_dets_size(o,sze,n_alpha,Nint)
   use bitmasks
   implicit none
@@ -29,16 +35,15 @@ subroutine occ_pattern_to_dets_size(o,sze,n_alpha,Nint)
   integer                        :: amax,bmax,k
   double precision, external     :: binom_func
 
-  amax = n_alpha
   bmax = 0
+  amax = n_alpha
   do k=1,Nint
     bmax += popcnt( o(k,1) )
     amax -= popcnt( o(k,2) )
   enddo
-  sze = int( min(binom_func(bmax, amax), 1.d8) )
-  sze = 2*sze*sze + 64
-
+  sze = binom_int(bmax, amax)
 end
+
 
 subroutine occ_pattern_to_dets(o,d,sze,n_alpha,Nint)
   use bitmasks
@@ -46,102 +51,58 @@ subroutine occ_pattern_to_dets(o,d,sze,n_alpha,Nint)
   BEGIN_DOC
   ! Generate all possible determinants for a give occ_pattern
   END_DOC
-  integer          ,intent(in)   :: Nint, n_alpha
-  integer         ,intent(inout) :: sze
-  integer(bit_kind),intent(in)   :: o(Nint,2)
-  integer(bit_kind),intent(out)  :: d(Nint,2,sze)
+  integer          ,intent(in)   :: Nint
+  integer          ,intent(in)   :: n_alpha        ! Number of alpha electrons
+  integer         ,intent(inout) :: sze            ! Dimension of the output dets
+  integer(bit_kind),intent(in)   :: o(Nint,2)      ! Occ patters
+  integer(bit_kind),intent(out)  :: d(Nint,2,sze)  ! Output determinants
   
-  integer                        :: i, l, k, nt, na, nd, amax
-  integer                        :: list_todo(2*n_alpha)
-  integer                        :: list_a(2*n_alpha)
-  integer                        :: ishift
+  integer                        :: i, k, n, ispin
 
-  amax = n_alpha
-  do k=1,Nint
-    amax -= popcnt( o(k,2) )
+  ! Extract list of singly occupied MOs as (int,pos) pairs
+  ! ------------------------------------------------------
+
+  integer           :: iint(2*n_alpha), ipos(2*n_alpha)
+  integer(bit_kind) :: v, t, tt
+  integer           :: n_alpha_in_single
+
+  n=0
+  n_alpha_in_single = n_alpha
+  do i=1,Nint
+    v = o(i,1)
+    do while(v /= 0_bit_kind)
+      n = n+1
+      iint(n) = i
+      ipos(n) = trailz(v)
+      v = iand(v,v-1)
+    enddo
+    n_alpha_in_single = n_alpha_in_single - popcnt( o(i,2) )
   enddo
 
-  call bitstring_to_list(o(1,1), list_todo, nt, Nint)
+  v = shiftl(1,n_alpha_in_single) - 1
+  sze = binom_int(n,n_alpha_in_single)
+  do i=1,sze
+    ! Initialize with doubly occupied MOs
+    d(:,1,i) = o(:,2)
+    d(:,2,i) = o(:,2)
 
-  na = 0
-  nd = 0
-  d = 0
-  call rec_occ_pattern_to_dets(list_todo,nt,list_a,na,d,nd,sze,amax,Nint)
-
-  sze = nd
-  
-  integer :: ne(2)
-  l=0
-  do i=1,nd
-    ne(1) = 0
-    ne(2) = 0
-    l=l+1
-    ! Doubly occupied orbitals
-    do k=1,Nint
-      d(k,1,l) = ior(d(k,1,i),o(k,2))
-      d(k,2,l) = ior(d(k,2,i),o(k,2))
-      ne(1) += popcnt(d(k,1,l))
-      ne(2) += popcnt(d(k,2,l))
-    enddo
-    if ( (ne(1) /= elec_alpha_num).or.(ne(2) /= elec_beta_num) ) then
-      l = l-1
-    endif
-  enddo
-  sze = l
-
-end
-
-
-recursive subroutine  rec_occ_pattern_to_dets(list_todo,nt,list_a,na,d,nd,sze,amax,Nint)
-  use bitmasks
-  implicit none
-
-  integer, intent(in)            :: nt, sze, amax, Nint,na
-  integer,intent(inout)          :: list_todo(nt)
-  integer, intent(inout)         :: list_a(na+1),nd
-  integer(bit_kind),intent(inout) :: d(Nint,2,sze)
-  integer :: iint, ipos, i,j,k
-
-  if (na == amax) then
-    nd += 1
-    if (nd > sze) then
-      print *,  irp_here, ': nd  = ', nd
-      print *,  irp_here, ': sze = ', sze
-      stop 'bug in rec_occ_pattern_to_dets'
-    endif
-    do i=1,na
-      iint = shiftr(list_a(i)-1,bit_kind_shift) + 1
-      ipos = list_a(i)-shiftl((iint-1),bit_kind_shift)-1
-      d(iint,1,nd) = ibset( d(iint,1,nd), ipos )
-    enddo
-    do i=1,nt
-      iint = shiftr(list_todo(i)-1,bit_kind_shift) + 1
-      ipos = list_todo(i)-shiftl((iint-1),bit_kind_shift)-1
-      d(iint,2,nd) = ibset( d(iint,2,nd), ipos )
-    enddo
-  else
-    integer, allocatable :: list_todo_tmp(:)
-    allocate (list_todo_tmp(nt))
-    do i=1,nt
-      if (na > 0) then
-        if (list_todo(i) < list_a(na)) then
-          cycle
-        endif
+    do k=1,n
+      if (btest(v,k-1)) then
+        ispin = 1
+      else
+        ispin = 2
       endif
-      list_a(na+1) = list_todo(i)
-      k=1
-      do j=1,nt
-        if (i/=j) then
-          list_todo_tmp(k) = list_todo(j)
-          k += 1
-        endif
-      enddo
-      call rec_occ_pattern_to_dets(list_todo_tmp,nt-1,list_a,na+1,d,nd,sze,amax,Nint)
+      d(iint(k), ispin, i) = ibset( d(iint(k), ispin, i), ipos(k) )
     enddo
-    deallocate(list_todo_tmp)
-  endif
+
+    ! Generate next permutation with Anderson's algorithm
+    t = ior(v,v-1)
+    tt = t+1
+    v = ior(tt, shiftr( and(not(t),tt) - 1, trailz(v)+1) )
+  enddo
 
 end
+
 
  BEGIN_PROVIDER [ integer(bit_kind), psi_occ_pattern, (N_int,2,psi_det_size) ]
 &BEGIN_PROVIDER [ integer, N_occ_pattern ]
@@ -348,13 +309,14 @@ subroutine make_s2_eigenfunction
     endif
     call occ_pattern_to_dets(psi_occ_pattern(1,1,i),d,s,elec_alpha_num,N_int)
     do j=1,s
-      if (.not. is_in_wavefunction(d(1,1,j), N_int) ) then
-        N_det_new += 1
-        det_buffer(:,:,N_det_new) = d(:,:,j)
-        if (N_det_new == bufsze) then
-          call fill_H_apply_buffer_no_selection(bufsze,det_buffer,N_int,ithread)
-          N_det_new = 0
-        endif
+      if ( is_in_wavefunction(d(1,1,j), N_int) ) then
+        cycle
+      endif
+      N_det_new += 1
+      det_buffer(:,:,N_det_new) = d(:,:,j)
+      if (N_det_new == bufsze) then
+        call fill_H_apply_buffer_no_selection(bufsze,det_buffer,N_int,ithread)
+        N_det_new = 0
       endif
     enddo
   enddo

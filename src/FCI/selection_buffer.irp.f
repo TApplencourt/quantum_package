@@ -137,3 +137,42 @@ subroutine sort_selection_buffer(b)
   b%cur = nmwen
 end subroutine
 
+subroutine make_selection_buffer_s2(b)
+  use selection_types
+  type(selection_buffer), intent(inout) :: b
+
+  integer(bit_kind), pointer :: o(:,:,:)
+  double precision, pointer  :: val(:)
+
+  integer :: n_d
+  integer :: i,k,sze,n_alpha,j,n
+ 
+  ! Create occupation patterns
+  n_d = 0
+  allocate(o(N_int,2,b%cur))
+  do i=1,b%cur
+    do k=1,N_int
+      o(k,1,i) = ieor(b%det(k,1,i), b%det(k,2,i))
+      o(k,2,i) = iand(b%det(k,1,i), b%det(k,2,i))
+    enddo
+    call occ_pattern_to_dets_size(o(1,1,i),sze,elec_alpha_num,N_int)
+    n_d = n_d + sze
+  enddo
+  deallocate(b%det)
+
+  allocate(b%det(N_int,2,n_d), val(n_d))
+  k=1
+  do i=1,b%cur
+    n=n_d
+    call occ_pattern_to_dets(o(1,1,i),b%det(1,1,k),n,elec_alpha_num,N_int)
+    val(k) = b%val(i)
+    do j=k+1,k+n-1
+      val(j) = 0.d0
+    enddo
+    k = k+n
+  enddo
+  deallocate(o,b%val)
+  b%val => val
+  b%N = k-1
+  b%cur = k-1
+end

@@ -53,7 +53,7 @@ END_PROVIDER
  ! CAS determinants sorted to accelerate the search of a random determinant in the wave
  ! function.
  END_DOC
- call sort_dets_by_det_search_key(N_det_cas, psi_cas, psi_cas_coef, &
+ call sort_dets_by_det_search_key(N_det_cas, psi_cas, psi_cas_coef, size(psi_cas_coef,1), &
      psi_cas_sorted_bit, psi_cas_coef_sorted_bit, N_states)
 
 END_PROVIDER
@@ -106,7 +106,7 @@ END_PROVIDER
  ! CAS determinants sorted to accelerate the search of a random determinant in the wave
  ! function.
  END_DOC
- call sort_dets_by_det_search_key(N_det_cas, psi_non_cas, psi_non_cas_coef, &
+ call sort_dets_by_det_search_key(N_det_cas, psi_non_cas, psi_non_cas_coef, size(psi_non_cas_coef,1), &
      psi_non_cas_sorted_bit, psi_non_cas_coef_sorted_bit, N_states)
 
 END_PROVIDER

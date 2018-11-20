@@ -265,7 +265,7 @@ EOF
             cd "${QP_ROOT}"
 
 
-    elif [[ ${PACKAGE} = resultsfile ]] ; then
+    elif [[ ${PACKAGE} = resultsFile ]] ; then
 
             download \
               "https://gitlab.com/scemama/resultsFile/-/archive/master/resultsFile-master.tar.gz" \

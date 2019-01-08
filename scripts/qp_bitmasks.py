@@ -24,7 +24,7 @@ def int_to_string(s):
     """
     assert type(s) in (int, long)
     assert s>=0
-    return str(s) if s in (0,1) else int_to_string(s>>1) + str(s&1) 
+    return '{s:0b}'.format(s=s)
 
 
 def string_to_bitmask(s,bit_kind_size=BIT_KIND_SIZE):
@@ -63,15 +63,9 @@ def int_to_bitmask(s,bit_kind_size=BIT_KIND_SIZE):
     >>> 
     """
     assert type(s) in (int, long)
-    if s>=0:
-      s = int_to_string(s)
-      result = string_to_bitmask( s, bit_kind_size )
-    else:
-      s = int_to_string(-s-1)
-      result = string_to_bitmask( s, bit_kind_size )
-      result = [ x.replace('1','.').replace('0','1').replace('.','0') for x in result ]
-    return result
-
+    if s < 0:
+        s = s + (1 << bit_kind_size)
+    return ['{s:0{width}b}'.format(s=s,width=bit_kind_size)]
 
 
 class BitMask(object):
@@ -102,9 +96,9 @@ class BitMask(object):
     self.bit_kind_size = bit_kind_size
     self._data_int = l
 
-  def get_N_int(self):
+  @property
+  def N_int(self):
     return len(self._data_int)
-  N_int = property(fget=get_N_int)
 
   def __getitem__(self,i):
     return self._data_int[i]
@@ -126,7 +120,16 @@ class BitMask(object):
       result += int_to_bitmask(i,bit_kind_size=self.bit_kind_size)
     return str(result)
 
-
+def excitation_degree(l_a,l_b):
+  '''
+  excitation_degree([895],[959])
+  >> 1
+  '''
+  e = 0
+  for a,b in zip(l_a,l_b):
+    e += bin(a ^ b).count("1")
+  
+  return e // 2
 
 if __name__ == '__main__':
   import doctest

@@ -125,11 +125,7 @@ def excitation_degree(l_a,l_b):
   excitation_degree([895],[959])
   >> 1
   '''
-  e = 0
-  for a,b in zip(l_a,l_b):
-    e += bin(a ^ b).count("1")
-  
-  return e // 2
+  return sum(bin(a ^ b).count("1") for a,b in zip(l_a,l_b) ) // 2
 
 if __name__ == '__main__':
   import doctest

@@ -10,7 +10,7 @@ subroutine create_selection_buffer(N, siz_, res)
   siz = max(siz_,1)
 
   double precision :: rss
-  double precision, external :: memory_of_double, memory_of_int
+  double precision, external :: memory_of_double
   rss = memory_of_double(siz)*(N_int*2+1)
   call check_mem(rss,irp_here)
 
@@ -171,7 +171,7 @@ subroutine make_selection_buffer_s2(b)
 
   n_d = b%cur
   double precision :: rss
-  double precision, external :: memory_of_double, memory_of_int
+  double precision, external :: memory_of_double
   rss = (4*N_int+4)*memory_of_double(n_d)
   call check_mem(rss,irp_here)
   allocate(o(N_int,2,n_d), iorder(n_d), duplicate(n_d), bit_tmp(n_d), &
@@ -294,8 +294,112 @@ subroutine make_selection_buffer_s2(b)
     if (k > n_d) exit
   enddo
   deallocate(o)
-  b%N = n_d
   b%cur = n_d
+  b%N = n_d
+end
+
+
+
+
+subroutine remove_duplicates_in_selection_buffer(b)
+  use selection_types
+  type(selection_buffer), intent(inout) :: b
+
+  integer(bit_kind), allocatable :: o(:,:,:)
+  double precision, allocatable  :: val(:)
+
+  integer :: n_d
+  integer :: i,k,sze,n_alpha,j,n
+  logical                        :: dup
+ 
+  ! Sort
+  integer, allocatable           :: iorder(:)
+  integer*8, allocatable         :: bit_tmp(:)
+  integer*8, external            :: det_search_key
+  integer(bit_kind), allocatable :: tmp_array(:,:,:)
+  logical, allocatable           :: duplicate(:)
+
+  n_d = b%cur
+  logical                        :: found_duplicates
+  double precision               :: rss
+  double precision, external     :: memory_of_double
+  rss = (4*N_int+4)*memory_of_double(n_d)
+  call check_mem(rss,irp_here)
+
+  found_duplicates = .False.
+  allocate(iorder(n_d), duplicate(n_d), bit_tmp(n_d), &
+           tmp_array(N_int,2,n_d), val(n_d) )
+
+  do i=1,n_d
+    iorder(i) = i
+    bit_tmp(i) = det_search_key(b%det(1,1,i),N_int)
+  enddo
+
+  call i8sort(bit_tmp,iorder,n_d)
+
+  do i=1,n_d
+    do k=1,N_int
+      tmp_array(k,1,i) = b%det(k,1,iorder(i))
+      tmp_array(k,2,i) = b%det(k,2,iorder(i))
+    enddo
+    val(i) = b%val(iorder(i))
+    duplicate(i) = .False.
+  enddo
+  
+  ! Find duplicates
+  do i=1,n_d-1
+    if (duplicate(i)) then
+      cycle
+    endif
+    j = i+1
+    do while (bit_tmp(j)==bit_tmp(i))
+      if (duplicate(j)) then
+        j+=1
+        if (j>n_d) then
+          exit
+        endif
+        cycle
+      endif
+      dup = .True.
+      do k=1,N_int
+        if ( (tmp_array(k,1,i) /= tmp_array(k,1,j))                   &
+              .or. (tmp_array(k,2,i) /= tmp_array(k,2,j)) ) then
+          dup = .False.
+          exit
+        endif
+      enddo
+      if (dup) then
+        duplicate(j) = .True.
+        found_duplicates = .True.
+      endif
+      j+=1
+      if (j>n_d) then
+        exit
+      endif
+    enddo
+  enddo
+  
+  if (found_duplicates) then
+
+    ! Copy filtered result
+    integer :: n_p
+    n_p=0
+    do i=1,n_d
+      if (duplicate(i)) then
+        cycle
+      endif
+      n_p = n_p + 1
+      do k=1,N_int
+        b%det(k,1,n_p) = tmp_array(k,1,i)
+        b%det(k,2,n_p) = tmp_array(k,2,i)
+      enddo
+      val(n_p) = val(i)
+    enddo
+    b%cur=n_p
+    b%N=n_p
+
+  endif
+  
 end
 
 

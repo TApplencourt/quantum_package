@@ -1,0 +1,8 @@
+export IRPF90=${QP_ROOT}/bin/irpf90
+
+# Load irpman shell completion
+(
+  irpman=$(tail -1 "${QP_ROOT}/bin/irpman" | cut --delimiter " " --field=2)
+  source $(dirname ${irpman})/../irpman-completions.bash
+)
+  

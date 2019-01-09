@@ -42,3 +42,14 @@
 # EZFIO sans fork
 
 Refaire les benchmarks
+
+# Commande qp avec completion dans le shell
+* qp set => ezfio set
+* qp get => ezfio get
+* qp run => qp_run
+* qp srun => qp_run
+* qp mpirun => qp_run
+* qp edit => qp_edit
+* qp set_mo_class => qp_set_mo_class
+* qp set_frozen_core => qp_set_frozen_core
+

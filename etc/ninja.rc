@@ -1,0 +1,8 @@
+if [[ -z $NINJA ]]
+then
+
+  export NINJA=${QP_ROOT}/bin/ninja
+
+fi
+
+

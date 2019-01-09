@@ -1,0 +1,9 @@
+if [[ -z $QP_LIB ]]
+then
+:
+
+  # Include here the optional external libraries to link with your binaries, 
+  # for example 
+#   export QP_LIB="$QP_LIB  -lint"
+
+fi

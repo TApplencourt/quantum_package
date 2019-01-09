@@ -125,7 +125,7 @@ subroutine ZMQ_pt2(E, pt2,relative_error, error, variance, norm, N_in)
     error(:) = 0.d0
   else
     
-    N = max(N_in,1)
+    N = max(N_in,1) * N_states
     state_average_weight_save(:) = state_average_weight(:)
     call create_selection_buffer(N, N*2, b)
     ASSERT (associated(b%det))
@@ -253,12 +253,13 @@ subroutine ZMQ_pt2(E, pt2,relative_error, error, variance, norm, N_in)
     FREE pt2_stoch_istate
 
     if (N_in > 0) then
+      b%cur = min(N_in,b%cur)
       if (s2_eig) then
         call make_selection_buffer_s2(b)
+      else
+        call remove_duplicates_in_selection_buffer(b)
       endif
       call fill_H_apply_buffer_no_selection(b%cur,b%det,N_int,0)
-      call copy_H_apply_buffer_to_wf()
-      call save_wavefunction
     endif
     call delete_selection_buffer(b)  
 

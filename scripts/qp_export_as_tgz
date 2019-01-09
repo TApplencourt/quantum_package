@@ -176,10 +176,10 @@ sed "s!^export QP_ROOT=.*\$!export QP_ROOT=\$( cd \$(dirname "\${BASH_SOURCE}") 
 echo "Creating the archive"
 #     --------------------
 
-tar --gzip --compress --file "${QPACKAGE_STATIC}".tar.gz quantum_package_static && rm --recursive --force -- "${QPACKAGE_STATIC}"
+tar --create --gzip --file "${QPACKAGE_STATIC}".tar.gz quantum_package_static && rm --recursive --force -- "${QPACKAGE_STATIC}"
 if [[ $? -ne 0 ]] ;
 then
-  echo 'tar --gzip --compress --file "${QPACKAGE_STATIC}".tar.gz "${QPACKAGE_STATIC}" && rm --recursive --force -- "${QPACKAGE_STATIC}"'
+  echo 'tar --create --gzip --file "${QPACKAGE_STATIC}".tar.gz "${QPACKAGE_STATIC}" && rm --recursive --force -- "${QPACKAGE_STATIC}"'
   exit 1
 fi
 

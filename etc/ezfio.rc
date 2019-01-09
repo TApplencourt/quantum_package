@@ -1,0 +1,15 @@
+if [[ -z $QP_EZFIO ]]
+then
+
+  export QP_EZFIO=${QP_ROOT}/external/ezfio
+
+  if [[ $SHELL == "/bin/bash" ]] ; then
+    if [[ -f ${QP_EZFIO}/Bash/ezfio.sh ]]; then
+        source ${QP_EZFIO}/Bash/ezfio.sh
+    else
+        echo "EZFIO is not installed."
+    fi
+  fi
+
+fi
+

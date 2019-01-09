@@ -1,16 +1,16 @@
-subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_)
+subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_,n_st)
   implicit none
   BEGIN_DOC
 ! Print the extrapolated energy in the output
   END_DOC
 
-  double precision, intent(in)   :: e_(N_states), pt2_(N_states), variance_(N_states), norm_(N_states), error_(N_states)
-  integer, intent(in)            :: n_det_, n_occ_pattern_
+  integer, intent(in)            :: n_det_, n_occ_pattern_, n_st
+  double precision, intent(in)   :: e_(n_st), pt2_(n_st), variance_(n_st), norm_(n_st), error_(n_st)
   integer                        :: i, k
   integer                        :: N_states_p
   character*(9)                  :: pt2_string
   character*(512)                :: fmt
-  double precision               :: f(N_states)
+  double precision               :: f(n_st)
 
   if (do_pt2) then
     pt2_string = '        '
@@ -18,7 +18,7 @@ subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_)
     pt2_string = '(approx)'
   endif
 
-  N_states_p = min(N_det_,N_states)
+  N_states_p = min(N_det_,n_st)
 
   do i=1,N_states_p
     f(i) = 1.d0/(1.d0+norm_(i))
@@ -57,7 +57,7 @@ subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_)
   print *,  ''
 
   print *,  'N_det             = ', N_det_
-  print *,  'N_states          = ', N_states
+  print *,  'N_states          = ', n_st
   if (s2_eig) then
     print *,  'N_sop             = ', N_occ_pattern_
   endif
@@ -76,7 +76,7 @@ subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_)
   enddo
 
   print *,  '-----'
-  if(N_states.gt.1)then
+  if(n_st.gt.1)then
     print *, 'Variational Energy difference (au | eV)'
     do i=2, N_states_p
       print*,'Delta E = ', (e_(i) - e_(1)), &

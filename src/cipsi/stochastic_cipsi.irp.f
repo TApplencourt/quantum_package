@@ -5,7 +5,7 @@ subroutine run_stochastic_cipsi
   END_DOC
   integer                        :: i,j,k
   double precision, allocatable  :: pt2(:), variance(:), norm(:), rpt2(:)
-  integer                        :: N_det_before, N_occ_pattern_before, to_select
+  integer                        :: to_select
   
   double precision :: rss
   double precision, external :: memory_of_double
@@ -52,9 +52,6 @@ subroutine run_stochastic_cipsi
     call save_wavefunction
   endif
   
-  N_det_before = 0
-  N_occ_pattern_before = 0
-
   double precision :: correlation_energy_ratio
   double precision :: error(N_states)
 
@@ -68,8 +65,6 @@ subroutine run_stochastic_cipsi
       write(*,'(A)')  '--------------------------------------------------------------------------------'
 
 
-    N_det_before = N_det
-    N_occ_pattern_before = N_occ_pattern
     to_select = N_det
     to_select = max(N_states_diag, to_select)
 
@@ -77,7 +72,7 @@ subroutine run_stochastic_cipsi
     variance = 0.d0
     norm = 0.d0
     call ZMQ_pt2(psi_energy_with_nucl_rep,pt2,relative_error,error, variance, &
-       norm, to_select) ! Stochastic PT2
+       norm, to_select) ! Stochastic PT2 and selection
 
     correlation_energy_ratio = (psi_energy_with_nucl_rep(1) - hf_energy_ref)  /     &
                     (psi_energy_with_nucl_rep(1) + pt2(1) - hf_energy_ref)
@@ -85,15 +80,19 @@ subroutine run_stochastic_cipsi
 
     call save_energy(psi_energy_with_nucl_rep, pt2)
     call write_double(6,correlation_energy_ratio, 'Correlation ratio')
-    call print_summary(psi_energy_with_nucl_rep(1:N_states),pt2,error,variance,norm,N_det_before,N_occ_pattern_before)
+    call print_summary(psi_energy_with_nucl_rep,pt2,error,variance,norm,N_det,N_occ_pattern,N_states)
 
     do k=1,N_states
       rpt2(:) = pt2(:)/(1.d0 + norm(k)) 
     enddo
 
-    call save_iterations(psi_energy_with_nucl_rep(1:N_states),rpt2,N_det_before) 
+    call save_iterations(psi_energy_with_nucl_rep(1:N_states),rpt2,N_det) 
     call print_extrapolated_energy()
     N_iter += 1
+
+    ! Add selected determinants
+    call copy_H_apply_buffer_to_wf()
+    call save_wavefunction
 
     PROVIDE  psi_coef
     PROVIDE  psi_det
@@ -123,7 +122,7 @@ subroutine run_stochastic_cipsi
     rpt2(:) = pt2(:)/(1.d0 + norm(k)) 
   enddo
 
-  call print_summary(psi_energy_with_nucl_rep(1:N_states),pt2,error,variance,norm,N_det,N_occ_pattern)
+  call print_summary(psi_energy_with_nucl_rep(1:N_states),pt2,error,variance,norm,N_det,N_occ_pattern,N_states)
   call save_iterations(psi_energy_with_nucl_rep(1:N_states),rpt2,N_det) 
   call print_extrapolated_energy()
 

@@ -3,6 +3,10 @@
 # Quantum Package configuration script
 #
 
+export QP_ROOT="$( cd "$(dirname "$0")" ; pwd -P )"
+echo "QP_ROOT="$QP_ROOT
+
+
 help()
 {
     cat <<EOF
@@ -17,14 +21,16 @@ Options:
   -c <file>, --config <file>            define a configuration file, in
                                         "${QP_ROOT}/config/". 
   -h, --help                            print the help message
-  -i <package>, --install <package>     install <package>. Use at your own risk.
+  -i <package>, --install <package>     install <package>. Use at your own
+                                        risk: no support will be provided
+                                        for the installation of dependencies.
 
 Example:
   ./configure -c config/gfortran.cfg
 
 Note:
-  - Using different configuration files for installing dependencies and
-    compiling QP can improve the user experience.
+  - Users are encouraged to create their own configuration files instead of
+    modifying the existing ones.
 
 EOF
     exit
@@ -42,7 +48,7 @@ while : ; do
         -i|--install)
             PACKAGES="${PACKAGE} $2"
             shift;;
-        -h|--help)
+        -h|-help|--help)
             help;;
         *)
             echo "unknown option $1, try --help"
@@ -54,17 +60,9 @@ done
 # Trim leading and trailing spaces
 PACKAGES=$(echo $PACKAGES | xargs)
 
-
-
-sed "s!^export QP_ROOT=.*\$!export QP_ROOT=\"$PWD\"!" \
-  quantum_package.rc.default > quantum_package.rc
-
-echo "quantum_package.rc created."
+echo "export QP_ROOT=\"$QP_ROOT\"" > ${QP_ROOT}/etc/00.qp_root
 
 source quantum_package.rc
-
-
-
 
 
 
@@ -151,7 +149,7 @@ for PACKAGE in ${PACKAGES} ; do
     elif [[ ${PACKAGE} = irpf90 ]] ; then
 
             download \
-              "https://gitlab.com/scemama/irpf90/-/archive/v1.7.3/irpf90-v1.7.3.tar.gz" \
+              "https://gitlab.com/scemama/irpf90/-/archive/v1.7.4/irpf90-v1.7.4.tar.gz" \
               "${QP_ROOT}"/external/irpf90.tar.gz
             (
               cd "${QP_ROOT}"/external

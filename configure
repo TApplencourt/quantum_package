@@ -3,7 +3,7 @@
 # Quantum Package configuration script
 #
 
-export QP_ROOT="$( cd "$(dirname "$0")" ; pwd -P )"
+export QP_ROOT="$( cd "$(dirname "$0")" ; pwd --physical )"
 echo "QP_ROOT="$QP_ROOT
 
 

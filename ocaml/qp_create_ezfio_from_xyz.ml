@@ -2,27 +2,6 @@ open Qputils
 open Qptypes
 open Core
 
-let spec =
-  let open Command.Spec in
-  empty 
-  +> flag "o" (optional string)
-     ~doc:"file Name of the created EZFIO file."
-  +> flag "b" (required string)
-     ~doc:"string Name of basis set."
-  +> flag "au" no_arg
-     ~doc:"Input geometry is in atomic units."
-  +> flag "c" (optional_with_default 0 int)
-     ~doc:"int Total charge of the molecule. Default is 0."
-  +> flag "d" (optional_with_default 0. float)
-     ~doc:"float Add dummy atoms. x * (covalent radii of the atoms)"
-  +> flag "m" (optional_with_default 1 int)
-     ~doc:"int Spin multiplicity (2S+1) of the molecule. Default is 1."
-  +> flag "p" (optional string)
-     ~doc:"string Name of the pseudopotential"
-  +> flag "cart" no_arg
-     ~doc:" Compute AOs in the Cartesian basis set (6d, 10f, ...)"
-  +> anon ("(xyz_file|zmt_file)" %: file )
-
 type element =
 | Element of Element.t
 | Int_elem of (Nucl_number.t * Element.t)
@@ -660,16 +639,16 @@ let run ?o b au c d m p cart xyz_file =
         end; 
         raise ex;
       end
-  in ()
+  in
+  ignore @@ Sys.command ("qp_edit -c "^ezfio_file);
+  print_endline ezfio_file
  
 
 
-let command = 
-    Command.basic_spec
-    ~summary: "Quantum Package command"
-    ~readme:(fun () -> "
 
-=== Available basis sets ===
+let () =
+
+  "=== Available basis sets ===
 
 " ^ (list_basis ()) ^ "
 
@@ -686,15 +665,68 @@ defined as follows:
 If a file with the same name as the basis set exists, this file will be read.
 Otherwise, the basis set is obtained from the database.
 
-" )
-    spec
-    (fun o b au c d m p cart xyz_file () ->
-       run ?o b au c d m p cart xyz_file )
+" |> Command_line.set_header_doc ;
 
+  [ ( 'o', "output", "file Name of the created EZFIO file.", Command_line.With_arg) ;
+    ( 'b', "basis", "string Name of basis set.", Command_line.With_arg) ;
+    ( 'a', "au", "Input geometry is in atomic units.", Command_line.Without_arg) ;
+    ( 'c', "charge", "int Total charge of the molecule. Default is 0.", Command_line.With_arg) ;
+    ( 'd', "dummy", "float Add dummy atoms. x * (covalent radii of the atoms)",  Command_line.With_arg);
+    ( 'm', "multiplicity", "int Spin multiplicity (2S+1) of the molecule. Default is 1.",  Command_line.With_arg);
+    ( 'p', "pseudo", "string Name of the pseudopotential.", Command_line.With_arg);
+    ( 'x', "cartesian", "Compute AOs in the Cartesian basis set (6d, 10f, ...)", Command_line.Without_arg);
+    Command_line.anonymous "(xyz_file|zmt_file)" "input file in xyz format or z-matrix."
+  ]
+  |> Command_line.set_specs ;
+  
 
-let () =
-    Command.run command
+  (*  Handle options *)
+  let output =
+    Command_line.get "output" 
+  in
 
+  let basis =
+    match Command_line.get "basis" with
+    | None -> (Command_line.help () ; failwith "Error: [-b|--basis] option is missing.")
+    | Some x -> x
+  in
 
+  let au =
+    Command_line.get_bool "au"
+  in
+
+  let charge =
+    match Command_line.get "charge" with
+    | None -> 0
+    | Some x -> int_of_string x
+  in
+
+  let dummy =
+    match Command_line.get "dummy" with
+    | None -> 0.
+    | Some x -> float_of_string x
+  in
+
+  let multiplicity =
+    match Command_line.get "multiplicity" with
+    | None -> 1
+    | Some n -> int_of_string n
+  in
+
+  let pseudo =
+    Command_line.get "pseudo" 
+  in
+
+  let cart =
+    Command_line.get_bool "cartesian" 
+  in
+
+  let xyz_filename =
+    match Command_line.anon_args () with
+    | [x] -> x
+    | _ -> (Command_line.help () ; failwith "input file is missing")
+  in
+
+  run ?o:output basis au charge dummy multiplicity pseudo cart xyz_filename
 
 

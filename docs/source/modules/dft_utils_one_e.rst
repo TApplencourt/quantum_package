@@ -1090,14 +1090,12 @@ Providers
 
     .. code:: text
 
-        double precision, allocatable	:: potential_sr_x_alpha_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_x_beta_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_c_alpha_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_c_beta_ao_lda	(ao_num,ao_num,N_states)
 
     File: :file:`sr_pot_ao.irp.f`
 
-    short range exchange/correlation alpha/beta potentials with LDA functional on the AO basis
+    short range correlation alpha/beta potentials with LDA functional on the |AO| basis
 
 
 
@@ -1122,14 +1120,12 @@ Providers
 
     .. code:: text
 
-        double precision, allocatable	:: potential_sr_x_alpha_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_x_beta_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_c_alpha_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_c_beta_ao_lda	(ao_num,ao_num,N_states)
 
     File: :file:`sr_pot_ao.irp.f`
 
-    short range exchange/correlation alpha/beta potentials with LDA functional on the AO basis
+    short range correlation alpha/beta potentials with LDA functional on the |AO| basis
 
 
 
@@ -1156,12 +1152,10 @@ Providers
 
         double precision, allocatable	:: potential_sr_x_alpha_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_x_beta_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_c_alpha_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_c_beta_ao_lda	(ao_num,ao_num,N_states)
 
     File: :file:`sr_pot_ao.irp.f`
 
-    short range exchange/correlation alpha/beta potentials with LDA functional on the AO basis
+    short range exchange alpha/beta potentials with LDA functional on the |AO| basis
 
 
 
@@ -1188,12 +1182,10 @@ Providers
 
         double precision, allocatable	:: potential_sr_x_alpha_ao_lda	(ao_num,ao_num,N_states)
         double precision, allocatable	:: potential_sr_x_beta_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_c_alpha_ao_lda	(ao_num,ao_num,N_states)
-        double precision, allocatable	:: potential_sr_c_beta_ao_lda	(ao_num,ao_num,N_states)
 
     File: :file:`sr_pot_ao.irp.f`
 
-    short range exchange/correlation alpha/beta potentials with LDA functional on the AO basis
+    short range exchange alpha/beta potentials with LDA functional on the |AO| basis
 
 
 
@@ -1352,7 +1344,7 @@ Providers
 
     File: :file:`one_e_energy_dft.irp.f`
 
-    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_body_dm_mo_beta_for_dft+one_body_dm_mo_alpha_for_dft
+    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_e_dm_mo_beta_for_dft+one_e_dm_mo_alpha_for_dft
 
 
 
@@ -1367,7 +1359,7 @@ Providers
 
     File: :file:`one_e_energy_dft.irp.f`
 
-    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_body_dm_mo_beta_for_dft+one_body_dm_mo_alpha_for_dft
+    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_e_dm_mo_beta_for_dft+one_e_dm_mo_alpha_for_dft
 
 
 
@@ -1382,7 +1374,7 @@ Providers
 
     File: :file:`one_e_energy_dft.irp.f`
 
-    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_body_dm_mo_beta_for_dft+one_body_dm_mo_alpha_for_dft
+    kinetic, electron-nuclear and total h_core energy computed with the density matrix one_e_dm_mo_beta_for_dft+one_e_dm_mo_alpha_for_dft
 
 
 

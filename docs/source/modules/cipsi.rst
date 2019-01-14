@@ -755,6 +755,20 @@ Subroutines / functions
 
 
 
+.. c:function:: remove_duplicates_in_selection_buffer
+
+    .. code:: text
+
+        subroutine remove_duplicates_in_selection_buffer(b)
+
+    File: :file:`selection_buffer.irp.f`
+
+    
+
+
+
+
+
 .. c:function:: run_cipsi
 
     .. code:: text

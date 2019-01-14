@@ -19,28 +19,18 @@ BEGIN_PROVIDER [ double precision, eigenvectors_Fock_matrix_mo, (ao_num,mo_num) 
        F(i,j) = Fock_matrix_mo(i,j)
      enddo
    enddo
-   if(no_oa_or_av_opt)then
+   
+   if(frozen_orb_scf)then
      integer                        :: iorb,jorb
-     do i = 1, n_act_orb
-       iorb = list_act(i)
-       do j = 1, n_inact_orb
-         jorb = list_inact(j)
-         F(iorb,jorb) = 0.d0
-         F(jorb,iorb) = 0.d0
-       enddo
-       do j = 1, n_virt_orb
-         jorb = list_virt(j)
-         F(iorb,jorb) = 0.d0
-         F(jorb,iorb) = 0.d0
-       enddo
-       do j = 1, n_core_orb
-         jorb = list_core(j)
-         F(iorb,jorb) = 0.d0
-         F(jorb,iorb) = 0.d0
-       enddo
+     do i = 1, n_core_orb
+      iorb = list_core(i)
+      do j = 1, n_act_orb
+       jorb = list_act(j)
+       F(iorb,jorb) = 0.d0
+       F(jorb,iorb) = 0.d0
+      enddo
      enddo
    endif
-   
    
    ! Insert level shift here
    do i = elec_beta_num+1, elec_alpha_num

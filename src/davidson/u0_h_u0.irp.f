@@ -137,6 +137,19 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
   integer, allocatable           :: idx(:), idx0(:)
   integer                        :: maxab, n_singles_a, n_singles_b, kcol_prev
   integer*8                      :: k8
+  logical                        :: compute_singles
+  integer*8                      :: last_found, left, right, right_max
+  double precision               :: rss, mem, ratio
+
+!  call resident_memory(rss)
+!  mem = dble(singles_beta_csc_size) / 1024.d0**3
+!
+!  compute_singles = (mem+rss > qp_max_mem)
+!
+!  if (.not.compute_singles) then
+!    provide singles_beta_csc
+!  endif
+compute_singles=.True.
 
   maxab = max(N_det_alpha_unique, N_det_beta_unique)+1
   allocate(idx0(maxab))
@@ -149,7 +162,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
   ! -------------------------------------------------
 
   PROVIDE N_int nthreads_davidson
-  !$OMP PARALLEL DEFAULT(NONE) NUM_THREADS(nthreads_davidson)        &
+  !$OMP PARALLEL DEFAULT(SHARED) NUM_THREADS(nthreads_davidson)        &
       !$OMP   SHARED(psi_bilinear_matrix_rows, N_det,                &
       !$OMP          psi_bilinear_matrix_columns,                    &
       !$OMP          psi_det_alpha_unique, psi_det_beta_unique,      &
@@ -161,13 +174,15 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
       !$OMP          psi_bilinear_matrix_columns_loc,                &
       !$OMP          psi_bilinear_matrix_transp_rows_loc,            &
       !$OMP          istart, iend, istep, irp_here, v_t, s_t,        &
-      !$OMP          ishift, idx0, u_t, maxab)                       &
+      !$OMP          ishift, idx0, u_t, maxab, compute_singles,      &
+      !$OMP          singles_alpha_csc,singles_alpha_csc_idx,        &
+      !$OMP          singles_beta_csc,singles_beta_csc_idx)          &        
       !$OMP   PRIVATE(krow, kcol, tmp_det, spindet, k_a, k_b, i,     &
       !$OMP          lcol, lrow, l_a, l_b,                           &
       !$OMP          buffer, doubles, n_doubles,                     &
       !$OMP          tmp_det2, hij, sij, idx, l, kcol_prev,          &
-      !$OMP          singles_a, n_singles_a, singles_b,              &
-      !$OMP          n_singles_b, k8)
+      !$OMP          singles_a, n_singles_a, singles_b, ratio,       &
+      !$OMP          n_singles_b, k8, last_found,left,right,right_max)
   
   ! Alpha/Beta double excitations
   ! =============================
@@ -197,43 +212,123 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
 
     if (kcol /= kcol_prev) then
       tmp_det(1:$N_int,2) = psi_det_beta_unique (1:$N_int, kcol)
-      call get_all_spin_singles_$N_int(                              &
-          psi_det_beta_unique, idx0,                                 &
-          tmp_det(1,2), N_det_beta_unique,                           &
-          singles_b, n_singles_b)
+      if (compute_singles) then
+        call get_all_spin_singles_$N_int(                              &
+            psi_det_beta_unique, idx0,                                 &
+            tmp_det(1,2), N_det_beta_unique,                           &
+            singles_b, n_singles_b)
+      else
+        n_singles_b = 0
+        !DIR$ LOOP COUNT avg(1000)
+        do k8=singles_beta_csc_idx(kcol),singles_beta_csc_idx(kcol+1)-1
+          n_singles_b = n_singles_b+1
+          singles_b(n_singles_b) = singles_beta_csc(k8)
+        enddo
+      endif
     endif
     kcol_prev = kcol
 
     ! Loop over singly excited beta columns
     ! -------------------------------------
 
+    !DIR$ LOOP COUNT avg(1000)
     do i=1,n_singles_b
       lcol = singles_b(i)
 
       tmp_det2(1:$N_int,2) = psi_det_beta_unique(1:$N_int, lcol)
 
-      l_a = psi_bilinear_matrix_columns_loc(lcol)
-      ASSERT (l_a <= N_det)
+!---
+!      if (compute_singles) then
 
-      do j=1,psi_bilinear_matrix_columns_loc(lcol+1) - psi_bilinear_matrix_columns_loc(lcol)
-        lrow = psi_bilinear_matrix_rows(l_a)
-        ASSERT (lrow <= N_det_alpha_unique)
-
-        buffer(1:$N_int,j) = psi_det_alpha_unique(1:$N_int, lrow)  ! hot spot
-
+        l_a = psi_bilinear_matrix_columns_loc(lcol)
         ASSERT (l_a <= N_det)
-        idx(j) = l_a
-        l_a = l_a+1
-      enddo
-      j = j-1
 
-      call get_all_spin_singles_$N_int(                              &
-          buffer, idx, tmp_det(1,1), j,                              &
-          singles_a, n_singles_a )
+        !DIR$ UNROLL(8)
+        !DIR$ LOOP COUNT avg(50000)
+        do j=1,psi_bilinear_matrix_columns_loc(lcol+1) - psi_bilinear_matrix_columns_loc(lcol)
+          lrow = psi_bilinear_matrix_rows(l_a)
+          ASSERT (lrow <= N_det_alpha_unique)
+
+          buffer(1:$N_int,j) = psi_det_alpha_unique(1:$N_int, lrow)  ! hot spot
+
+          ASSERT (l_a <= N_det)
+          idx(j) = l_a
+          l_a = l_a+1
+        enddo
+        j = j-1
+
+        call get_all_spin_singles_$N_int(                              &
+            buffer, idx, tmp_det(1,1), j,                              &
+            singles_a, n_singles_a )
+
+!-----
+!      else
+!
+! ! Search for singles
+!
+!call cpu_time(time0)
+! ! Right boundary
+!        l_a = psi_bilinear_matrix_columns_loc(lcol+1)-1
+!        ASSERT (l_a <= N_det)
+!        do j=1,psi_bilinear_matrix_columns_loc(lcol+1) - psi_bilinear_matrix_columns_loc(lcol)
+!          lrow = psi_bilinear_matrix_rows(l_a)
+!          ASSERT (lrow <= N_det_alpha_unique)
+!
+!          left = singles_alpha_csc_idx(krow)
+!          right_max = -1_8
+!          right = singles_alpha_csc_idx(krow+1)
+!          do while (right-left>0_8)
+!            k8 = shiftr(right+left,1)
+!            if (singles_alpha_csc(k8) > lrow) then
+!              right = k8 
+!            else if (singles_alpha_csc(k8) < lrow) then
+!              left = k8 + 1_8
+!            else
+!              right_max = k8+1_8
+!              exit
+!            endif
+!          enddo
+!          if (right_max > 0_8) exit
+!          l_a = l_a-1
+!        enddo
+!        if (right_max < 0_8) right_max = singles_alpha_csc_idx(krow)
+!
+! ! Search
+!        n_singles_a = 0
+!        l_a = psi_bilinear_matrix_columns_loc(lcol)
+!        ASSERT (l_a <= N_det)
+!
+!        last_found = singles_alpha_csc_idx(krow)
+!        do j=1,psi_bilinear_matrix_columns_loc(lcol+1) - psi_bilinear_matrix_columns_loc(lcol)
+!          lrow = psi_bilinear_matrix_rows(l_a)
+!          ASSERT (lrow <= N_det_alpha_unique)
+!
+!          left = last_found
+!          right = right_max
+!          do while (right-left>0_8)
+!            k8 = shiftr(right+left,1)
+!            if (singles_alpha_csc(k8) > lrow) then
+!              right = k8 
+!            else if (singles_alpha_csc(k8) < lrow) then
+!              left = k8 + 1_8
+!            else
+!              n_singles_a += 1
+!              singles_a(n_singles_a) = l_a
+!              last_found = k8+1_8
+!              exit
+!            endif
+!          enddo
+!          l_a = l_a+1
+!        enddo
+!        j = j-1
+!
+!      endif
+!-----
 
       ! Loop over alpha singles
       ! -----------------------
 
+      !DIR$ LOOP COUNT avg(1000)
       do k = 1,n_singles_a
         l_a = singles_a(k)
         ASSERT (l_a <= N_det)
@@ -244,9 +339,10 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
         tmp_det2(1:$N_int,1) = psi_det_alpha_unique(1:$N_int, lrow)
         call i_H_j_double_alpha_beta(tmp_det,tmp_det2,$N_int,hij)
         call get_s2(tmp_det,tmp_det2,$N_int,sij)
+        !DIR$ LOOP COUNT AVG(4)
         do l=1,N_st
           v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
-          s_t(l,k_a) = s_t(l,k_a) + sij * u_t(l,l_a)
+          s_t(l,k_a) = s_t(l,k_a) + sij * u_t(l,l_a) 
         enddo
       enddo
 
@@ -286,6 +382,8 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! Loop inside the beta column to gather all the connected alphas
     lcol = psi_bilinear_matrix_columns(k_a)
     l_a = psi_bilinear_matrix_columns_loc(lcol)
+
+    !DIR$ LOOP COUNT avg(200000)
     do i=1,N_det_alpha_unique
       if (l_a > N_det) exit
       lcol = psi_bilinear_matrix_columns(l_a)
@@ -307,6 +405,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! ----------------------------------
 
     tmp_det2(1:$N_int,2) = psi_det_beta_unique (1:$N_int, kcol)
+    !DIR$ LOOP COUNT avg(1000)
     do i=1,n_singles_a
       l_a = singles_a(i)
       ASSERT (l_a <= N_det)
@@ -317,6 +416,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
       tmp_det2(1:$N_int,1) = psi_det_alpha_unique(1:$N_int, lrow)
       call i_H_j_mono_spin( tmp_det, tmp_det2, $N_int, 1, hij)
 
+      !DIR$ LOOP COUNT AVG(4)
       do l=1,N_st
         v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
         ! single => sij = 0 
@@ -327,6 +427,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! Compute Hij for all alpha doubles
     ! ----------------------------------
     
+    !DIR$ LOOP COUNT avg(50000)
     do i=1,n_doubles
       l_a = doubles(i)
       ASSERT (l_a <= N_det)
@@ -335,6 +436,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
       ASSERT (lrow <= N_det_alpha_unique)
 
       call i_H_j_double_spin( tmp_det(1,1), psi_det_alpha_unique(1, lrow), $N_int, hij)
+      !DIR$ LOOP COUNT AVG(4)
       do l=1,N_st
         v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
         ! same spin => sij = 0
@@ -366,6 +468,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! Loop inside the alpha row to gather all the connected betas
     lrow = psi_bilinear_matrix_transp_rows(k_b)
     l_b = psi_bilinear_matrix_transp_rows_loc(lrow)
+    !DIR$ LOOP COUNT avg(200000)
     do i=1,N_det_beta_unique
       if (l_b > N_det) exit
       lrow = psi_bilinear_matrix_transp_rows(l_b)
@@ -387,6 +490,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! ----------------------------------
     
     tmp_det2(1:$N_int,1) = psi_det_alpha_unique(1:$N_int, krow)
+    !DIR$ LOOP COUNT avg(1000)
     do i=1,n_singles_b
       l_b = singles_b(i)
       ASSERT (l_b <= N_det)
@@ -398,6 +502,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
       call i_H_j_mono_spin( tmp_det, tmp_det2, $N_int, 2, hij)
       l_a = psi_bilinear_matrix_transp_order(l_b)
       ASSERT (l_a <= N_det)
+      !DIR$ LOOP COUNT AVG(4)
       do l=1,N_st
         v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
         ! single => sij = 0 
@@ -407,6 +512,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
     ! Compute Hij for all beta doubles
     ! ----------------------------------
     
+    !DIR$ LOOP COUNT avg(50000)
     do i=1,n_doubles
       l_b = doubles(i)
       ASSERT (l_b <= N_det)
@@ -418,6 +524,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
       l_a = psi_bilinear_matrix_transp_order(l_b)
       ASSERT (l_a <= N_det)
 
+      !DIR$ LOOP COUNT AVG(4)
       do l=1,N_st
         v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,l_a)
         ! same spin => sij = 0 
@@ -445,6 +552,7 @@ subroutine H_S2_u_0_nstates_openmp_work_$N_int(v_t,s_t,u_t,N_st,sze,istart,iend,
   
     hij = diag_H_mat_elem(tmp_det,$N_int) 
     sij = diag_S_mat_elem(tmp_det,$N_int)
+    !DIR$ LOOP COUNT AVG(4)
     do l=1,N_st
       v_t(l,k_a) = v_t(l,k_a) + hij * u_t(l,k_a)
       s_t(l,k_a) = s_t(l,k_a) + sij * u_t(l,k_a)

@@ -97,9 +97,9 @@ EZFIO parameters
     Calculated HF energy
 
 
-.. option:: no_oa_or_av_opt
+.. option:: frozen_orb_scf
 
-    If true, leave the active orbitals untouched in the SCF procedure
+    If true, leave untouched all the orbitals defined as core and optimize all the orbitals defined as active with qp_set_mo_class
 
     Default: False
 

@@ -1,21 +1,19 @@
-open Core
 open Qputils
 
 (* Environment variables :
 
-   QP_PREFIX=gdb   : to run gdb (or valgrind, or whatever)
    QP_TASK_DEBUG=1 : debug task server
 
 *)
 
 let print_list () =
   Lazy.force Qpackage.executables 
-  |> List.iter ~f:(fun (x,_) -> Printf.printf " * %s\n" x) 
+  |> List.iter (fun (x,_) -> Printf.printf " * %s\n" x) 
 
 let () = 
   Random.self_init ()
 
-let run slave exe ezfio_file =
+let run slave ?prefix exe ezfio_file =
 
   (** Check availability of the ports *)
   let port_number = 
@@ -27,13 +25,13 @@ let run slave exe ezfio_file =
     in
     let rec try_new_port port_number =
       try 
-        List.iter [ 0;1;2;3;4;5;6;7;8;9 ] ~f:(fun i ->
+        List.iter (fun i ->
             let address = 
               Printf.sprintf "tcp://%s:%d" (Lazy.force TaskServer.ip_address) (port_number+i)
             in
             Zmq.Socket.bind dummy_socket address;
             Zmq.Socket.unbind dummy_socket address;
-        );
+        ) [ 0;1;2;3;4;5;6;7;8;9 ] ;
         port_number
       with
       | Unix.Unix_error _ -> try_new_port (port_number+100)
@@ -47,21 +45,21 @@ let run slave exe ezfio_file =
   in
 
   let time_start = 
-    Time.now ()
+    Core.Time.now ()
   in
 
-  if (not (Sys.file_exists_exn ezfio_file)) then
+  if (not (Sys.file_exists ezfio_file)) then
     failwith ("EZFIO directory "^ezfio_file^" not found");
 
   let executables = Lazy.force Qpackage.executables in
-  if (not (List.exists ~f:(fun (x,_) -> x = exe) executables)) then
+  if (not (List.exists (fun (x,_) -> x = exe) executables)) then
     begin
         Printf.printf "\nPossible choices:\n";
-        List.iter executables ~f:(fun (x,_) -> Printf.printf "* %s\n%!" x);
+        List.iter (fun (x,_) -> Printf.printf "* %s\n%!" x) executables;
         failwith ("Executable "^exe^" not found")
     end;
 
-  Printf.printf "%s\n" (Time.to_string time_start);
+  Printf.printf "%s\n" (Core.Time.to_string time_start);
   Printf.printf "===============\nQuantum Package\n===============\n\n";
   Printf.printf "Git Commit: %s\n" Git.message;
   Printf.printf "Git Date  : %s\n" Git.date;
@@ -86,10 +84,10 @@ let run slave exe ezfio_file =
     if slave then
       try
         let address = 
-          In_channel.read_all qp_run_address_filename
-          |> String.strip
+          Core.In_channel.read_all qp_run_address_filename
+          |> String.trim
         in
-        Unix.putenv ~key:"QP_RUN_ADDRESS_MASTER" ~data:address
+        Unix.putenv "QP_RUN_ADDRESS_MASTER" address
       with Sys_error _ -> failwith "No master is not running"
   in
        
@@ -104,23 +102,22 @@ let run slave exe ezfio_file =
   let address =
     Printf.sprintf "tcp://%s:%d" (Lazy.force TaskServer.ip_address) port_number
   in
-  Unix.putenv ~key:"QP_RUN_ADDRESS" ~data:address;
+  Unix.putenv "QP_RUN_ADDRESS" address;
   let () = 
     if (not slave) then
-      Out_channel.with_file qp_run_address_filename  ~f:(
-        fun oc -> Out_channel.output_lines oc [address]) 
+      Core.Out_channel.with_file qp_run_address_filename  ~f:(
+        fun oc -> Core.Out_channel.output_lines oc [address]) 
   in
 
 
   (** Run executable *)
   let prefix = 
-    match Sys.getenv "QP_PREFIX" with
+    match prefix with
     | Some x -> x^" "
     | None -> ""
   and exe =
-    match (List.find ~f:(fun (x,_) -> x = exe) executables) with
-    | Some (_,x) -> x^" "
-    | None -> assert false
+    match (List.find (fun (x,_) -> x = exe) executables) with
+    | (_,exe) -> exe^" "
   in
   let exit_code = 
     match (Sys.command (prefix^exe^ezfio_file)) with
@@ -133,37 +130,51 @@ let run slave exe ezfio_file =
   if (not slave) then
     Sys.remove qp_run_address_filename;
 
-  let duration = Time.diff (Time.now()) time_start 
-  |> Time.Span.to_string in
+  let duration = Core.Time.diff (Core.Time.now()) time_start 
+  |> Core.Time.Span.to_string in
   Printf.printf "Wall time : %s\n\n" duration;
   if (exit_code <> 0) then
     exit exit_code
 
-let spec = 
-  let open Command.Spec in
-  empty
-  +> flag "slave" no_arg
-     ~doc:(" Required for slave tasks")
-  +> anon ("executable" %: string)
-  +> anon ("ezfio_file" %: string)
-;;
 
 
 
 let () =
-  Command.basic_spec
-  ~summary: "Quantum Package command"
-  ~readme:( fun () -> "
-Executes a Quantum Package binary file among these:\n\n"
+  (* Command-line specs *)
+  "Executes a Quantum Package binary file among these:\n\n"
 ^ (Lazy.force Qpackage.executables
-    |> List.map ~f:(fun (x,_) -> Printf.sprintf " * %s" x )
-    |> String.concat ~sep:"\n" 
-    )
-  )
-  spec
-  (fun slave exe ezfio_file () ->
-    run slave exe ezfio_file
-  )
-  |> Command.run   ~version: Git.sha1   ~build_info: Git.message
+    |> List.map (fun (x,_) -> Printf.sprintf " * %s" x )
+    |> String.concat "\n"
+  ) |> Command_line.set_header_doc;
+
+  [ ( 's', "slave", "Required to run slave tasks in distributed environments",
+        Command_line.Without_arg);
+    ( 'p', "prefix", "<string> Prefix before running the program, like gdb or valgrind",
+        Command_line.With_arg );
+      Command_line.anonymous "PROGRAM" "Name of the QP program to be run";
+      Command_line.anonymous "EZFIO_DIR" "EZFIO directory";
+    ]
+  |> Command_line.set_specs ;
+
+
+  (*  Handle options *)
+  if Command_line.show_help () then
+    exit 0;
+
+  let slave = 
+    match Command_line.get "slave" with
+    | None -> false
+    | _ -> true
+  in
+
+  let prefix = 
+    Command_line.get "prefix"
+  in
+
+  (* Run the program *)
+  match Command_line.anon_args () with
+  | exe :: ezfio_file :: [] -> run slave ?prefix exe ezfio_file
+  | _ ->  (Command_line.help () ; failwith "Inconsistent command line")
+  
 
 

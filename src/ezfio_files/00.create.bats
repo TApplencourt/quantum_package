@@ -1,6 +1,7 @@
 #!/usr/bin/env bats
 
 source $QP_ROOT/tests/bats/common.bats.sh
+source $QP_ROOT/quantum_package.rc
 
 function run {
   local INPUT=$1
@@ -14,12 +15,12 @@ function run {
   fi
   cp ${QP_ROOT}/tests/input/$INPUT .
   rm -rf $EZ
-  qp_create_ezfio_from_xyz \
-     $INPUT -b "$BASIS" -m $MULT -c $CHARGE $PSEUDO -o $EZ
-  qp_edit -c $EZ
-  ezfio set_file $EZ
-  ezfio set scf_utils thresh_scf 1.e-12
-  ezfio set ao_two_e_ints io_ao_two_e_integrals "Write" 
+  qp create_ezfio_from_xyz \
+     $INPUT --basis="$BASIS" -m $MULT -c $CHARGE $PSEUDO -o $EZ
+  qp edit --check
+  qp set scf_utils thresh_scf 1.e-12
+  qp set ao_two_e_ints io_ao_two_e_integrals "Write" 
+  qp set mo_two_e_ints io_mo_two_e_integrals "Write" 
 }
 
 

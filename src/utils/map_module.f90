@@ -549,13 +549,13 @@ subroutine cache_map_get_interval(map, key, value, ibegin, iend, idx)
   double precision, pointer :: v(:)
   integer :: i
   
-!  call search_key_big_interval(key,map%key, map%n_elements, idx, ibegin, iend)
-  call search_key_value_big_interval(key, value, map%key, map%value, map%n_elements, idx, ibegin, iend)
-!  if (idx > 0) then
-!    value = v(idx)
-!  else
-!    value = 0._integral_kind
-!  endif
+  call search_key_big_interval(key,map%key, map%n_elements, idx, ibegin, iend)
+  if (idx > 0) then
+    value = map%value(idx)
+  else
+    value = 0._integral_kind
+  endif
+!  call search_key_value_big_interval(key, value, map%key, map%value, map%n_elements, idx, ibegin, iend)
 end
 
 
@@ -665,7 +665,7 @@ subroutine search_key_big_interval(key,X,sze,idx,ibegin_in,iend_in)
     
     istep = shiftr(iend-ibegin,1)
     idx = ibegin + istep
-    do while (istep > 64)
+    do while (istep > 4)
       idx = ibegin + istep
       ! TODO : Cache misses 
       if (cache_key < X(idx)) then
@@ -703,17 +703,17 @@ subroutine search_key_big_interval(key,X,sze,idx,ibegin_in,iend_in)
       endif
     enddo
     idx = ibegin
-    if (min(iend_in,sze) > ibegin+64) then
-      iend = ibegin+64
+    if (min(iend_in,sze) > ibegin+4) then
+      iend = ibegin+4
+      !DIR$ LOOP COUNT MAX(4)
       do while (cache_key > X(idx))
         idx = idx+1
       end do
     else
+      !DIR$ LOOP COUNT MAX(4)
       do while (cache_key > X(idx))
         idx = idx+1
-        if (idx /= iend) then
-          cycle
-        else
+        if (idx == iend) then
           exit
         endif
       end do
@@ -771,10 +771,11 @@ subroutine search_key_value_big_interval(key,value,X,Y,sze,idx,ibegin_in,iend_in
   iend   = min(iend_in,sze)
   if ((cache_key > X(ibegin)) .and. (cache_key < X(iend))) then
     
-    istep = shiftr(iend-ibegin,1)
+    istep = shiftr(iend+ibegin,1)
     idx = ibegin + istep
-    do while (istep > 64)
+    do while (istep > 4)
       idx = ibegin + istep
+      ! TODO : Cache misses 
       if (cache_key < X(idx)) then
         iend = idx
         istep = shiftr(idx-ibegin,1)
@@ -813,20 +814,17 @@ subroutine search_key_value_big_interval(key,value,X,Y,sze,idx,ibegin_in,iend_in
       endif
     enddo
     idx = ibegin
-    value = Y(idx)
-    if (min(iend_in,sze) > ibegin+64) then
-      iend = ibegin+64
+    if (min(iend_in,sze) > ibegin+4) then
+      iend = ibegin+4
+      !DIR$ LOOP COUNT MAX(4)
       do while (cache_key > X(idx))
         idx = idx+1
-        value = Y(idx)
       end do
     else
+      !DIR$ LOOP COUNT MAX(4)
       do while (cache_key > X(idx))
         idx = idx+1
-        value = Y(idx)
-        if (idx /= iend) then
-          cycle
-        else
+        if (idx == iend) then
           exit
         endif
       end do
@@ -834,6 +832,8 @@ subroutine search_key_value_big_interval(key,value,X,Y,sze,idx,ibegin_in,iend_in
     if (cache_key /= X(idx)) then
       idx = 1-idx
       value = 0.d0
+    else
+      value = Y(idx)
     endif
     return
     

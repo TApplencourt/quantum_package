@@ -1,16 +1,16 @@
 #!/usr/bin/env bats
 
 source $QP_ROOT/tests/bats/common.bats.sh
+source $QP_ROOT/quantum_package.rc
 
 function run {
   local INPUT=$1
   local EZ=$2
   cp ${QP_ROOT}/tests/input/$INPUT .
-  qp_convert_output_to_ezfio $INPUT -o $EZ
-  qp_edit -c $EZ
-  ezfio set_file $EZ
-  ezfio set scf_utils thresh_scf 1.e-12
-  echo "Write" > ${EZ}/ao_two_e_ints/io_ao_two_e_integrals
+  qp convert_output_to_ezfio $INPUT -o $EZ
+  qp set_file $EZ
+  qp edit --check
+  qp set scf_utils thresh_scf 1.e-12
 }
 
 @test "HBO GAMESS" {
@@ -23,5 +23,5 @@ function run {
 
 @test "[Cu(NH3)4]2+ GAMESS" {
   run cu_nh3_4_2plus.gms.out  cu_nh3_4_2plus.ezfio
-  ezfio set scf_utils thresh_scf 1.e-10
+  qp set scf_utils thresh_scf 1.e-10
 }

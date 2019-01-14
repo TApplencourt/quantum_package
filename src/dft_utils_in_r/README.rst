@@ -10,5 +10,5 @@ The main providers for this module are:
 
 * `aos_in_r_array`: values of the |AO| basis on the grid point.
 * `mos_in_r_array`: values of the |MO| basis on the grid point.
-* `one_dm_and_grad_alpha_in_r`: values of the density and its gradienst on the grid points.
+* `one_e_dm_and_grad_alpha_in_r`: values of the density and its gradienst on the grid points.
 

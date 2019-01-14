@@ -22,6 +22,7 @@
 
  BEGIN_PROVIDER[double precision, aos_grad_in_r_array, (ao_num,n_points_final_grid,3)]
 &BEGIN_PROVIDER[double precision, aos_grad_in_r_array_transp, (n_points_final_grid,ao_num,3)]
+&BEGIN_PROVIDER[double precision, aos_grad_in_r_array_transp_xyz, (3,n_points_final_grid,ao_num)]
  implicit none
  BEGIN_DOC
  ! aos_grad_in_r_array(i,j,k)          = value of the kth component of the gradient of ith ao on the jth grid point

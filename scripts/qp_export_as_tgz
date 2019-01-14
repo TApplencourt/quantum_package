@@ -18,6 +18,8 @@ cd ${QP_ROOT}
 if [[ -f quantum_package.rc \
    && -f README.md \
    && -d src  \
+   && -d etc  \
+   && -d man  \
    && -d bin  \
    && -d ocaml \
    && -d external \
@@ -43,7 +45,7 @@ QPACKAGE_STATIC=${QP_ROOT}/quantum_package_static
 
 function find_libs ()
 {
-  for i in $@
+  for i in "$@"
   do
       ldd $i
   done | sort | grep '/' | cut --delimiter=' ' --fields=3 | uniq
@@ -61,10 +63,10 @@ echo "Creating root of static directory"
 #     ---------------------------------
 
 rm --recursive --force -- "${QPACKAGE_STATIC}"
-mkdir --parents -- ${QPACKAGE_STATIC}/{bin,lib,extra_lib,external}
+mkdir --parents -- ${QPACKAGE_STATIC}/{bin,etc,man,lib,extra_lib,external}
 if [[ $? -ne 0 ]] ;
 then
-  echo "Error creating ${QPACKAGE_STATIC}/{bin,lib,extra_lib,external}"
+  echo "Error creating ${QPACKAGE_STATIC}/{bin,lib,etc,man,extra_lib,external}"
   exit 1
 fi
 
@@ -101,6 +103,8 @@ cd ${QPACKAGE_STATIC}/bin
     mv "$i" $(basename "$i" .native)
   done
 )
+
+cp ${QP_ROOT}/bin/qpsh ${QPACKAGE_STATIC}/bin
 
 cp --recursive -- ${QP_ROOT}/data ${QPACKAGE_STATIC}/data
 for i in ${FORTRAN_EXEC}
@@ -163,13 +167,21 @@ cp --recursive -- ${QP_ROOT}/external/Python ${QPACKAGE_STATIC}/external/
 mkdir ${QPACKAGE_STATIC}/external/ezfio
 cp --recursive -- ${QP_ROOT}/external/ezfio/Python ${QPACKAGE_STATIC}/external/ezfio/
 cp --recursive -- ${QP_ROOT}/external/ezfio/Bash   ${QPACKAGE_STATIC}/external/ezfio/
+cp --recursive -- ${QP_ROOT}/man   ${QPACKAGE_STATIC}/man
 
 
 #
 echo "Creating quantum_package.rc"
 #     ---------------------------
 
-sed "s!^export QP_ROOT=.*\$!export QP_ROOT=\$( cd \$(dirname "\${BASH_SOURCE}")  ; pwd -P )!" ${QP_ROOT}/quantum_package.rc.default > ${QPACKAGE_STATIC}/quantum_package.rc
+cp ${QP_ROOT}/quantum_package.rc ${QPACKAGE_STATIC}/
+cp ${QP_ROOT}/etc/* ${QPACKAGE_STATIC}/etc/
+cat << EOF > ${QPACKAGE_STATIC}/etc/00.qp_root.rc
+export QP_ROOT="\$( cd \$(dirname \\\${BASH_SOURCE}) ; cd .. ; pwd -P )"
+EOF
+
+
+
 
 #exit 0
 #

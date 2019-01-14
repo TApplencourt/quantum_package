@@ -25,9 +25,8 @@ sets all the environment variables required for the normal operation of the
 Running this script will also tell you which external dependencies are missing
 and need to be installed.
 
-Then, source the :file:`quantum_package.rc` file in your current shell before
-installing the dependencies.
-
+When all dependencies have been installed, ( the :command:`configure` will tell you) 
+source the :file:`quantum_package.rc` in order to load all environment variables and compile the |QP|. 
 
 
 Requirements
@@ -70,6 +69,52 @@ architecture. Modify it if needed, and run :command:`configure` with
 
 Help for installing external dependencies
 =========================================
+
+Using the :command:`configure` executable
+-----------------------------------------
+
+The :command:`configure` executable can help you in installing the minimal dependencies you will need to compile the |QP|. 
+The command is to be used as follows: 
+
+.. code:: bash
+
+   ./configure --install <package>
+
+The following packages are supported by the :command:`configure` installer: 
+
+* ninja 
+* irpf90 
+* zeromq 
+* f77zmq ( :math:`\approx` 3 minutes)
+* ocaml 
+* ezfio 
+* emsl 
+* docopt 
+* resultsFile 
+* bats
+
+Example: 
+
+.. code:: bash
+
+   ./configure -i ezfio
+
+.. note::
+
+   When installing the ocaml package, you will be asked the location of where it should be installed.
+   A safe option is to enter the path proposed by the |QP|:
+
+   QP>> Please install it here: /your_quantum_package_directory/bin
+
+   So just enter the proposition of the |QP| and press enter.
+
+
+If the :command:`configure` executable fails to install a specific dependency
+-----------------------------------------------------------------------------
+
+If the :command:`configure` executable does not succeed to install a specific dependency, 
+there are some proposition of how to download and install the minimal dependencies to compile and use the |QP|
+
 
 Before doing anything below, try to install the packages with your package manager
 (:command:`apt`, :command:`yum`, etc)
@@ -201,7 +246,7 @@ OCaml
 
   .. code:: bash
 
-      opam install cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving
+      opam install ocamlbuild cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving getopt
 
 
 EZFIO

@@ -127,7 +127,6 @@ def main(arguments):
     if arguments["create"]:                        
         m_instance = ModuleHandler([QP_SRC])       
                                                    
-        print arguments
         l_children = arguments["<needed_modules>"] 
                                                    
         name = arguments["<name>"][0]              
@@ -226,7 +225,6 @@ def main(arguments):
 
         for name in l_name:
 
-            print name
             if name in d_local:
                 print "{0} Is already installed".format(name)
 
@@ -285,7 +283,6 @@ def main(arguments):
         for module in set(l_name_to_remove):
 
             uninstall = os.path.join(QP_SRC,module,"uninstall")
-            print uninstall
             if os.path.isfile(uninstall):
                 subprocess.check_call([uninstall])
 

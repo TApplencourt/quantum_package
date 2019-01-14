@@ -136,7 +136,8 @@ subroutine ZMQ_pt2(E, pt2,relative_error, error, variance, norm, N_in)
       state_average_weight(pt2_stoch_istate) = 1.d0
       TOUCH state_average_weight pt2_stoch_istate
 
-      provide nproc pt2_F mo_two_e_integrals_in_map mo_one_e_integrals pt2_w psi_selectors 
+      PROVIDE nproc pt2_F mo_two_e_integrals_in_map mo_one_e_integrals pt2_w
+      PROVIDE psi_selectors pt2_u pt2_J pt2_R
       call new_parallel_job(zmq_to_qp_run_socket, zmq_socket_pull, 'pt2')
 
       integer, external              :: zmq_put_psi
@@ -185,7 +186,7 @@ subroutine ZMQ_pt2(E, pt2,relative_error, error, variance, norm, N_in)
       ipos=1
       do i= 1, N_det_generators
         do j=1,pt2_F(pt2_J(i))
-          write(task(ipos:ipos+30),'(I9,1X,I9,1X,I9,''|'')') j, pt2_J(i), N
+          write(task(ipos:ipos+30),'(I9,1X,I9,1X,I9,''|'')') j, pt2_J(i), N_in
           ipos += 30
           if (ipos > 300000-30) then
             if (add_task_to_taskserver(zmq_to_qp_run_socket,trim(task(1:ipos))) == -1) then
@@ -213,15 +214,55 @@ subroutine ZMQ_pt2(E, pt2,relative_error, error, variance, norm, N_in)
       endif
 
       
+      double precision :: mem_collector, mem, rss
+
+      call resident_memory(rss)
+
+      mem_collector = 8.d0 *                  & ! bytes 
+            ( 1.d0*pt2_n_tasks_max            & ! task_id, index
+            + 0.635d0*N_det_generators        & ! f,d
+            + 3.d0*N_det_generators*N_states  & ! eI, vI, nI
+            + 3.d0*pt2_n_tasks_max*N_states   & ! eI_task, vI_task, nI_task
+            + 4.d0*(pt2_N_teeth+1)            & ! S, S2, T2, T3
+            + 1.d0*(N_int*2.d0*N + N)         & ! selection buffer
+            + 1.d0*(N_int*2.d0*N + N)         & ! sort selection buffer
+            ) / 1024.d0**3
+
       integer :: nproc_target
-      nproc_target = nproc
-      double precision :: mem
-      mem = 8.d0 * N_det * (N_int * 2.d0 * 3.d0 +  3.d0 + 5.d0) / (1024.d0**3)
-      call write_double(6,mem,'Estimated memory/thread (Gb)')
-      if (qp_max_mem > 0) then
-        nproc_target = max(1,int(dble(qp_max_mem)/mem))
-        nproc_target = min(nproc_target,nproc)
-      endif
+      nproc_target = nthreads_pt2
+
+      do 
+        mem = mem_collector +                   & !
+              nproc_target * 8.d0 *             & ! bytes 
+              ( 0.5d0*pt2_n_tasks_max           & ! task_id
+              + 64.d0*pt2_n_tasks_max           & ! task
+              + 3.d0*pt2_n_tasks_max*N_states   & ! pt2, variance, norm
+              + 1.d0*pt2_n_tasks_max            & ! i_generator, subset
+              + 2.d0*(N_int*2.d0*N_in + N_in)   & ! selection buffers
+              + 1.d0*(N_int*2.d0*N_in + N_in)   & ! sort/merge selection buffers
+              + 1.d0*(N_int*2.d0*N_det)         & ! preinteresting_det
+              + 2.0d0*(N_det+1)                 & ! preinteresting, interesting,
+                                                  ! prefullinteresting, fullinteresting
+              + 1.0d0*(N_int*2*N_det_selectors) & ! minilist
+              + 1.0d0*(N_int*2*N_det)           & ! fullminilist
+              + 1.0d0*(N_states*mo_num*mo_num)  & ! mat
+              ) / 1024.d0**3
+
+        if (nproc_target == 0) then
+          call check_mem(mem,irp_here)
+          nproc_target = 1
+          exit
+        endif
+
+        if (mem+rss < qp_max_mem) then
+          exit
+        endif
+
+        nproc_target = nproc_target - 1
+
+      enddo
+      call write_int(6,nproc_target,'Number of threads for PT2')
+      call write_double(6,mem,'Memory (Gb)')
 
       call omp_set_nested(.false.)
 
@@ -329,6 +370,8 @@ subroutine pt2_collector(zmq_socket_pull, E, relative_error, pt2, error,  &
   rss += memory_of_double(pt2_N_teeth+1)*4.d0 
   call check_mem(rss,irp_here)
 
+  ! If an allocation is added here, the estimate of the memory should also be
+  ! updated in ZMQ_pt2
   allocate(task_id(pt2_n_tasks_max), index(pt2_n_tasks_max), f(N_det_generators))
   allocate(d(N_det_generators+1))
   allocate(eI(N_states, N_det_generators), eI_task(N_states, pt2_n_tasks_max))

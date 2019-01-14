@@ -61,14 +61,14 @@ subroutine damping_SCF
     write(6,'(I4,1X,F16.10, 1X, F16.10, 1X, F16.10, 3X, A )')  &
       k, E, delta_E, delta_D, save_char
     
-    if(no_oa_or_av_opt)then
+    if(frozen_orb_scf)then
      call initialize_mo_coef_begin_iteration
     endif
     D_alpha = SCF_density_matrix_ao_alpha
     D_beta  = SCF_density_matrix_ao_beta 
     mo_coef = eigenvectors_fock_matrix_mo
-    if(no_oa_or_av_opt)then
-     call reorder_active_orb
+    if(frozen_orb_scf)then
+     call reorder_core_orb
      call initialize_mo_coef_begin_iteration
     endif
     TOUCH mo_coef
@@ -88,8 +88,8 @@ subroutine damping_SCF
       SCF_density_matrix_ao_beta  = D_beta  + lambda * delta_beta
       TOUCH SCF_density_matrix_ao_alpha SCF_density_matrix_ao_beta
       mo_coef = eigenvectors_fock_matrix_mo
-      if(no_oa_or_av_opt)then
-       call reorder_active_orb
+      if(frozen_orb_scf)then
+       call reorder_core_orb
        call initialize_mo_coef_begin_iteration
       endif
       TOUCH mo_coef
@@ -123,8 +123,8 @@ subroutine damping_SCF
     SCF_density_matrix_ao_beta  = D_beta
     TOUCH SCF_density_matrix_ao_alpha SCF_density_matrix_ao_beta
     mo_coef = eigenvectors_fock_matrix_mo
-    if(no_oa_or_av_opt)then
-     call reorder_active_orb
+    if(frozen_orb_scf)then
+     call reorder_core_orb
      call initialize_mo_coef_begin_iteration
     endif
     TOUCH mo_coef
@@ -133,7 +133,7 @@ subroutine damping_SCF
   write(6,'(A4,1X,A16, 1X, A16, 1X, A16, 1X, A4 )')  '====','================','================','================', '===='
   write(6,*)
   
-  if(.not.no_oa_or_av_opt)then
+  if(.not.frozen_orb_scf)then
    call mo_as_eigvectors_of_mo_matrix(Fock_matrix_mo,size(Fock_matrix_mo,1),size(Fock_matrix_mo,2),mo_label,1,.true.)
   endif
 

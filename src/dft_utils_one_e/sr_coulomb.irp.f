@@ -16,7 +16,7 @@
  short_range_Hartree = 0.d0
  do i = 1, mo_num
   do j = 1, mo_num
-   if(dabs(one_body_dm_average_mo_for_dft(j,i)).le.1.d-12)cycle
+   if(dabs(one_e_dm_average_mo_for_dft(j,i)).le.1.d-12)cycle
    call get_mo_two_e_integrals_i1j1(i,j,mo_num,integrals_array,mo_integrals_map)
    call get_mo_two_e_integrals_erf_i1j1(i,j,mo_num,integrals_erf_array,mo_integrals_erf_map)
    do istate = 1, N_states
@@ -24,9 +24,9 @@
      do l = 1, mo_num
       integral = integrals_array(l,k)
       integral_erf = integrals_erf_array(l,k)
-      contrib = one_body_dm_mo_for_dft(i,j,istate) * (integral  - integral_erf)
+      contrib = one_e_dm_mo_for_dft(i,j,istate) * (integral  - integral_erf)
       short_range_Hartree_operator(l,k,istate) += contrib 
-      short_range_Hartree(istate) += contrib * one_body_dm_mo_for_dft(k,l,istate) 
+      short_range_Hartree(istate) += contrib * one_e_dm_mo_for_dft(k,l,istate) 
      enddo
     enddo
    enddo

@@ -1,9 +1,8 @@
-if [[ -z $QP_LIB ]]
-then
-:
+# Configuration of additional libraries required for modules
 
-  # Include here the optional external libraries to link with your binaries, 
-  # for example 
+QP_LIB=""
+
+# Include here the optional external libraries to link with your binaries, 
+# for example :
 #   export QP_LIB="$QP_LIB  -lint"
 
-fi

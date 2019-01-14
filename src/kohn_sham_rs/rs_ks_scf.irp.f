@@ -12,9 +12,8 @@ program rs_ks_scf
   touch io_ao_one_e_integrals
 
   read_wf = .False.
-  density_for_dft ="WFT"
+  density_for_dft ="KS"
   touch density_for_dft
-  touch read_wf
   print*, '**************************'
   print*, 'mu_erf_dft = ',mu_erf_dft
   print*, '**************************'
@@ -90,13 +89,15 @@ subroutine run
    
   EHF = RS_KS_energy 
 
-  mo_label = "Canonical"
+  mo_label = "Orthonormalized"
 
+  level_shift += 1.d0
+  touch level_shift
   call Roothaan_Hall_SCF
   call ezfio_set_kohn_sham_rs_energy(SCF_energy)
 
- write(*, '(A22,X,F16.10)') 'one_electron_energy = ',one_electron_energy
- write(*, '(A22,X,F16.10)') 'two_electron_energy = ',two_electron_energy
+ write(*, '(A22,X,F16.10)') 'one_e_energy = ',one_e_energy
+ write(*, '(A22,X,F16.10)') 'two_e_energy = ',two_e_energy
  write(*, '(A22,X,F16.10)') 'e_exchange_dft      = ',e_exchange_dft
  write(*, '(A22,X,F16.10)') 'e_correlation_dft   = ',e_correlation_dft
  write(*, '(A22,X,F16.10)') 'Fock_matrix_energy  = ',Fock_matrix_energy

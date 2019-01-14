@@ -18,7 +18,7 @@ on the density in order to speed up convergence.
 
 The main providers of that module are:
 
-* `data_one_body_alpha_dm_mo` and `data_one_body_beta_dm_mo` which are the
+* `data_one_e_dm_alpha_mo` and `data_one_e_dm_beta_mo` which are the
   one-body alpha and beta densities which are necessary read from the EZFIO
   folder.
 
@@ -41,12 +41,12 @@ EZFIO parameters
     Projected energy computed with the wave function
 
 
-.. option:: data_one_body_alpha_dm_mo
+.. option:: data_one_e_dm_alpha_mo
 
-    Alpha one body density matrix on the MO basis computed with the wave function
+    Alpha one body density matrix on the |MO| basis computed with the wave function
 
 
-.. option:: data_one_body_beta_dm_mo
+.. option:: data_one_e_dm_beta_mo
 
-    Beta one body density matrix on the MO basis computed with the wave function
+    Beta one body density matrix on the |MO| basis computed with the wave function
 

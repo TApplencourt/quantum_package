@@ -1,15 +1,16 @@
 #!/usr/bin/env bats
 
 source $QP_ROOT/tests/bats/common.bats.sh
+source $QP_ROOT/quantum_package.rc
 
 
 function run() {
   thresh=1.e-8
   test_exe scf || skip
-  qp_edit -c $1
-  ezfio set_file $1
-  qp_run scf $1
-  qp_set_frozen_core $1
+  qp set_file $1
+  qp edit --check
+  qp run scf 
+  qp set_frozen_core 
   energy="$(ezfio get hartree_fock energy)"
   eq $energy $2 $thresh
 }
@@ -20,7 +21,7 @@ function run() {
 }
 
 @test "SO" { # 0.539000
-  run so.ezfio -25.71752633718843
+  run so.ezfio -25.7175263371942
 }
 
 @test "HCO" { # 0.636700
@@ -102,8 +103,8 @@ function run() {
 
 @test "[Cu(NH3)4]2+" { # 59.610100
   [[ -n $TRAVIS ]] && skip
-  ezfio set_file cu_nh3_4_2plus.ezfio
-  ezfio set scf_utils thresh_scf 1.e-10
+  qp set_file cu_nh3_4_2plus.ezfio
+  qp set scf_utils thresh_scf 1.e-10
   run  cu_nh3_4_2plus.ezfio -1862.97590388214
 }
 

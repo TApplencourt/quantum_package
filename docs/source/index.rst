@@ -26,6 +26,7 @@
    users_guide/excited_states
    users_guide/natural_orbitals
    users_guide/plugins
+   users_guide/qp_plugins
    users_guide/index
 
 
@@ -37,7 +38,9 @@
 
    programmers_guide/programming
    programmers_guide/ezfio
+   /programmers_guide/plugins
    programmers_guide/index
+   programmers_guide/plugins
 
 
 .. toctree::

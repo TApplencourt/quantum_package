@@ -312,30 +312,40 @@ let default range =
   )
 
 
-let spec =
-  let open Command.Spec in
-  empty 
-  +> flag "core"   (optional string) ~doc:"range Range of core orbitals"
-  +> flag "inact"  (optional string) ~doc:"range Range of inactive orbitals"
-  +> flag "act"    (optional string) ~doc:"range Range of active orbitals"
-  +> flag "virt"   (optional string) ~doc:"range Range of virtual orbitals"
-  +> flag "del"    (optional string) ~doc:"range Range of deleted orbitals"
-  +> flag "q"       no_arg ~doc:" Query: print the current masks"
-  +> anon ("ezfio_filename" %: ezfio_file)
-
-
-let command = 
-    Command.basic_spec
-    ~summary: "Quantum Package command"
-    ~readme:(fun () ->
-     "Set the orbital classes in an EZFIO directory
-      The range of MOs has the form : \"[36-53,72-107,126-131]\"
-        ")
-    spec
-    (fun core inact act virt del q ezfio_filename () -> run ~q ?core ?inact ?act ?virt ?del ezfio_filename )
-
 
 let () =
-    Command.run command
+  "Set the orbital classes in an EZFIO directory.
+The range of MOs has the form : \"[36-53,72-107,126-131]\"." |> Command_line.set_header_doc ;
+
+  [ ( 'c',  "core", "range Range of     core MOs", Command_line.With_opt_arg);
+    ( 'i', "inact", "range Range of inactive MOs", Command_line.With_opt_arg);
+    ( 'a',   "act", "range Range of   active MOs", Command_line.With_opt_arg);
+    ( 'v',  "virt", "range Range of  virtual MOs", Command_line.With_opt_arg);
+    ( 'd',   "del", "range Range of  deleted MOs", Command_line.With_opt_arg);
+    ( 'q', "query", "Print the current MOs classes", Command_line.Without_arg);
+    Command_line.anonymous "<EZFIO_FILE>" "EZFIO directory";
+  ] |> Command_line.set_specs ;
+
+  (*  Handle options *)
+  if Command_line.show_help () then
+    exit 0;
+
+  let core  = Command_line.get   "core" 
+  and inact = Command_line.get  "inact" 
+  and   act = Command_line.get    "act" 
+  and  virt = Command_line.get   "virt" 
+  and   del = Command_line.get    "del" 
+  and     q = Command_line.get_bool "q"
+  in
+
+  let ezfio_filename = 
+    match Command_line.anon_args () with
+    | [x] -> x
+    | _ -> (Command_line.help () ; failwith "EZFIO_FILE is missing")
+  in
+  run ~q ?core ?inact ?act ?virt ?del ezfio_filename
+
+
+
 
 

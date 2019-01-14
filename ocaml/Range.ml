@@ -14,6 +14,8 @@ open Sexplib.Std
 
 type t = int list [@@deriving sexp] 
 
+let to_int_list r = r
+
 let expand_range r =
   match String_ext.lsplit2 ~on:'-' r with
   | Some (s, f) ->
@@ -50,6 +52,10 @@ let of_string s =
 
 
 let to_string l =
+  "[" ^ 
+  (List.map string_of_int l
+   |> String.concat ",") ^ "]"
+(*
   let rec do_work buf symbol = function
     | [] -> buf
     | a::([] as t) -> 
@@ -58,15 +64,15 @@ let to_string l =
         if (b-a = 1) then
           do_work buf "-" t
         else
-          do_work (buf^symbol^(string_of_int a)^","^(string_of_int b)) "" t
+          do_work (buf^symbol^","^(string_of_int b)) "" t
   in
   let result = 
     match l with
-    | [] ->
-        "[]"
+    | [] -> "[]"
     | h::t  ->
         do_work ("["^(string_of_int h)) "" l in
   (String.sub result 0 ((String.length result)))^"]"
+  *)
 
 
 let test_module () =

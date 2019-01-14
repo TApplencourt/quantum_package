@@ -13,11 +13,11 @@ subroutine dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
  do istate = 1, N_states
   aos_array_bis = aos_array
   ! alpha density
-  call dgemv('N',ao_num,ao_num,1.d0,one_body_dm_alpha_ao_for_dft(1,1,istate),ao_num,aos_array,1,0.d0,aos_array_bis,1)
+  call dgemv('N',ao_num,ao_num,1.d0,one_e_dm_alpha_ao_for_dft(1,1,istate),ao_num,aos_array,1,0.d0,aos_array_bis,1)
   dm_a(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
   ! beta density
   aos_array_bis = aos_array
-  call dgemv('N',ao_num,ao_num,1.d0,one_body_dm_beta_ao_for_dft(1,1,istate),ao_num,aos_array,1,0.d0,aos_array_bis,1)
+  call dgemv('N',ao_num,ao_num,1.d0,one_e_dm_beta_ao_for_dft(1,1,istate),ao_num,aos_array,1,0.d0,aos_array_bis,1)
   dm_b(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
  enddo
 end
@@ -40,11 +40,11 @@ subroutine dm_dft_alpha_beta_and_all_aos_at_r(r,dm_a,dm_b,aos_array)
  do istate = 1, N_states
   aos_array_bis = aos_array
   ! alpha density
-  call dsymv('U',ao_num,1.d0,one_body_dm_alpha_ao_for_dft(1,1,istate),size(one_body_dm_alpha_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
+  call dsymv('U',ao_num,1.d0,one_e_dm_alpha_ao_for_dft(1,1,istate),size(one_e_dm_alpha_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
   dm_a(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
   ! beta density
   aos_array_bis = aos_array
-  call dsymv('U',ao_num,1.d0,one_body_dm_beta_ao_for_dft(1,1,istate),size(one_body_dm_beta_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
+  call dsymv('U',ao_num,1.d0,one_e_dm_beta_ao_for_dft(1,1,istate),size(one_e_dm_beta_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
   dm_b(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
  enddo
 end
@@ -80,7 +80,7 @@ end
  do istate = 1, N_states
    ! alpha density
    ! aos_array_bis = \rho_ao * aos_array
-   call dsymv('U',ao_num,1.d0,one_body_dm_alpha_ao_for_dft(1,1,istate),size(one_body_dm_alpha_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
+   call dsymv('U',ao_num,1.d0,one_e_dm_alpha_ao_for_dft(1,1,istate),size(one_e_dm_alpha_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
    dm_a(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
    
    ! grad_dm(1) = \sum_i aos_grad_array(i,1) * aos_array_bis(i)
@@ -91,7 +91,7 @@ end
    ! aos_grad_array_bis = \rho_ao * aos_grad_array
   
    ! beta density
-   call dsymv('U',ao_num,1.d0,one_body_dm_beta_ao_for_dft(1,1,istate),size(one_body_dm_beta_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
+   call dsymv('U',ao_num,1.d0,one_e_dm_beta_ao_for_dft(1,1,istate),size(one_e_dm_beta_ao_for_dft,1),aos_array,1,0.d0,aos_array_bis,1)
    dm_b(istate) = u_dot_v(aos_array,aos_array_bis,ao_num)
 
    ! grad_dm(1) = \sum_i aos_grad_array(i,1) * aos_array_bis(i)
@@ -103,8 +103,8 @@ end
  enddo
  end
 
- BEGIN_PROVIDER [double precision, one_dm_alpha_in_r, (n_points_integration_angular,n_points_radial_grid,nucl_num,N_states) ]
-&BEGIN_PROVIDER [double precision, one_dm_beta_in_r, (n_points_integration_angular,n_points_radial_grid,nucl_num,N_states) ]
+ BEGIN_PROVIDER [double precision, one_e_dm_alpha_in_r, (n_points_integration_angular,n_points_radial_grid,nucl_num,N_states) ]
+&BEGIN_PROVIDER [double precision, one_e_dm_beta_in_r, (n_points_integration_angular,n_points_radial_grid,nucl_num,N_states) ]
  implicit none
  integer :: i,j,k,l,m,istate
  double precision :: contrib
@@ -114,8 +114,8 @@ end
    do k = 1, n_points_radial_grid -1
     do l = 1, n_points_integration_angular
      do istate = 1, N_States
-      one_dm_alpha_in_r(l,k,j,istate) = 0.d0
-      one_dm_beta_in_r(l,k,j,istate) = 0.d0
+      one_e_dm_alpha_in_r(l,k,j,istate) = 0.d0
+      one_e_dm_beta_in_r(l,k,j,istate) = 0.d0
      enddo
      r(1) = grid_points_per_atom(1,l,k,j)
      r(2) = grid_points_per_atom(2,l,k,j)
@@ -124,8 +124,8 @@ end
      double precision :: dm_a(N_states),dm_b(N_states)
      call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
      do istate=1,N_states
-      one_dm_alpha_in_r(l,k,j,istate) = dm_a(istate)
-      one_dm_beta_in_r(l,k,j,istate) = dm_b(istate)
+      one_e_dm_alpha_in_r(l,k,j,istate) = dm_a(istate)
+      one_e_dm_beta_in_r(l,k,j,istate) = dm_b(istate)
      enddo
 
     enddo
@@ -135,12 +135,12 @@ end
 END_PROVIDER 
 
 
- BEGIN_PROVIDER [double precision, one_body_dm_alpha_at_r, (n_points_final_grid,N_states) ]
-&BEGIN_PROVIDER [double precision, one_body_dm_beta_at_r, (n_points_final_grid,N_states) ]
+ BEGIN_PROVIDER [double precision, one_e_dm_alpha_at_r, (n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, one_e_dm_beta_at_r, (n_points_final_grid,N_states) ]
  implicit none
  BEGIN_DOC
-! one_body_dm_alpha_at_r(i,istate) = n_alpha(r_i,istate)
-! one_body_dm_beta_at_r(i,istate) =  n_beta(r_i,istate)
+! one_e_dm_alpha_at_r(i,istate) = n_alpha(r_i,istate)
+! one_e_dm_beta_at_r(i,istate) =  n_beta(r_i,istate)
 ! where r_i is the ith point of the grid and istate is the state number
  END_DOC
  integer :: i,istate
@@ -153,24 +153,24 @@ END_PROVIDER
    r(2) = final_grid_points(2,i)
    r(3) = final_grid_points(3,i)
    call dm_dft_alpha_beta_at_r(r,dm_a,dm_b)
-   one_body_dm_alpha_at_r(i,istate) = dm_a(istate)
-   one_body_dm_beta_at_r(i,istate) = dm_b(istate)
+   one_e_dm_alpha_at_r(i,istate) = dm_a(istate)
+   one_e_dm_beta_at_r(i,istate) = dm_b(istate)
   enddo
  enddo
 
 END_PROVIDER 
 
 
- BEGIN_PROVIDER [double precision, one_dm_and_grad_alpha_in_r, (4,n_points_final_grid,N_states) ]
-&BEGIN_PROVIDER [double precision, one_dm_and_grad_beta_in_r,  (4,n_points_final_grid,N_states) ]
-&BEGIN_PROVIDER [double precision, one_body_grad_2_dm_alpha_at_r, (n_points_final_grid,N_states) ]
-&BEGIN_PROVIDER [double precision, one_body_grad_2_dm_beta_at_r, (n_points_final_grid,N_states) ]
+ BEGIN_PROVIDER [double precision, one_e_dm_and_grad_alpha_in_r, (4,n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, one_e_dm_and_grad_beta_in_r,  (4,n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, one_e_grad_2_dm_alpha_at_r, (n_points_final_grid,N_states) ]
+&BEGIN_PROVIDER [double precision, one_e_grad_2_dm_beta_at_r, (n_points_final_grid,N_states) ]
  BEGIN_DOC
-! one_dm_and_grad_alpha_in_r(1,i,i_state) = d\dx n_alpha(r_i,istate)
-! one_dm_and_grad_alpha_in_r(2,i,i_state) = d\dy n_alpha(r_i,istate)
-! one_dm_and_grad_alpha_in_r(3,i,i_state) = d\dz n_alpha(r_i,istate)
-! one_dm_and_grad_alpha_in_r(4,i,i_state) = n_alpha(r_i,istate)
-! one_body_grad_2_dm_alpha_at_r(i,istate)      = d\dx n_alpha(r_i,istate)^2 + d\dy n_alpha(r_i,istate)^2 + d\dz n_alpha(r_i,istate)^2
+! one_e_dm_and_grad_alpha_in_r(1,i,i_state) = d\dx n_alpha(r_i,istate)
+! one_e_dm_and_grad_alpha_in_r(2,i,i_state) = d\dy n_alpha(r_i,istate)
+! one_e_dm_and_grad_alpha_in_r(3,i,i_state) = d\dz n_alpha(r_i,istate)
+! one_e_dm_and_grad_alpha_in_r(4,i,i_state) = n_alpha(r_i,istate)
+! one_e_grad_2_dm_alpha_at_r(i,istate)      = d\dx n_alpha(r_i,istate)^2 + d\dy n_alpha(r_i,istate)^2 + d\dz n_alpha(r_i,istate)^2
 ! where r_i is the ith point of the grid and istate is the state number
  END_DOC
  implicit none
@@ -188,17 +188,17 @@ END_PROVIDER
   r(3) = final_grid_points(3,i)
  !!!! Works also with the ao basis 
    call density_and_grad_alpha_beta_and_all_aos_and_grad_aos_at_r(r,dm_a,dm_b,  dm_a_grad, dm_b_grad, aos_array, grad_aos_array)
-   one_dm_and_grad_alpha_in_r(1,i,istate)  =  dm_a_grad(1,istate)
-   one_dm_and_grad_alpha_in_r(2,i,istate)  =  dm_a_grad(2,istate)
-   one_dm_and_grad_alpha_in_r(3,i,istate)  =  dm_a_grad(3,istate)
-   one_dm_and_grad_alpha_in_r(4,i,istate)  =  dm_a(istate)
-   one_body_grad_2_dm_alpha_at_r(i,istate) = dm_a_grad(1,istate) * dm_a_grad(1,istate) + dm_a_grad(2,istate) * dm_a_grad(2,istate) + dm_a_grad(3,istate) * dm_a_grad(3,istate)
+   one_e_dm_and_grad_alpha_in_r(1,i,istate)  =  dm_a_grad(1,istate)
+   one_e_dm_and_grad_alpha_in_r(2,i,istate)  =  dm_a_grad(2,istate)
+   one_e_dm_and_grad_alpha_in_r(3,i,istate)  =  dm_a_grad(3,istate)
+   one_e_dm_and_grad_alpha_in_r(4,i,istate)  =  dm_a(istate)
+   one_e_grad_2_dm_alpha_at_r(i,istate) = dm_a_grad(1,istate) * dm_a_grad(1,istate) + dm_a_grad(2,istate) * dm_a_grad(2,istate) + dm_a_grad(3,istate) * dm_a_grad(3,istate)
    
-   one_dm_and_grad_beta_in_r(1,i,istate)  =  dm_b_grad(1,istate)
-   one_dm_and_grad_beta_in_r(2,i,istate)  =  dm_b_grad(2,istate)
-   one_dm_and_grad_beta_in_r(3,i,istate)  =  dm_b_grad(3,istate)
-   one_dm_and_grad_beta_in_r(4,i,istate)  =  dm_b(istate)
-   one_body_grad_2_dm_beta_at_r(i,istate) = dm_b_grad(1,istate) * dm_b_grad(1,istate) + dm_b_grad(2,istate) * dm_b_grad(2,istate) + dm_b_grad(3,istate) * dm_b_grad(3,istate)
+   one_e_dm_and_grad_beta_in_r(1,i,istate)  =  dm_b_grad(1,istate)
+   one_e_dm_and_grad_beta_in_r(2,i,istate)  =  dm_b_grad(2,istate)
+   one_e_dm_and_grad_beta_in_r(3,i,istate)  =  dm_b_grad(3,istate)
+   one_e_dm_and_grad_beta_in_r(4,i,istate)  =  dm_b(istate)
+   one_e_grad_2_dm_beta_at_r(i,istate) = dm_b_grad(1,istate) * dm_b_grad(1,istate) + dm_b_grad(2,istate) * dm_b_grad(2,istate) + dm_b_grad(3,istate) * dm_b_grad(3,istate)
   enddo
  enddo
 

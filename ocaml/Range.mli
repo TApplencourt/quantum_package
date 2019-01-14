@@ -8,3 +8,4 @@ type t = int list [@@deriving sexp]
  *)
 val of_string : string -> t
 val to_string : t -> string
+val to_int_list : t -> int list

@@ -13,10 +13,10 @@ zero.
 
 
 Usage:
-      qp_set_frozen_core [-q] <EZFIO_DIRECTORY>
+      qp_set_frozen_core [-q|--query] <EZFIO_DIRECTORY>
 
 Options:
-    -q        Prints in the standard output the number of core electrons
+    -q --query   Prints in the standard output the number of core electrons
 
 """
 
@@ -58,15 +58,15 @@ def main(arguments):
 
     mo_num = ezfio.mo_basis_mo_num
 
-    if arguments["-q"]:
+    if arguments["--query"]:
         print nb
         sys.exit(0)
 
     if nb == 0:
-        os.system( """qp_set_mo_class -act "[1-%d]" %s""" % 
+        os.system( """qp_set_mo_class -a "[1-%d]" %s""" % 
             (mo_num, sys.argv[1]) )
     else:
-        os.system( """qp_set_mo_class -core "[1-%d]" -act "[%d-%d]" %s""" % 
+        os.system( """qp_set_mo_class -c "[1-%d]" -a "[%d-%d]" %s""" % 
             (nb, nb+1, mo_num, sys.argv[1]) )
 
 

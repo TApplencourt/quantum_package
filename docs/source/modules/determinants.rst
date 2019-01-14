@@ -199,7 +199,7 @@ Providers
 
     Norm of the  :math:`\alpha`  and  :math:`\beta`  spin determinants in the wave function: 
 
-    ||Da||_i \sum_j C_{ij}**2
+     :math:`||D_\alpha||_i = \sum_j C_{ij}^2`
 
 
 
@@ -215,7 +215,7 @@ Providers
 
     Norm of the  :math:`\alpha`  and  :math:`\beta`  spin determinants in the wave function: 
 
-    ||Da||_i \sum_j C_{ij}**2
+     :math:`||D_\alpha||_i = \sum_j C_{ij}^2`
 
 
 
@@ -451,7 +451,7 @@ Providers
         integer(bit_kind), allocatable	:: psi_det_alpha_unique	(N_int,psi_det_size)
         integer	:: n_det_alpha_unique
 
-    File: :file:`spindeterminants.irp.f_template_141`
+    File: :file:`spindeterminants.irp.f_template_144`
 
     Unique  :math:`\alpha`  determinants
 
@@ -465,7 +465,7 @@ Providers
         integer(bit_kind), allocatable	:: psi_det_beta_unique	(N_int,psi_det_size)
         integer	:: n_det_beta_unique
 
-    File: :file:`spindeterminants.irp.f_template_141`
+    File: :file:`spindeterminants.irp.f_template_144`
 
     Unique  :math:`\beta`  determinants
 
@@ -740,6 +740,168 @@ Providers
 
 
 
+.. c:var:: one_e_dm_ao_alpha
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_ao_alpha	(ao_num,ao_num)
+        double precision, allocatable	:: one_e_dm_ao_beta	(ao_num,ao_num)
+
+    File: :file:`density_matrix.irp.f`
+
+    One body density matrix on the |AO| basis :  :math:`\rho_{AO}(\alpha), \rho_{AO}(\beta)` .
+
+
+
+
+.. c:var:: one_e_dm_ao_beta
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_ao_alpha	(ao_num,ao_num)
+        double precision, allocatable	:: one_e_dm_ao_beta	(ao_num,ao_num)
+
+    File: :file:`density_matrix.irp.f`
+
+    One body density matrix on the |AO| basis :  :math:`\rho_{AO}(\alpha), \rho_{AO}(\beta)` .
+
+
+
+
+.. c:var:: one_e_dm_dagger_mo_spin_index
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_dagger_mo_spin_index	(mo_num,mo_num,N_states,2)
+
+    File: :file:`density_matrix.irp.f`
+
+    
+
+
+
+
+.. c:var:: one_e_dm_mo
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo	(mo_num,mo_num)
+
+    File: :file:`density_matrix.irp.f`
+
+    One-body density matrix
+
+
+
+
+.. c:var:: one_e_dm_mo_alpha
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_alpha	(mo_num,mo_num,N_states)
+        double precision, allocatable	:: one_e_dm_mo_beta	(mo_num,mo_num,N_states)
+
+    File: :file:`density_matrix.irp.f`
+
+     :math:`\alpha`  and  :math:`\beta`  one-body density matrix for each state
+
+
+
+
+.. c:var:: one_e_dm_mo_alpha_average
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_alpha_average	(mo_num,mo_num)
+        double precision, allocatable	:: one_e_dm_mo_beta_average	(mo_num,mo_num)
+
+    File: :file:`density_matrix.irp.f`
+
+     :math:`\alpha`  and  :math:`\beta`  one-body density matrix for each state
+
+
+
+
+.. c:var:: one_e_dm_mo_beta
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_alpha	(mo_num,mo_num,N_states)
+        double precision, allocatable	:: one_e_dm_mo_beta	(mo_num,mo_num,N_states)
+
+    File: :file:`density_matrix.irp.f`
+
+     :math:`\alpha`  and  :math:`\beta`  one-body density matrix for each state
+
+
+
+
+.. c:var:: one_e_dm_mo_beta_average
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_alpha_average	(mo_num,mo_num)
+        double precision, allocatable	:: one_e_dm_mo_beta_average	(mo_num,mo_num)
+
+    File: :file:`density_matrix.irp.f`
+
+     :math:`\alpha`  and  :math:`\beta`  one-body density matrix for each state
+
+
+
+
+.. c:var:: one_e_dm_mo_diff
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_diff	(mo_num,mo_num,2:N_states)
+
+    File: :file:`density_matrix.irp.f`
+
+    Difference of the one-body density matrix with respect to the ground state
+
+
+
+
+.. c:var:: one_e_dm_mo_spin_index
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_spin_index	(mo_num,mo_num,N_states,2)
+
+    File: :file:`density_matrix.irp.f`
+
+    
+
+
+
+
+.. c:var:: one_e_spin_density_ao
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_spin_density_ao	(ao_num,ao_num)
+
+    File: :file:`density_matrix.irp.f`
+
+    One body spin density matrix on the |AO| basis :  :math:`\rho_{AO}(\alpha) - \rho_{AO}(\beta)`
+
+
+
+
+.. c:var:: one_e_spin_density_mo
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_spin_density_mo	(mo_num,mo_num)
+
+    File: :file:`density_matrix.irp.f`
+
+     :math:`\rho(\alpha) - \rho(\beta)`
+
+
+
+
 .. c:var:: psi_average_norm_contrib
 
     .. code:: text
@@ -797,9 +959,9 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Sparse coefficient matrix if the wave function is expressed in a bilinear form : D_a^t C D_b 
+    Sparse coefficient matrix if the wave function is expressed in a bilinear form :  :math:`D_\alpha^\dagger.C.D_\beta` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta.` 
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` . 
 
     Order refers to psi_det
 
@@ -818,9 +980,9 @@ Providers
 
      :math:`D_\alpha^\dagger.C.D_\beta` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta.` 
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` . 
 
-    Order refers to psi_det
+    Order refers to ``psi_det``
 
 
 
@@ -836,9 +998,9 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Sparse coefficient matrix if the wave function is expressed in a bilinear form : D_a^t C D_b 
+    Sparse coefficient matrix if the wave function is expressed in a bilinear form :  :math:`D_\alpha^\dagger.C.D_\beta` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta.` 
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` . 
 
     Order refers to psi_det
 
@@ -853,7 +1015,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Order which allows to go from psi_bilinear_matrix to psi_det
+    Order which allows to go from ``psi_bilinear_matrix`` to ``psi_det``
 
 
 
@@ -866,7 +1028,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Order which allows to go from psi_bilinear_matrix_order_transp to psi_bilinear_matrix
+    Order which allows to go from ``psi_bilinear_matrix_order_transp`` to ``psi_bilinear_matrix``
 
 
 
@@ -882,9 +1044,9 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Sparse coefficient matrix if the wave function is expressed in a bilinear form : D_a^t C D_b 
+    Sparse coefficient matrix if the wave function is expressed in a bilinear form :  :math:`D_\alpha^\dagger.C.D_\beta` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta.` 
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` . 
 
     Order refers to psi_det
 
@@ -902,11 +1064,11 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Transpose of psi_bilinear_matrix 
+    Transpose of ``psi_bilinear_matrix`` 
 
      :math:`D_\beta^\dagger.C^\dagger.D_\alpha` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format.
 
 
 
@@ -922,11 +1084,11 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Transpose of psi_bilinear_matrix 
+    Transpose of ``psi_bilinear_matrix`` 
 
      :math:`D_\beta^\dagger.C^\dagger.D_\alpha` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format.
 
 
 
@@ -942,11 +1104,11 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Transpose of psi_bilinear_matrix 
+    Transpose of ``psi_bilinear_matrix`` 
 
      :math:`D_\beta^\dagger.C^\dagger.D_\alpha` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format.
 
 
 
@@ -959,7 +1121,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Location of the columns in the psi_bilinear_matrix
+    Location of the columns in the ``psi_bilinear_matrix``
 
 
 
@@ -975,11 +1137,11 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Transpose of psi_bilinear_matrix 
+    Transpose of ``psi_bilinear_matrix`` 
 
      :math:`D_\beta^\dagger.C^\dagger.D_\alpha` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` , but the matrix is stored in row major format.
 
 
 
@@ -995,9 +1157,9 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Sparse coefficient matrix if the wave function is expressed in a bilinear form : D_a^t C D_b 
+    Sparse coefficient matrix if the wave function is expressed in a bilinear form :  :math:`D_\alpha^\dagger.C.D_\beta` 
 
-    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta.` 
+    Rows are  :math:`\alpha`  determinants and columns are  :math:`\beta` . 
 
     Order refers to psi_det
 
@@ -1215,7 +1377,7 @@ Providers
         integer(bit_kind), allocatable	:: psi_det_alpha_unique	(N_int,psi_det_size)
         integer	:: n_det_alpha_unique
 
-    File: :file:`spindeterminants.irp.f_template_141`
+    File: :file:`spindeterminants.irp.f_template_144`
 
     Unique  :math:`\alpha`  determinants
 
@@ -1242,7 +1404,7 @@ Providers
         integer(bit_kind), allocatable	:: psi_det_beta_unique	(N_int,psi_det_size)
         integer	:: n_det_beta_unique
 
-    File: :file:`spindeterminants.irp.f_template_141`
+    File: :file:`spindeterminants.irp.f_template_144`
 
     Unique  :math:`\beta`  determinants
 
@@ -1335,7 +1497,7 @@ Providers
 
     psi_energy_h_core =  :math:`\langle \Psi | h_{core} |\Psi \rangle` 
 
-    computed using the :c:data:`one_body_dm_mo_alpha` + :c:data:`one_body_dm_mo_beta` and :c:data:`mo_one_e_integrals`
+    computed using the :c:data:`one_e_dm_mo_alpha` + :c:data:`one_e_dm_mo_beta` and :c:data:`mo_one_e_integrals`
 
 
 
@@ -1624,7 +1786,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Dimension of the singles_alpha array
+    Dimension of the ``singles_alpha`` array
 
 
 
@@ -1638,7 +1800,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Dimension of the singles_alpha array
+    Dimension of the ``singles_alpha`` array
 
 
 
@@ -1651,7 +1813,7 @@ Providers
 
     File: :file:`spindeterminants.irp.f`
 
-    Dimension of the singles_alpha array
+    Dimension of the ``singles_alpha`` array
 
 
 
@@ -1929,7 +2091,7 @@ Subroutines / functions
 
     File: :file:`spindeterminants.irp.f`
 
-    Overwrites psi_det and psi_coef with the wf in bilinear order
+    Overwrites ``psi_det`` and ``psi_coef`` with the wave function in bilinear order
 
 
 
@@ -1985,7 +2147,7 @@ Subroutines / functions
 
     File: :file:`spindeterminants.irp.f`
 
-    Generate a wave function containing all possible products of  :math:`\alpha`  and  :math:`\beta`  determinants
+    Generates a wave function containing all possible products of  :math:`\alpha`  and  :math:`\beta`  determinants
 
 
 
@@ -2289,7 +2451,7 @@ Subroutines / functions
 
     File: :file:`spindeterminants.irp.f`
 
-    Create a wave function from all possible  :math:`\alpha \times \beta`  determinants
+    Creates a wave function from all possible  :math:`\alpha \times \beta`  determinants
 
 
 
@@ -2337,7 +2499,7 @@ Subroutines / functions
 
         subroutine get_all_spin_doubles_2(buffer, idx, spindet, size_buffer, doubles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2355,7 +2517,7 @@ Subroutines / functions
 
         subroutine get_all_spin_doubles_3(buffer, idx, spindet, size_buffer, doubles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2373,7 +2535,7 @@ Subroutines / functions
 
         subroutine get_all_spin_doubles_4(buffer, idx, spindet, size_buffer, doubles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2391,7 +2553,7 @@ Subroutines / functions
 
         subroutine get_all_spin_doubles_N_int(buffer, idx, spindet, size_buffer, doubles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2445,7 +2607,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_2(buffer, idx, spindet, size_buffer, singles, n_singles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2463,7 +2625,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_3(buffer, idx, spindet, size_buffer, singles, n_singles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2481,7 +2643,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_4(buffer, idx, spindet, size_buffer, singles, n_singles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2505,7 +2667,7 @@ Subroutines / functions
 
     Returns the indices of all the single and double excitations in the list of unique  :math:`\alpha`  determinants. 
 
-    /!\ : The buffer is transposed ! 
+    Warning: The buffer is transposed. 
 
 
 
@@ -2539,7 +2701,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_and_doubles_2(buffer, idx, spindet, size_buffer, singles, doubles, n_singles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2559,7 +2721,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_and_doubles_3(buffer, idx, spindet, size_buffer, singles, doubles, n_singles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2579,7 +2741,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_and_doubles_4(buffer, idx, spindet, size_buffer, singles, doubles, n_singles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2599,7 +2761,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_and_doubles_N_int(buffer, idx, spindet, size_buffer, singles, doubles, n_singles, n_doubles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -2619,7 +2781,7 @@ Subroutines / functions
 
         subroutine get_all_spin_singles_N_int(buffer, idx, spindet, size_buffer, singles, n_singles)
 
-    File: :file:`spindeterminants.irp.f_template_1218`
+    File: :file:`spindeterminants.irp.f_template_1223`
 
     
 
@@ -3573,7 +3735,7 @@ Subroutines / functions
 
     File: :file:`spindeterminants.irp.f`
 
-    Return an integer(8) corresponding to a determinant index for searching
+    Returns an integer(8) corresponding to a determinant index for searching
 
 
 

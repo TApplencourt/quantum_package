@@ -93,6 +93,20 @@ Providers
 
 
 
+.. c:var:: one_body_dm_mo_alpha_one_det
+
+    .. code:: text
+
+        double precision, allocatable	:: one_body_dm_mo_alpha_one_det	(mo_num,mo_num,N_states)
+        double precision, allocatable	:: one_body_dm_mo_beta_one_det	(mo_num,mo_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    One body density matrix on the |MO| basis for a single determinant
+
+
+
+
 .. c:var:: one_body_dm_mo_beta_for_dft
 
     .. code:: text
@@ -106,11 +120,105 @@ Providers
 
 
 
+.. c:var:: one_body_dm_mo_beta_one_det
+
+    .. code:: text
+
+        double precision, allocatable	:: one_body_dm_mo_alpha_one_det	(mo_num,mo_num,N_states)
+        double precision, allocatable	:: one_body_dm_mo_beta_one_det	(mo_num,mo_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    One body density matrix on the |MO| basis for a single determinant
+
+
+
+
 .. c:var:: one_body_dm_mo_for_dft
 
     .. code:: text
 
         double precision, allocatable	:: one_body_dm_mo_for_dft	(mo_num,mo_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    
+
+
+
+
+.. c:var:: one_e_dm_alpha_ao_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_alpha_ao_for_dft	(ao_num,ao_num,N_states)
+        double precision, allocatable	:: one_e_dm_beta_ao_for_dft	(ao_num,ao_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    one body density matrix on the AO basis based on one_e_dm_mo_alpha_for_dft
+
+
+
+
+.. c:var:: one_e_dm_average_mo_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_average_mo_for_dft	(mo_num,mo_num)
+
+    File: :file:`density_for_dft.irp.f`
+
+    
+
+
+
+
+.. c:var:: one_e_dm_beta_ao_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_alpha_ao_for_dft	(ao_num,ao_num,N_states)
+        double precision, allocatable	:: one_e_dm_beta_ao_for_dft	(ao_num,ao_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    one body density matrix on the AO basis based on one_e_dm_mo_alpha_for_dft
+
+
+
+
+.. c:var:: one_e_dm_mo_alpha_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_alpha_for_dft	(mo_num,mo_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    density matrix for alpha electrons in the MO basis used for all DFT calculations based on the density
+
+
+
+
+.. c:var:: one_e_dm_mo_beta_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_beta_for_dft	(mo_num,mo_num,N_states)
+
+    File: :file:`density_for_dft.irp.f`
+
+    density matrix for beta  electrons in the MO basis used for all DFT calculations based on the density
+
+
+
+
+.. c:var:: one_e_dm_mo_for_dft
+
+    .. code:: text
+
+        double precision, allocatable	:: one_e_dm_mo_for_dft	(mo_num,mo_num,N_states)
 
     File: :file:`density_for_dft.irp.f`
 

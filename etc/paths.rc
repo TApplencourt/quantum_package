@@ -1,8 +1,10 @@
+# Configuration of all the paths to executables and libraries
+
 if [[ -z $QP_PYTHON ]]
 then
 
   # Load dependencies
-  for i in ezfio.rc irpf90.rc network.rc ninja.rc ocaml.rc 
+  for i in ezfio.rc irpf90.rc ninja.rc ocaml.rc 
   do
     source $i
   done

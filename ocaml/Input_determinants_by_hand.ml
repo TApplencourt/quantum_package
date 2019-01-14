@@ -22,6 +22,7 @@ module Determinants_by_hand : sig
   val read_n_int : unit -> N_int_number.t
   val update_ndet : Det_number.t -> unit
   val extract_state : States_number.t -> unit
+  val extract_states : Range.t -> unit
 end = struct
   type t = 
     { n_int                  : N_int_number.t;
@@ -80,7 +81,10 @@ end = struct
   ;;
 
   let write_n_det n =
-    Det_number.to_int n
+    let n_det_old =
+      Ezfio.get_determinants_n_det ()
+    in
+    min n_det_old (Det_number.to_int n)
     |> Ezfio.set_determinants_n_det
   ;;
 
@@ -585,6 +589,47 @@ psi_det                = %s
     end;
     let new_det =
       { det with n_states = (States_number.of_int 1) }
+    in
+    write new_det
+  ;;
+
+  let extract_states range =
+    Printf.printf "Extracting states %s\n" (Range.to_string range);
+    let det =
+      read ()
+    in
+    let n_det, n_states =
+      Det_number.to_int det.n_det,
+      States_number.to_int det.n_states
+    in
+    Range.to_int_list range
+    |> List.iter ~f:(fun istate ->
+      if istate > n_states then
+        failwith "State to extract should not be greater than n_states") 
+    ;
+    let sorted_list = 
+      Range.to_int_list range
+      |> List.sort ~compare 
+    in
+    let state_shift = ref 0 in
+    List.iter ~f:(fun istate ->
+      let j =
+        istate - 1
+      in
+      begin
+        if (j>0) then
+          let ishift =
+            j*n_det
+          in
+          for i=0 to (n_det-1) do
+            det.psi_coef.(!state_shift+i) <- det.psi_coef.(i+ishift)
+          done
+      end;
+      state_shift := !state_shift + n_det
+    ) sorted_list
+    ;
+    let new_det =
+      { det with n_states = (States_number.of_int @@ List.length sorted_list) }
     in
     write new_det
   ;;

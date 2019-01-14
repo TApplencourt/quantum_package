@@ -452,10 +452,10 @@ BEGIN_PROVIDER [ integer, nthreads_davidson ]
  END_DOC
  nthreads_davidson = nproc
  character*(32) :: env
- call getenv('NTHREADS_DAVIDSON',env)
+ call getenv('QP_NTHREADS_DAVIDSON',env)
  if (trim(env) /= '') then
    read(env,*) nthreads_davidson
-   call write_int(6,nthreads_davidson,'Number of threads for <Psi|H|Psi>')
+   call write_int(6,nthreads_davidson,'Target number of threads for <Psi|H|Psi>')
  endif
 END_PROVIDER
 

@@ -90,6 +90,8 @@ def main(arguments):
                         f.write(f_new)
 
     print "Done"
+    with open( os.path.join(QP_ROOT,"REPLACE"), 'a') as f:
+       print >>f, "qp_name "+" ".join(sys.argv[1:])
     
 
 

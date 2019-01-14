@@ -1,7 +1,7 @@
 program diagonalize_h
  implicit none
  BEGIN_DOC
-! program that extracts the N_states lowest states of the Hamiltonian within the set of Slater determinants stored in the EZFIO folder
+! program that extracts the `n_states` lowest states of the Hamiltonian within the set of Slater determinants stored in the EZFIO folder
  END_DOC
  read_wf = .True.
  touch read_wf

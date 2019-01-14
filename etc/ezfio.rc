@@ -1,15 +1,16 @@
-if [[ -z $QP_EZFIO ]]
-then
+# Configuration of EZFIO package
 
-  export QP_EZFIO=${QP_ROOT}/external/ezfio
+export QP_EZFIO=${QP_ROOT}/external/ezfio
 
-  if [[ $SHELL == "/bin/bash" ]] ; then
-    if [[ -f ${QP_EZFIO}/Bash/ezfio.sh ]]; then
-        source ${QP_EZFIO}/Bash/ezfio.sh
-    else
-        echo "EZFIO is not installed."
-    fi
+function source_if_exists() {
+  if [[ -f $1 ]]; then
+        if [[ "$(ps -p $$ -ocomm=)" == "zsh" ]] ; then
+          autoload bashcompinit
+          bashcompinit
+        fi
+        source $1
   fi
+} 
 
-fi
+source_if_exists "${QP_EZFIO}/Bash/ezfio.sh"
 

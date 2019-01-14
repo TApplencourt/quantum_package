@@ -268,7 +268,21 @@ Subroutines / functions
 
     Transform A from the MO basis to the AO basis 
 
-    (S.C).A_mo.(S.C)t
+     :math:`(S.C).A_{mo}.(S.C)^\dagger`
+
+
+
+
+
+.. c:function:: mo_to_ao_no_overlap
+
+    .. code:: text
+
+        subroutine mo_to_ao_no_overlap(A_mo,LDA_mo,A_ao,LDA_ao)
+
+    File: :file:`ao_to_mo.irp.f`
+
+     :math:`C.A_{mo}.C^\dagger`
 
 
 

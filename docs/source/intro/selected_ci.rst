@@ -105,13 +105,25 @@ The determinants in |SetDI| will be characterized as **internal**.
 Of course, such a procedure can be applied on any state and therefore can allow to treat both ground and excited states. 
 
 
-Approximations to accelerate the selection
-------------------------------------------
+Stochastic approximations for the selection and the computation of |EPT|
+------------------------------------------------------------------------
 
 The simple algorithm would be too slow to make calculations possible. Instead,
-we use the 3-class |CIPSI| approximation to accelerate the selection, 
-:cite:`Evangelisti_1983` where instead of generating all possible |kalpha|,
-we only generate a subset which are likely to be selected.
+the |QP| uses a stochastic algorithm :cite:`Garniron_2017.2` in order to compute 
+efficiently the |EPT| and to select on-the-fly the best Slater determinants. 
+
+In such a way, the selection step introduces no extra cost with respect to the |EPT| calculation and the |EPT| 
+itself is unbiased but associated with a statistical error bar rapidly converging. 
+
+
+Deterministic approximations for the selection
+----------------------------------------------
+
+The following description was used in a previous version of the |CIPSI| algorithm
+which was less efficient. Nonetheless, it introduces the notions of **generator**  and **selector** determinants 
+which are much more general than the |CIPSI| algorithm that targets the |FCI| and can be used to realize virtually 
+**any kind of CI in a selected way**. 
+
 
 We define **generator** determinants, as determinants of the internal space
 from which the |kalpha| are generated.
@@ -123,6 +135,11 @@ For calculations in the |FCI| space, the determinants are sorted by decreasing
 The default is to use :option:`determinants threshold_generators` = 0.99 for
 the generators, and :option:`determinants threshold_selectors` = 0.999 for the
 selectors.
+
+This is nothing but the 3-class |CIPSI| approximation to accelerate the selection, 
+:cite:`Evangelisti_1983` where instead of generating all possible |kalpha|,
+we only generate a subset which are likely to be selected.
+
 
 The computation of |EPT| using a truncated wave function is biased,
 so if an accurate estimate of the |FCI| energy is desired, it is preferable
@@ -147,7 +164,7 @@ a selected |CAS-SD|. And if one add the rule to prevent for doing double
 excitations with two holes and two particles outside of the active space, one
 obtains a selected |DDCI| method.
 
-All such things can be done very easily when programming the the |qp|.
+All such things can be done very easily when programming the |qp|.
 
 -----------------------------------
 

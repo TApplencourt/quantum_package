@@ -115,7 +115,7 @@ subroutine davidson_diag_hjj_sjj(dets_in,u_in,H_jj,s2_out,energies,dim_in,sze,N_
   integer                        :: iter2, itertot
   double precision, allocatable  :: W(:,:),  U(:,:), S(:,:), overlap(:,:)
   double precision, allocatable  :: y(:,:), h(:,:), lambda(:), s2(:)
-  double precision, allocatable  :: c(:), s_(:,:), s_tmp(:,:)
+  double precision, allocatable  :: s_(:,:), s_tmp(:,:)
   double precision               :: diag_h_mat_elem
   double precision, allocatable  :: residual_norm(:)
   character*(16384)              :: write_buffer
@@ -137,6 +137,13 @@ subroutine davidson_diag_hjj_sjj(dets_in,u_in,H_jj,s2_out,energies,dim_in,sze,N_
   itermax = max(3,min(davidson_sze_max, sze/N_st_diag))
   itertot = 0
   
+  if (state_following) then
+    allocate(overlap(N_st_diag*itermax, N_st_diag*itermax))
+  else
+    allocate(overlap(1,1))  ! avoid 'if' for deallocate
+  endif
+  overlap = 0.d0
+
   PROVIDE nuclear_repulsion expected_s2 psi_bilinear_matrix_order psi_bilinear_matrix_order_reverse
   
   call write_time(6)
@@ -149,25 +156,51 @@ subroutine davidson_diag_hjj_sjj(dets_in,u_in,H_jj,s2_out,energies,dim_in,sze,N_
   call write_int(6,N_st,'Number of states')
   call write_int(6,N_st_diag,'Number of states in diagonalization')
   call write_int(6,sze,'Number of determinants')
+
+  ! Find max number of cores to fit in memory
+  ! -----------------------------------------
+
   nproc_target = nproc
   double precision :: rss
+  integer :: maxab
+  maxab = max(N_det_alpha_unique, N_det_beta_unique)+1
+
   call resident_memory(rss)
-  r1 = 8.d0*(3.d0*dble(sze*N_st_diag*itermax+5.d0*(N_st_diag*itermax)**2 & 
-    + 3.d0*(N_st_diag*itermax)+nproc*(4.d0*N_det_alpha_unique+2.d0*N_st_diag*sze)))/(1024.d0**3)
-  do while (r1+rss > qp_max_mem)
-    nproc_target = nproc_target - 1
-    r1 = 8.d0*(3.d0*dble(sze*N_st_diag*itermax+5.d0*(N_st_diag*itermax)**2 & 
-      + 3.d0*(N_st_diag*itermax)+nproc_target*(4.d0*N_det_alpha_unique+2.d0*N_st_diag*sze)))/(1024.d0**3)
+  do 
+    r1 = 8.d0 *                                   &! bytes
+         ( 3.d0*(dble(sze)*(N_st_diag*itermax))   &! W,U,S
+         + 4.d0*(N_st_diag*itermax)**2            &! h,y,s_,s_tmp
+         + 2.d0*(N_st_diag*itermax)               &! s2,lambda
+         + 1.d0*(N_st_diag)                       &! residual_norm
+                                                   ! In H_S2_u_0_nstates_zmq
+         + 3.d0*(N_st_diag*N_det)                 &! u_t, v_t, s_t on collector
+         + 3.d0*(N_st_diag*N_det)                 &! u_t, v_t, s_t on slave
+         + 0.5d0*maxab                            &! idx0 in H_S2_u_0_nstates_openmp_work_*
+         + nproc_target *                         &! In OMP section
+           ( 1.d0*(N_int*maxab)                   &! buffer
+           + 3.5d0*(maxab) )                      &! singles_a, singles_b, doubles, idx
+         ) / 1024.d0**3
+    
     if (nproc_target == 0) then
       call check_mem(r1,irp_here)
       nproc_target = 1
       exit
     endif
+
+    if (r1+rss < qp_max_mem) then
+      exit
+    endif
+
+    nproc_target = nproc_target - 1
+
   enddo
   nthreads_davidson = nproc_target
   TOUCH nthreads_davidson
   call write_int(6,nproc_target,'Number of threads for diagonalization')
   call write_double(6, r1, 'Memory(Gb)')
+
+  !---------------
+
   write(6,'(A)') ''
   write_buffer = '====='
   do i=1,N_st
@@ -198,9 +231,7 @@ subroutine davidson_diag_hjj_sjj(dets_in,u_in,H_jj,s2_out,energies,dim_in,sze,N_
       s_(N_st_diag*itermax,N_st_diag*itermax),                       &
       s_tmp(N_st_diag*itermax,N_st_diag*itermax),                    &
       residual_norm(N_st_diag),                                      &
-      c(N_st_diag*itermax),                                          &
       s2(N_st_diag*itermax),                                         &
-      overlap(N_st_diag*itermax, N_st_diag*itermax),                 &
       lambda(N_st_diag*itermax))
   
   h = 0.d0
@@ -503,7 +534,7 @@ subroutine davidson_diag_hjj_sjj(dets_in,u_in,H_jj,s2_out,energies,dim_in,sze,N_
   deallocate (                                                       &
       W, residual_norm,                                              &
       U, overlap,                                                    &
-      c, S,                                                          &
+      S,                                                             &
       h,                                                             &
       y, s_, s_tmp,                                                  &
       lambda                                                         &

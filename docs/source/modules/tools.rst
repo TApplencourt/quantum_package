@@ -25,7 +25,7 @@ Subroutines / functions
 
     File: :file:`diagonalize_h.irp.f`
 
-    program that extracts the N_states lowest states of the Hamiltonian within the set of Slater determinants stored in the EZFIO folder
+    program that extracts the `n_states` lowest states of the Hamiltonian within the set of Slater determinants stored in the EZFIO folder
 
 
 
@@ -39,7 +39,17 @@ Subroutines / functions
 
     File: :file:`fcidump.irp.f`
 
-    Produce a FCIDUMP file
+    Produce a regular FCIDUMP file from the MOs stored in the EZFIO folder. 
+
+    To specify an active space, the class of the mos have to set in the EZFIO folder (see set_mo_class/qp_set_mo_class). 
+
+    The fcidump program supports 3 types of MO_class : 
+
+    * the "core" orbitals which are always doubly occupied in the calculation 
+
+    * the "del" orbitals that are never occupied in the calculation 
+
+    * the "act" orbitals that will be occupied by a varying number of electrons
 
 
 
@@ -53,7 +63,11 @@ Subroutines / functions
 
     File: :file:`four_idx_transform.irp.f`
 
-    4-index transformation of two-electron integrals from AO to MO integrals
+    4-index transformation of two-electron integrals from AO to MO integrals. 
+
+    This program will compute the two-electron integrals on the MO basis and store it into the EZFIO folder. 
+
+    This program can be useful if the AO --> MO transformation is an expensive step by itself.
 
 
 
@@ -81,7 +95,13 @@ Subroutines / functions
 
     File: :file:`print_e_conv.irp.f`
 
-    program that prints in a human readable format the convergence of the CIPSI algorithm
+    program that prints in a human readable format the convergence of the CIPSI algorithm. 
+
+    for all istate, this program produces 
+
+    * a file "EZFIO.istate.conv" containing the variational and var+PT2 energies as a function of N_det 
+
+    * for istate > 1, a file EZFIO.istate.delta_e.conv containing the energy difference (both var and var+PT2) with the ground state as a function of N_det
 
 
 
@@ -95,7 +115,7 @@ Subroutines / functions
 
     File: :file:`print_wf.irp.f`
 
-    print the wave function stored in the EZFIO folder in the intermediate normalization 
+    print the wave function stored in the EZFIO folder in the intermediate normalization. 
 
     it also prints a lot of information regarding the excitation operators from the reference determinant 
 
@@ -129,7 +149,15 @@ Subroutines / functions
 
     File: :file:`save_natorb.irp.f`
 
-    Save natural MOs into the EZFIO
+    Save natural MOs into the EZFIO 
+
+    This program reads the wave function stored in the EZFIO folder, 
+
+    extracts the corresponding natural orbitals and set them as the new MOs 
+
+    If this is a multi-state calculation, the density matrix that produces the natural orbitals 
+
+    is obtained from a state-averaged of the density matrices of each state with the corresponding state_average_weight (see the doc of state_average_weight).
 
 
 
@@ -153,6 +181,24 @@ Subroutines / functions
 
 
 
+.. c:function:: save_one_e_dm
+
+    .. code:: text
+
+        subroutine save_one_e_dm
+
+    File: :file:`save_one_e_dm.irp.f`
+
+    programs that computes the one body density on the mo basis for alpha and beta electrons from the wave function stored in the EZFIO folder, and then save it into the EZFIO folder aux_quantities. 
+
+    Then, the global variable data_one_e_dm_alpha_mo and data_one_e_dm_beta_mo will automatically read this density in a further calculation. 
+
+    This can be used to perform damping on the density in RS-DFT calculation (see the density_for_dft module).
+
+
+
+
+
 .. c:function:: save_ortho_mos
 
     .. code:: text
@@ -161,7 +207,13 @@ Subroutines / functions
 
     File: :file:`save_ortho_mos.irp.f`
 
-    Save orthonormalized MOs in the EZFIO.
+    Save orthonormalized MOs in the EZFIO. 
+
+    This program reads the current MOs, computes the corresponding overlap matrix in the MO basis 
+
+    and perform a Lowdin orthonormalization : :math:`MO_{new} = S^{-1/2} MO_{guess}`. 
+
+    Thanks to the Lowdin orthonormalization, the new MOs are the most similar to the guess MOs.
 
 
 
@@ -203,7 +255,7 @@ Subroutines / functions
 
     File: :file:`write_integrals_erf.irp.f`
 
-    Saves the two-electron erf integrals into the EZFIO
+    Saves the two-electron integrals with the :math:`erf(\mu r_{12})/r_{12}` oprerator into the EZFIO folder
 
 
 

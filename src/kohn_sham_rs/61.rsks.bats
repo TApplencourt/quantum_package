@@ -1,19 +1,20 @@
 #!/usr/bin/env bats
 
 source $QP_ROOT/tests/bats/common.bats.sh
+source $QP_ROOT/quantum_package.rc
 
 
 function run() {
   thresh=1.e-8
-  qp_edit -c $1
   functional=$2
-  ezfio set_file $1
-  ezfio set scf_utils thresh_scf 1.e-10
-  ezfio set dft_keywords exchange_functional $functional
-  ezfio set dft_keywords correlation_functional $functional
-  ezfio set ao_two_e_erf_ints mu_erf 0.5 
-  ezfio set becke_numerical_grid grid_type_sgn 1 
-  qp_run rs_ks_scf $1
+  qp set_file $1
+  qp edit --check
+  qp set scf_utils thresh_scf 1.e-10
+  qp set dft_keywords exchange_functional $functional
+  qp set dft_keywords correlation_functional $functional
+  qp set ao_two_e_erf_ints mu_erf 0.5 
+  qp set becke_numerical_grid grid_type_sgn 1 
+  qp run rs_ks_scf 
   energy="$(ezfio get kohn_sham_rs energy)"
   eq $energy $3 $thresh
 }

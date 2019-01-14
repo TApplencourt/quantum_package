@@ -7,7 +7,7 @@ Working with external plugins
 plugins need to be downloaded and installed in the ``$QP_ROOT/plugins``
 directory.
 
-Plugins are usually hosted in external repositories. To dowload a plugin,
+Plugins are usually hosted in external repositories. To download a plugin,
 the remote repository needs to be downloaded, and the plugins of the 
 repository can be selected for installation.
 
@@ -47,5 +47,5 @@ To remove the module, run
         qp_plugins uninstall ext_module
 
 
-
+For a more detailed explanation and an example, see :ref:`qp_plugins`. 
 

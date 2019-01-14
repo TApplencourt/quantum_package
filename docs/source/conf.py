@@ -157,10 +157,14 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'quantumpackage', 'Quantum Package Documentation',
-     [author], 1)
-]
+man_pages = []
+qpdoc = ' | Quantum Package >'
+import os
+for f in os.listdir("users_guide"):
+  name = f.split('.')[0]
+  if name not in ["index","quickstart"]:
+    filename = os.path.join("users_guide",name)
+    man_pages.append( (filename, name, qpdoc, [author], 1) )
 
 
 # -- Options for Texinfo output ----------------------------------------------

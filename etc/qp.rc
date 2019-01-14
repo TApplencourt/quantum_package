@@ -1,0 +1,206 @@
+# Configuration of the qp shell command
+
+if [[ "$(ps -p $$ -ocomm=)" == "zsh" ]] ; then
+  autoload bashcompinit
+  bashcompinit
+fi
+
+source ${QP_ROOT}/etc/ezfio.rc
+
+function _qp_usage()
+{
+  echo "
+Usage:
+  qp set_file    EZFIO_DIRECTORY
+  qp unset_file
+
+  qp has         DIRECTORY   ITEM
+  qp get         DIRECTORY   ITEM
+  qp set         DIRECTORY   ITEM  VALUE  : Scalar values
+  qp set         DIRECTORY   ITEM         : Array values read from stdin
+
+  qp run         PROGRAM
+  qp srun        PROGRAM
+  qp mpirun      PROGRAM
+
+  qp set_frozen_core
+  qp create_ezfio_from_xyz    --help
+  qp convert_output_to_ezfio  --help
+  qp set_mo_class             --help
+"
+}
+
+#function test_ezfio()
+#{
+#      if [[ ! -d ${EZFIO_FILE} ]] ; then
+#        echo "qp: cannot access ${EZFIO_FILE}: No such file or directory"
+#        return 1
+#      fi
+#}
+
+function qp()
+{
+  case $1 in
+    "has"|"set"|"get"|"set_file"|"unset_file")
+        ezfio "$@"
+      ;;
+
+    "set_frozen_core")
+      shift
+      qp_set_frozen_core "$@" ${EZFIO_FILE}
+      ;;
+
+    "create_ezfio_from_xyz")
+      shift
+      NAME=$(qp_create_ezfio_from_xyz "$@")
+      if [[ -d $NAME ]] ; then
+        [[ -d $EZFIO_FILE ]] && ezfio unset_file
+        ezfio set_file $NAME
+      else
+        echo $NAME | more
+      fi
+      ;;
+
+    "convert_output_to_ezfio")
+      shift
+      qp_convert_output_to_ezfio "$@"
+      ;;
+
+    "set_mo_class")
+      shift
+      qp_set_mo_class "$@" -- ${EZFIO_FILE} 
+      ;;
+
+    "edit")
+      shift
+      qp_edit "$@" -- ${EZFIO_FILE} 
+      ;;
+
+    "run")
+      shift
+      qp_run "$@" -- ${EZFIO_FILE}
+      ;;
+
+    "srun")
+      shift
+      qp_srun "$@" ${EZFIO_FILE}
+      ;;
+
+    "mpirun")
+      shift
+      qp_mpirun "$@" ${EZFIO_FILE}
+      ;;
+
+    "man")
+      shift
+      man $QP_ROOT/man/${1}.?
+      ;;
+
+    "prompt")
+      shift
+      function _check_ezfio() {
+        if [[ -d ${EZFIO_FILE} ]] ; then
+          printf "\e[0;32m|${EZFIO_FILE}>\e[m"
+        else
+          printf "\e[0;31m|${EZFIO_FILE}>\e[m"
+        fi
+      }
+#      PS1="${PS1%\\\$ } \$(_check_ezfio) $ "
+      PS1="\$(_check_ezfio)\n$PS1"
+      ;;
+      
+    *)
+      _qp_usage
+      ;;
+  esac
+  
+}
+
+
+_Complete()
+{
+  local cur
+
+  COMPREPLY=()
+  cur="${COMP_WORDS[COMP_CWORD]}"
+  prev="${COMP_WORDS[COMP_CWORD-1]}"
+  prev2="${COMP_WORDS[COMP_CWORD-2]}"
+
+  if [[ -n ${EZFIO_FILE} && -d ${EZFIO_FILE} ]]
+  then
+
+    case "${prev2}" in
+      "set"|has|get)
+        if [[ ${prev} == "qp" ]] ; then
+          COMPREPLY=( $(compgen -W "set set_frozen_core set_mo_class" -- $cur ) )
+        elif [[ ! -d ${EZFIO_FILE}/${prev} ]] ; then
+          COMPREPLY=( $(compgen -W "" -- $cur ) )
+        else
+          COMPREPLY=( $(compgen -W "$(cd ${EZFIO_FILE}/${prev} ; ls | sed 's/\.gz//' )" -- $cur ) )
+        fi
+        return 0
+        ;;
+       *)
+          COMPREPLY=( $(compgen -W "$(\ls)" -- $cur ) )
+    esac
+
+    case "${prev}" in
+      run|srun|mpirun)
+        COMPREPLY=( $(compgen -W "$(cat ${QP_ROOT}/data/executables | cut -d ' ' -f 1)" -- $cur ) )
+        return 0
+        ;;
+      unset_file|edit|set_frozen_core)
+        COMPREPLY=()
+        return 0
+        ;;
+      set_mo_class)
+        COMPREPLY=( $(compgen -W "-h -core -inact -act -virt -del" -- $cur ) )
+        return 0
+        ;;
+      man)
+        COMPREPLY=( $(compgen -W "$(cd ${QP_ROOT}/man ; \ls | sed '/\.[1-9] / /')" -- $cur ) )
+        return 0
+        ;;
+      set|has|get)
+        COMPREPLY=( $(compgen -W "$(cd ${EZFIO_FILE} ; \ls -d */ | sed 's|/||g')" -- $cur ) )
+        return 0
+        ;;
+      *)
+        COMPREPLY=( $(compgen -W 'has get set unset_file edit \
+                                  run srun mpirun set_frozen_core \
+                                  set_mo_class create_ezfio_from_xyz \
+                                  convert_output_to_ezfio \
+                                  -h' -- $cur ) )
+        return 0
+        ;;
+    esac
+
+  else
+
+    case "${prev}" in
+      man)
+        COMPREPLY=( $(compgen -W "$(cd ${QP_ROOT}/man ; echo * | sed 's|\.[1-9] | |g')" -- $cur ) )
+        return 0
+        ;;
+      set_file)
+        COMPREPLY=( $(compgen -W "$(\ls -d */ | sed 's|/||g')" -- ${cur} ) )
+        return 0
+        ;;
+      convert_output_to_ezfio|create_ezfio_from_xyz)
+        COMPREPLY=( $(compgen -W "$(\ls)" -- ${cur} ) )
+        return 0
+        ;;
+      *)
+        COMPREPLY=( $(compgen -W 'set_file \
+                                  man \
+                                  create_ezfio_from_xyz \
+                                  convert_output_to_ezfio \
+                                  -h' -- $cur ) )
+        return 0
+        ;;
+    esac
+
+  fi
+}
+
+complete -F _Complete qp

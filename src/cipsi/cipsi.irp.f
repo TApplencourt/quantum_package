@@ -46,6 +46,9 @@ subroutine run_cipsi
     psi_coef = psi_coef_sorted
     N_det = N_det_max
     soft_touch N_det psi_det psi_coef
+    if (s2_eig) then
+      call make_s2_eigenfunction
+    endif
     call diagonalize_CI
     call save_wavefunction
   endif

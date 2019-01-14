@@ -91,7 +91,7 @@ Subroutines / functions
 
     .. code:: text
 
-        subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_)
+        subroutine print_summary(e_,pt2_,error_,variance_,norm_,n_det_,n_occ_pattern_,n_st)
 
     File: :file:`print_summary.irp.f`
 

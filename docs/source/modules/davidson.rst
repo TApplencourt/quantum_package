@@ -449,7 +449,7 @@ Subroutines / functions
 
         subroutine H_S2_u_0_nstates_openmp_work_1(v_t,s_t,u_t,N_st,sze,istart,iend,ishift,istep)
 
-    File: :file:`u0_h_u0.irp.f_template_468`
+    File: :file:`u0_h_u0.irp.f_template_477`
 
     Computes  :math:`v_t = H|u_t angle`  and  :math:`s_t = S^2 |u_t angle` 
 
@@ -465,7 +465,7 @@ Subroutines / functions
 
         subroutine H_S2_u_0_nstates_openmp_work_2(v_t,s_t,u_t,N_st,sze,istart,iend,ishift,istep)
 
-    File: :file:`u0_h_u0.irp.f_template_468`
+    File: :file:`u0_h_u0.irp.f_template_477`
 
     Computes  :math:`v_t = H|u_t angle`  and  :math:`s_t = S^2 |u_t angle` 
 
@@ -481,7 +481,7 @@ Subroutines / functions
 
         subroutine H_S2_u_0_nstates_openmp_work_3(v_t,s_t,u_t,N_st,sze,istart,iend,ishift,istep)
 
-    File: :file:`u0_h_u0.irp.f_template_468`
+    File: :file:`u0_h_u0.irp.f_template_477`
 
     Computes  :math:`v_t = H|u_t angle`  and  :math:`s_t = S^2 |u_t angle` 
 
@@ -497,7 +497,7 @@ Subroutines / functions
 
         subroutine H_S2_u_0_nstates_openmp_work_4(v_t,s_t,u_t,N_st,sze,istart,iend,ishift,istep)
 
-    File: :file:`u0_h_u0.irp.f_template_468`
+    File: :file:`u0_h_u0.irp.f_template_477`
 
     Computes  :math:`v_t = H|u_t angle`  and  :math:`s_t = S^2 |u_t angle` 
 
@@ -513,7 +513,7 @@ Subroutines / functions
 
         subroutine H_S2_u_0_nstates_openmp_work_N_int(v_t,s_t,u_t,N_st,sze,istart,iend,ishift,istep)
 
-    File: :file:`u0_h_u0.irp.f_template_468`
+    File: :file:`u0_h_u0.irp.f_template_477`
 
     Computes  :math:`v_t = H|u_t angle`  and  :math:`s_t = S^2 |u_t angle` 
 

@@ -5,10 +5,10 @@
 
 QP_ROOT="/NOT/FOUND"
 case "$(ps -p $$ -ocomm=)" in
-  zsh)
+  "zsh")
     QP_ROOT=$(dirname $0)
     ;;
-  bash)
+  *)
     QP_ROOT=$(dirname ${BASH_SOURCE}[0])
     ;;
 esac

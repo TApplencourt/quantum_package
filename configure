@@ -37,6 +37,7 @@ EOF
 }
 
 PACKAGES=""
+OCAML_PACKAGES="ocamlbuild cryptokit zmq core sexplib ppx_sexp_conv ppx_deriving getopt"
 
 while : ; do
     case "$1" in
@@ -60,7 +61,7 @@ done
 # Trim leading and trailing spaces
 PACKAGES=$(echo $PACKAGES | xargs)
 
-echo "export QP_ROOT=\"$QP_ROOT\"" > ${QP_ROOT}/etc/00.qp_root
+echo "export QP_ROOT=\"$QP_ROOT\"" > ${QP_ROOT}/etc/00.qp_root.rc
 
 source quantum_package.rc
 
@@ -148,6 +149,7 @@ for PACKAGE in ${PACKAGES} ; do
 
     elif [[ ${PACKAGE} = irpf90 ]] ; then
 
+            # When changing version of irpf90, don't forget to update etc/irpf90.rc
             download \
               "https://gitlab.com/scemama/irpf90/-/archive/v1.7.4/irpf90-v1.7.4.tar.gz" \
               "${QP_ROOT}"/external/irpf90.tar.gz
@@ -157,15 +159,6 @@ for PACKAGE in ${PACKAGES} ; do
               rm irpf90.tar.gz
               cd irpf90-*
               make
-              for i in irpf90 irpman irpf90_indent
-              do
-                      cat << EOF > "${QP_ROOT}"/bin/$i
-#!/bin/sh
-exec $PWD/bin/$i \$@
-EOF
-
-                      chmod +x "${QP_ROOT}"/bin/$i
-              done
             )
     
 
@@ -233,8 +226,7 @@ EOF
                  --yes --comp=4.07.0
 
             eval $(${QP_ROOT}/bin/opam env)
-            opam install -y ocamlbuild cryptokit zmq core sexplib \
-                 ppx_sexp_conv ppx_deriving
+            opam install -y ${OCAML_PACKAGES}  || exit 1
 
             
     elif [[ ${PACKAGE} = ezfio ]] ; then
@@ -378,9 +370,13 @@ echo "                 ||----w |     "
 echo "                 ||     ||     "
 echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo ""
-echo "Now:"
+echo "Now, if you want to use the current shell,"
 echo ""
 echo "  source $QP_ROOT/quantum_package.rc"
+echo ""
+echo "Or if you want to use a Bash shell adapted for QP:"
+echo ""
+echo "  $QP_ROOT/qpsh"
 echo ""
    
     

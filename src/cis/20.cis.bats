@@ -1,20 +1,21 @@
 #!/usr/bin/env bats
 
 source $QP_ROOT/tests/bats/common.bats.sh
+source $QP_ROOT/quantum_package.rc
 
 function run() {
   thresh=1.e-5
   test_exe cis || skip
-  qp_edit -c $1
-  ezfio set_file $1
-  ezfio set determinants n_states  3
-  ezfio set davidson threshold_davidson 1.e-12
-  ezfio set mo_two_e_ints io_mo_two_e_integrals Write
-  qp_set_frozen_core $1
-  qp_run cis $1
-  energy1="$(ezfio get cis energy | tr '[]' ' ' | cut -d ',' -f 1)"
-  energy2="$(ezfio get cis energy | tr '[]' ' ' | cut -d ',' -f 2)"
-  energy3="$(ezfio get cis energy | tr '[]' ' ' | cut -d ',' -f 3)"
+  qp set_file $1
+  qp edit --check
+  qp set determinants n_states  3
+  qp set davidson threshold_davidson 1.e-12
+  qp set mo_two_e_ints io_mo_two_e_integrals Write
+  qp set_frozen_core 
+  qp run cis 
+  energy1="$(qp get cis energy | tr '[]' ' ' | cut -d ',' -f 1)"
+  energy2="$(qp get cis energy | tr '[]' ' ' | cut -d ',' -f 2)"
+  energy3="$(qp get cis energy | tr '[]' ' ' | cut -d ',' -f 3)"
   eq $energy1 $2 $thresh
   eq $energy2 $3 $thresh
   eq $energy3 $4 $thresh
